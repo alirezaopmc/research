@@ -1,0 +1,2 @@
+# Opt-in Git LFS (run: git lfs track "*.png")
+# *.png filter=lfs diff=lfs merge=lfs -text

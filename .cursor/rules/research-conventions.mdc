@@ -1,0 +1,12 @@
+---
+description: Research repo defaults — minimal output and topic lens
+alwaysApply: true
+---
+
+# Conventions
+
+- Read `AGENTS.md` in the repo root first.
+- **Minimal replies** unless user asks for detail.
+- Default lens: limited compute (~1× H100 ceiling), hype/market, industry relevance.
+- Papers: markdown notes + links only; never commit PDFs.
+- Experiments: `sandbox/` + `AGENT_LOG.md`; promote summaries to `docs/research/topics/`.

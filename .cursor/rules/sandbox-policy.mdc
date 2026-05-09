@@ -1,0 +1,11 @@
+---
+description: Local sandbox experiments
+globs: sandbox/**/*
+alwaysApply: false
+---
+
+# Sandbox
+
+- Contents are **gitignored** except `sandbox/README.md`.
+- Each experiment: `sandbox/<slug>/` with `AGENT_LOG.md` (commands, outputs, decisions).
+- Do not ask to commit `sandbox/` artifacts; summarize into `docs/` instead.

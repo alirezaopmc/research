@@ -1,0 +1,11 @@
+---
+description: Markdown notes under docs/
+globs: docs/**/*.md
+alwaysApply: false
+---
+
+# Markdown notes
+
+- YAML frontmatter where a template exists (`docs/papers/_template.md`).
+- Wikilinks: `[[relative/path/no-ext]]` or `[[path|label]]`.
+- Cross-link papers and topic folders; keep filenames stable (`kebab-case`).

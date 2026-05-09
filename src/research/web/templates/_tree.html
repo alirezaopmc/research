@@ -1,0 +1,20 @@
+{% macro render_tree(nodes, current_path) %}
+<ul class="tree">
+  {% for n in nodes %}
+    <li>
+      {% if n.type == 'dir' %}
+        <span class="tree__dir">{{ n.name }}/</span>
+        {{ render_tree(n.children, current_path) }}
+      {% else %}
+        <a
+          class="{% if n.path == current_path %}is-active{% endif %}"
+          href="/viewer/note/{{ n.path | quote_path }}"
+          hx-get="/viewer/note/{{ n.path | quote_path }}"
+          hx-target="#main"
+          hx-push-url="true"
+        >{{ n.name }}</a>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+{% endmacro %}

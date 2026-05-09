@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}research{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/app.css" />
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose" });
+    document.body.addEventListener("htmx:afterSwap", function (e) {
+      if (!e.detail || !e.detail.target || !window.mermaid) return;
+      try {
+        mermaid.run({ nodes: e.detail.target.querySelectorAll(".mermaid") });
+      } catch (_) {}
+    });
+    document.body.addEventListener("htmx:afterSwap", function (e) {
+      if (!e.detail || e.detail.target.id !== "main") return;
+      document.querySelectorAll(".tree a.is-active").forEach(function (el) {
+        el.classList.remove("is-active");
+      });
+      var path = window.location.pathname;
+      document.querySelectorAll(".tree a[href]").forEach(function (a) {
+        if (a.getAttribute("href") === path) a.classList.add("is-active");
+      });
+    });
+  </script>
+</head>
+<body>
+  <aside class="layout-sidebar" aria-label="Site">
+    <div class="sidebar-header">
+      <a class="sidebar-brand" href="/viewer/">
+        <span class="sidebar-brand__mark" aria-hidden="true">R</span>
+        <span class="sidebar-brand__text">
+          <span class="sidebar-brand__title">Research</span>
+          <span class="sidebar-brand__sub">Notes vault</span>
+        </span>
+      </a>
+      <div class="sidebar-search" style="margin-top:1rem;">
+        <label for="vault-search">Search</label>
+        <div class="search-field">
+          <span class="search-field__icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          </span>
+          <input
+            id="vault-search"
+            type="search"
+            name="q"
+            autocomplete="off"
+            placeholder="Titles and content…"
+            aria-label="Search notes"
+            hx-get="/viewer/search"
+            hx-trigger="keyup changed delay:280ms, search"
+            hx-target="#search-results"
+            hx-indicator="#search-indicator"
+          />
+        </div>
+        <p id="search-indicator" class="htmx-indicator search-indicator-status">Searching…</p>
+        <div id="search-results" class="search-results"></div>
+      </div>
+    </div>
+    <div class="sidebar-scroll">
+      <div class="nav-label">Browse</div>
+      {% from "_tree.html" import render_tree %}
+      {{ render_tree(tree, current_path | default('')) }}
+    </div>
+    <div class="sidebar-footer">
+      <a href="/docs" target="_blank" rel="noopener noreferrer">API reference</a>
+      ·
+      <a href="/api/search/?q=" target="_blank" rel="noopener noreferrer">JSON search</a>
+    </div>
+  </aside>
+  <div class="layout-main">
+    <div class="layout-main__inner">
+      <main id="main">
+        {% block main %}{% endblock %}
+      </main>
+    </div>
+  </div>
+</body>
+</html>

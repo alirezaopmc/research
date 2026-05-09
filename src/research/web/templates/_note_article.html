@@ -1,0 +1,23 @@
+<article class="doc">
+  <header class="doc-header">
+    <p class="doc-path">{{ note.path }}</p>
+  </header>
+  <div class="note-html">{{ note.html | safe }}</div>
+  {% if note.backlinks %}
+    <aside class="backlinks">
+      <strong>Backlinks</strong>
+      <ul>
+        {% for b in note.backlinks %}
+          <li>
+            <a
+              href="/viewer/note/{{ b | quote_path }}"
+              hx-get="/viewer/note/{{ b | quote_path }}"
+              hx-target="#main"
+              hx-push-url="true"
+            >{{ b }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </aside>
+  {% endif %}
+</article>
