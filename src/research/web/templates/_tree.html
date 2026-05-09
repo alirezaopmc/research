@@ -1,10 +1,15 @@
-{% macro render_tree(nodes, current_path) %}
+{% macro render_tree(nodes, current_path, prefix_path="") %}
 <ul class="tree">
   {% for n in nodes %}
     <li>
-      {% if n.type == 'dir' %}
-        <span class="tree__dir">{{ n.name }}/</span>
-        {{ render_tree(n.children, current_path) }}
+      {% if n.type == "dir" %}
+        {% set dir_prefix = prefix_path ~ n.name ~ "/" %}
+        <details class="tree-branch" {% if current_path.startswith(dir_prefix) %}open{% endif %}>
+          <summary class="tree-branch__summary">
+            <span class="tree__dir">{{ n.name }}/</span>
+          </summary>
+          {{ render_tree(n.children, current_path, dir_prefix) }}
+        </details>
       {% else %}
         <a
           class="{% if n.path == current_path %}is-active{% endif %}"

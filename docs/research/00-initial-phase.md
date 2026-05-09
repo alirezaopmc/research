@@ -1,13 +1,12 @@
 ---
 date: 2026-05-09
 phase: initial
-source: ChatGPT brainstorming session
+source: user-selected pillars (ChatGPT session summarized offline)
 ---
 
-# Initial phase: 3 candidate topics
+# Initial phase: three focus pillars
 
-Reached 3 feasible topics on **2026-05-09** via initial brainstorming
-(ChatGPT link kept in personal notes, not in repo).
+Locked in **2026-05-09**. Execution path: [[research/roadmap]]; overview: [[research/topics/focus-areas]].
 
 ## Filters used
 
@@ -17,6 +16,10 @@ Reached 3 feasible topics on **2026-05-09** via initial brainstorming
 
 ## Topics
 
-1. **\<TBD — paste topic 1\>** — feasible because: ...
-2. **\<TBD — paste topic 2\>** — feasible because: ...
-3. **\<TBD — paste topic 3\>** — feasible because: ...
+1. **Efficient / Tiny ML** — Strong industry demand (on-device, cost); pairs naturally with limited compute; hardware–software co-design is active.
+2. **Data-centric AI** — High leverage per dollar when models are commoditized; aligns with rigorous evaluation and ML reliability trends.
+3. **Explainable AI (XAI)** — Regulatory and product pressure where failures are costly; intersects with robustness and data debugging.
+
+## Next action
+
+Follow phases in [[research/roadmap]]; add paper notes under `docs/papers/` as you read (links only, no PDFs in git).

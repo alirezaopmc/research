@@ -34,10 +34,25 @@ def viewer_home(request: Request) -> HTMLResponse:
 @router.get("/search", response_class=HTMLResponse)
 def viewer_search(request: Request, q: str = "") -> HTMLResponse:
     hits = request.app.state.search.search(q, limit=30)
+    is_htmx = request.headers.get("hx-request", "").lower() == "true"
+    if is_htmx:
+        return templates.TemplateResponse(
+            request,
+            "_search_results.html",
+            {"hits": hits, "q": q},
+        )
+    docs = _docs_dir(request)
+    tree = build_tree(docs)
     return templates.TemplateResponse(
         request,
-        "_search_results.html",
-        {"hits": hits, "q": q},
+        "viewer_search.html",
+        {
+            "tree": tree,
+            "current_path": "",
+            "hits": hits,
+            "q": q,
+            "initial_search_q": q,
+        },
     )
 
 

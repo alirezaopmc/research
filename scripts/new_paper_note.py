@@ -7,6 +7,8 @@ import re
 import sys
 from pathlib import Path
 
+_PAPER_LINK_LINE = re.compile(r"^(- \*\*Paper:\*\*)\s*$", re.MULTILINE)
+
 
 def _parse_arxiv(source: str) -> str | None:
     s = source.strip()
@@ -73,6 +75,11 @@ def main(argv: list[str] | None = None) -> int:
     if body.startswith("---"):
         _parts = body.split("---", 2)
         body = _parts[2].lstrip("\n") if len(_parts) >= 3 else body
+
+    def repl(_m: re.Match[str]) -> str:
+        return f"{_m.group(1)} [{url}]({url})"
+
+    body, _ = _PAPER_LINK_LINE.subn(repl, body, count=1)
 
     dest.write_text(front + body, encoding="utf-8")
     print(dest)

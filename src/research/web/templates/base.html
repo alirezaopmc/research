@@ -3,6 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+    try {
+      var _t = localStorage.getItem("research-theme");
+      if (_t === "light" || _t === "dark") document.documentElement.setAttribute("data-theme", _t);
+    } catch (e) {}
+  </script>
   <title>{% block title %}research{% endblock %}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -10,25 +16,6 @@
   <link rel="stylesheet" href="/static/app.css" />
   <script src="https://unpkg.com/htmx.org@1.9.12"></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-  <script>
-    mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose" });
-    document.body.addEventListener("htmx:afterSwap", function (e) {
-      if (!e.detail || !e.detail.target || !window.mermaid) return;
-      try {
-        mermaid.run({ nodes: e.detail.target.querySelectorAll(".mermaid") });
-      } catch (_) {}
-    });
-    document.body.addEventListener("htmx:afterSwap", function (e) {
-      if (!e.detail || e.detail.target.id !== "main") return;
-      document.querySelectorAll(".tree a.is-active").forEach(function (el) {
-        el.classList.remove("is-active");
-      });
-      var path = window.location.pathname;
-      document.querySelectorAll(".tree a[href]").forEach(function (a) {
-        if (a.getAttribute("href") === path) a.classList.add("is-active");
-      });
-    });
-  </script>
 </head>
 <body>
   <aside class="layout-sidebar" aria-label="Site">
@@ -42,36 +29,87 @@
       </a>
       <div class="sidebar-search" style="margin-top:1rem;">
         <label for="vault-search">Search</label>
-        <div class="search-field">
-          <span class="search-field__icon" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-          </span>
-          <input
-            id="vault-search"
-            type="search"
-            name="q"
-            autocomplete="off"
-            placeholder="Titles and content…"
-            aria-label="Search notes"
-            hx-get="/viewer/search"
-            hx-trigger="keyup changed delay:280ms, search"
-            hx-target="#search-results"
-            hx-indicator="#search-indicator"
-          />
-        </div>
+        <form method="get" action="/viewer/search" class="search-form">
+          <div class="search-field">
+            <span class="search-field__icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            </span>
+            <input
+              id="vault-search"
+              type="search"
+              name="q"
+              value="{{ initial_search_q | default('') | e }}"
+              autocomplete="off"
+              placeholder="Titles and content…"
+              aria-label="Search notes"
+              hx-get="/viewer/search"
+              hx-trigger="keyup[key!='Enter'] changed delay:280ms, search"
+              hx-target="#search-results"
+              hx-indicator="#search-indicator"
+            />
+          </div>
+        </form>
         <p id="search-indicator" class="htmx-indicator search-indicator-status">Searching…</p>
         <div id="search-results" class="search-results"></div>
       </div>
     </div>
     <div class="sidebar-scroll">
       <div class="nav-label">Browse</div>
-      {% from "_tree.html" import render_tree %}
-      {{ render_tree(tree, current_path | default('')) }}
+      <div class="tree-filter">
+        <label for="tree-filter-input" class="tree-filter__label">Filter tree titles</label>
+        <input
+          id="tree-filter-input"
+          type="search"
+          placeholder="Match note / folder names…"
+          autocomplete="off"
+          aria-label="Filter sidebar tree by title"
+        />
+      </div>
+      <div id="browse-tree-root" class="browse-tree-root">
+        {% from "_tree.html" import render_tree %}
+        {{ render_tree(tree, current_path | default("")) }}
+      </div>
     </div>
     <div class="sidebar-footer">
-      <a href="/docs" target="_blank" rel="noopener noreferrer">API reference</a>
-      ·
-      <a href="/api/search/?q=" target="_blank" rel="noopener noreferrer">JSON search</a>
+      <button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false">
+        <!-- Heroicons v2 outline (MIT): moon → switch to dark -->
+        <svg
+          class="theme-toggle__icon theme-toggle__moon"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"
+          />
+        </svg>
+        <!-- sun → switch to light -->
+        <svg
+          class="theme-toggle__icon theme-toggle__sun"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+          />
+        </svg>
+      </button>
+      <div class="sidebar-footer__links">
+        <a href="/docs" target="_blank" rel="noopener noreferrer">API reference</a>
+        ·
+        <a href="/api/search/?q=" target="_blank" rel="noopener noreferrer">JSON search</a>
+      </div>
     </div>
   </aside>
   <div class="layout-main">
@@ -81,5 +119,174 @@
       </main>
     </div>
   </div>
+  <script>
+    (function () {
+      var THEME_KEY = "research-theme";
+
+      function storedTheme() {
+        try {
+          var t = localStorage.getItem(THEME_KEY);
+          return t === "light" || t === "dark" ? t : null;
+        } catch (e) {
+          return null;
+        }
+      }
+
+      function effectiveDark() {
+        var root = document.documentElement;
+        var attr = root.getAttribute("data-theme");
+        if (attr === "dark") return true;
+        if (attr === "light") return false;
+        return window.matchMedia("(prefers-color-scheme: dark)").matches;
+      }
+
+      function mermaidThemeName() {
+        return effectiveDark() ? "dark" : "neutral";
+      }
+
+      if (typeof mermaid !== "undefined") {
+        try {
+          mermaid.initialize({
+            startOnLoad: true,
+            theme: mermaidThemeName(),
+            securityLevel: "loose",
+          });
+        } catch (e) {}
+      }
+
+      document.body.addEventListener("htmx:afterSwap", function (e) {
+        if (!e.detail || !e.detail.target || typeof mermaid === "undefined") return;
+        try {
+          mermaid.run({ nodes: e.detail.target.querySelectorAll(".mermaid") });
+        } catch (_) {}
+      });
+
+      document.body.addEventListener("htmx:afterSwap", function (e) {
+        if (!e.detail || e.detail.target.id !== "main") return;
+        document.querySelectorAll(".tree a.is-active").forEach(function (el) {
+          el.classList.remove("is-active");
+        });
+        var path = window.location.pathname;
+        document.querySelectorAll(".tree a[href]").forEach(function (a) {
+          if (a.getAttribute("href") === path) a.classList.add("is-active");
+        });
+      });
+
+      function initBrowseTreeFilter() {
+        var root = document.getElementById("browse-tree-root");
+        var input = document.getElementById("tree-filter-input");
+        if (!root || !input) return;
+
+        var preFilterDetailsOpen = null;
+
+        function depth(li) {
+          var d = 0;
+          var e = li;
+          while (e && e !== root) {
+            if (e.tagName === "LI") d++;
+            e = e.parentElement;
+          }
+          return d;
+        }
+
+        function apply() {
+          var query = input.value.trim().toLowerCase();
+          var lis = Array.prototype.slice.call(root.querySelectorAll("li"));
+
+          if (!query) {
+            lis.forEach(function (li) {
+              li.classList.remove("tree-filter-hidden", "tree-filter-match");
+            });
+            if (preFilterDetailsOpen) {
+              preFilterDetailsOpen.forEach(function (rec) {
+                rec.el.open = rec.open;
+              });
+              preFilterDetailsOpen = null;
+            }
+            return;
+          }
+
+          if (!preFilterDetailsOpen) {
+            preFilterDetailsOpen = [];
+            root.querySelectorAll("details.tree-branch").forEach(function (d) {
+              preFilterDetailsOpen.push({ el: d, open: d.open });
+            });
+          }
+
+          lis.sort(function (a, b) {
+            return depth(b) - depth(a);
+          });
+
+          lis.forEach(function (li) {
+            li.classList.remove("tree-filter-match");
+            var link = li.querySelector(":scope > a");
+            var branch = li.querySelector(":scope > details.tree-branch");
+            var match = false;
+            if (link) {
+              match = link.textContent.trim().toLowerCase().includes(query);
+            } else if (branch) {
+              var summary = branch.querySelector(":scope > summary");
+              var dirLabel = (summary ? summary.textContent : "")
+                .replace(/\//g, "")
+                .trim()
+                .toLowerCase();
+              var ul = branch.querySelector(":scope > ul");
+              var anyChild = ul
+                ? Array.prototype.some.call(ul.children, function (childLi) {
+                    return childLi.classList.contains("tree-filter-match");
+                  })
+                : false;
+              match = dirLabel.includes(query) || anyChild;
+            }
+            li.classList.toggle("tree-filter-match", match);
+            li.classList.toggle("tree-filter-hidden", !match);
+            if (branch && match) branch.open = true;
+          });
+        }
+
+        var debounce = null;
+        input.addEventListener("input", function () {
+          clearTimeout(debounce);
+          debounce = setTimeout(apply, 140);
+        });
+        input.addEventListener("search", function () {
+          if (!input.value) apply();
+        });
+        input.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") {
+            input.value = "";
+            apply();
+          }
+        });
+      }
+
+      var btn = document.getElementById("theme-toggle");
+      function paintToggle() {
+        if (!btn) return;
+        var dark = effectiveDark();
+        btn.classList.toggle("is-dark", dark);
+        var label = dark ? "Switch to light theme" : "Switch to dark theme";
+        btn.setAttribute("aria-label", label);
+        btn.setAttribute("title", label);
+        btn.setAttribute("aria-pressed", dark ? "true" : "false");
+      }
+      paintToggle();
+      if (btn) {
+        btn.addEventListener("click", function () {
+          var next = effectiveDark() ? "light" : "dark";
+          try {
+            localStorage.setItem(THEME_KEY, next);
+          } catch (e) {}
+          location.reload();
+        });
+      }
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () {
+        if (storedTheme()) return;
+        paintToggle();
+      });
+
+      initBrowseTreeFilter();
+    })();
+  </script>
 </body>
 </html>

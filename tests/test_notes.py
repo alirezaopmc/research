@@ -100,3 +100,61 @@ def test_api_search(docs_dir: Path, tmp_path: Path) -> None:
         r = client.get("/api/search/", params={"q": "alias"})
     assert r.status_code == 200
     assert any(h["path"] == "a.md" for h in r.json())
+
+
+def test_viewer_search_full_page(docs_dir: Path, tmp_path: Path) -> None:
+    from fastapi.testclient import TestClient
+
+    app = create_app(
+        docs_dir_override=docs_dir,
+        search_db_override=tmp_path / "search.sqlite",
+    )
+    with TestClient(app) as client:
+        r = client.get("/viewer/search", params={"q": "alias"})
+    assert r.status_code == 200
+    assert "<!DOCTYPE" in r.text
+    assert '<main id="main">' in r.text
+    assert "a.md" in r.text
+
+
+def test_viewer_sidebar_tree_expand_and_title_filter_ui(tmp_path: Path) -> None:
+    """Collapsible dirs + browse-tree-root / filter input are present when folders exist."""
+    from fastapi.testclient import TestClient
+
+    docs = tmp_path / "docs"
+    docs.mkdir()
+    (docs / "top.md").write_text("# Top\n", encoding="utf-8")
+    nest = docs / "papers"
+    nest.mkdir()
+    (nest / "one.md").write_text("# One\n", encoding="utf-8")
+
+    app = create_app(
+        docs_dir_override=docs,
+        search_db_override=tmp_path / "search.sqlite",
+    )
+    with TestClient(app) as client:
+        r = client.get("/viewer/note/papers/one.md")
+    assert r.status_code == 200
+    body = r.text
+    assert 'id="browse-tree-root"' in body
+    assert 'id="tree-filter-input"' in body
+    assert 'class="tree-branch"' in body
+    assert 'class="tree-branch" open' in body  # current note under papers/
+
+
+def test_viewer_search_htmx_fragment(docs_dir: Path, tmp_path: Path) -> None:
+    from fastapi.testclient import TestClient
+
+    app = create_app(
+        docs_dir_override=docs_dir,
+        search_db_override=tmp_path / "search.sqlite",
+    )
+    with TestClient(app) as client:
+        r = client.get(
+            "/viewer/search",
+            params={"q": "alias"},
+            headers={"HX-Request": "true"},
+        )
+    assert r.status_code == 200
+    assert "<!DOCTYPE" not in r.text
+    assert "a.md" in r.text
