@@ -19,3 +19,6 @@ htmlcov/
 
 sandbox/*
 !sandbox/README.md
+
+# Local search index (SQLite FTS)
+.research/

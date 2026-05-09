@@ -46,10 +46,13 @@ def test_backlinks(docs_dir: Path) -> None:
     assert "a.md" in note.backlinks
 
 
-def test_api_notes_tree(docs_dir: Path) -> None:
+def test_api_notes_tree(docs_dir: Path, tmp_path: Path) -> None:
     from fastapi.testclient import TestClient
 
-    app = create_app(docs_dir_override=docs_dir)
+    app = create_app(
+        docs_dir_override=docs_dir,
+        search_db_override=tmp_path / "search.sqlite",
+    )
     with TestClient(app) as client:
         r = client.get("/api/notes/")
     assert r.status_code == 200
@@ -57,10 +60,13 @@ def test_api_notes_tree(docs_dir: Path) -> None:
     assert isinstance(data, list)
 
 
-def test_api_note_detail(docs_dir: Path) -> None:
+def test_api_note_detail(docs_dir: Path, tmp_path: Path) -> None:
     from fastapi.testclient import TestClient
 
-    app = create_app(docs_dir_override=docs_dir)
+    app = create_app(
+        docs_dir_override=docs_dir,
+        search_db_override=tmp_path / "search.sqlite",
+    )
     with TestClient(app) as client:
         r = client.get("/api/notes/a.md")
     assert r.status_code == 200
@@ -69,10 +75,13 @@ def test_api_note_detail(docs_dir: Path) -> None:
     assert "<p>" in body["html"]
 
 
-def test_api_graph(docs_dir: Path) -> None:
+def test_api_graph(docs_dir: Path, tmp_path: Path) -> None:
     from fastapi.testclient import TestClient
 
-    app = create_app(docs_dir_override=docs_dir)
+    app = create_app(
+        docs_dir_override=docs_dir,
+        search_db_override=tmp_path / "search.sqlite",
+    )
     with TestClient(app) as client:
         r = client.get("/api/graph/")
     assert r.status_code == 200
@@ -80,10 +89,13 @@ def test_api_graph(docs_dir: Path) -> None:
     assert any(e["from_path"] == "a.md" and e["to_path"] == "b.md" for e in edges)
 
 
-def test_api_search(docs_dir: Path) -> None:
+def test_api_search(docs_dir: Path, tmp_path: Path) -> None:
     from fastapi.testclient import TestClient
 
-    app = create_app(docs_dir_override=docs_dir)
+    app = create_app(
+        docs_dir_override=docs_dir,
+        search_db_override=tmp_path / "search.sqlite",
+    )
     with TestClient(app) as client:
         r = client.get("/api/search/", params={"q": "alias"})
     assert r.status_code == 200

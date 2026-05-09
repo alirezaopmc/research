@@ -8,7 +8,6 @@ from fastapi.responses import HTMLResponse
 from starlette.templating import Jinja2Templates
 
 from research.services.notes import build_tree, get_note_detail
-from research.services.search import search_notes
 
 _PKG = Path(__file__).resolve().parent.parent.parent
 _TEMPLATES = _PKG / "web" / "templates"
@@ -34,7 +33,7 @@ def viewer_home(request: Request) -> HTMLResponse:
 
 @router.get("/search", response_class=HTMLResponse)
 def viewer_search(request: Request, q: str = "") -> HTMLResponse:
-    hits = search_notes(_docs_dir(request), q, limit=30)
+    hits = request.app.state.search.search(q, limit=30)
     return templates.TemplateResponse(
         request,
         "_search_results.html",
