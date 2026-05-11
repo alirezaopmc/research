@@ -7,6 +7,7 @@ import pytest
 from research.api.main import create_app
 from research.services.notes import (
     build_path_index,
+    build_tree,
     expand_wikilinks,
     extract_wikilinks,
     get_note_detail,
@@ -46,6 +47,19 @@ def test_render_markdown_linkifies_bare_https_urls():
 
     html = render_markdown("- **Paper:** https://arxiv.org/abs/2210\n")
     assert '<a href="https://arxiv.org/abs/2210"' in html
+
+
+def test_build_tree_hides_papers_template_stub(tmp_path: Path) -> None:
+    docs = tmp_path / "docs"
+    (docs / "papers").mkdir(parents=True)
+    (docs / "papers" / "_template.md").write_text("# Template\n", encoding="utf-8")
+    (docs / "papers" / "shown.md").write_text("# Doc\n", encoding="utf-8")
+
+    papers = next(n for n in build_tree(docs) if n.type == "dir" and n.name == "papers")
+    file_names = {c.name for c in papers.children if c.type == "file"}
+
+    assert "_template.md" not in file_names
+    assert "shown.md" in file_names
 
 
 def test_backlinks(docs_dir: Path) -> None:

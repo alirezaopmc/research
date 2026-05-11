@@ -12,6 +12,9 @@ from research.domain.note import NoteDetail, TreeNode
 
 WIKILINK_RE = re.compile(r"\[\[([^\]|]+)(?:\|([^\]]+))?\]\]")
 
+# Shown elsewhere (search, linking) but omitted from sidebar browse trees.
+_SIDEBAR_SKIP_PATHS: frozenset[str] = frozenset({"papers/_template.md"})
+
 
 def split_frontmatter(raw: str) -> tuple[dict, str]:
     if not raw.startswith("---"):
@@ -169,6 +172,8 @@ def _trie_to_nodes(trie: _Trie) -> list[TreeNode]:
 def build_tree(docs: Path) -> list[TreeNode]:
     root = _Trie()
     for rel in list_markdown_paths(docs):
+        if rel in _SIDEBAR_SKIP_PATHS:
+            continue
         _insert(root, rel.split("/"), rel)
     return _trie_to_nodes(root)
 
