@@ -4,6 +4,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
+from research.domain.paper_reading import PaperReadingRow
+
 
 class TreeNode(BaseModel):
     name: str
@@ -18,6 +20,7 @@ class NoteDetail(BaseModel):
     markdown: str
     html: str
     backlinks: list[str]
+    paper_reading: PaperReadingRow | None = None
 
 
 class GraphEdge(BaseModel):

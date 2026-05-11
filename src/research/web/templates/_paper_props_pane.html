@@ -1,0 +1,55 @@
+<div
+  class="note-props paper-metadata-panel"
+  data-note-path="{{ note.path | e }}"
+  role="region"
+  aria-labelledby="note-props-heading"
+>
+  <h3 class="note-props__title" id="note-props-heading">Paper</h3>
+  <p class="note-props__hint">Saved to this note’s YAML frontmatter.</p>
+
+  {% set pr = note.paper_reading %}
+  {% if pr %}
+    <div class="note-props__field">
+      <label class="note-props__label" for="paper-abstract">Abstract</label>
+      <select name="paper_abstract" id="paper-abstract" class="note-props__select paper-prop-input">
+        {% for x in paper_abstract_choices %}
+          <option value="{{ x }}" {% if pr.paper_abstract == x %}selected{% endif %}>{{ paper_choice_label_abs(x) }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="note-props__field">
+      <label class="note-props__label" for="paper-content">Content</label>
+      <select name="paper_content" id="paper-content" class="note-props__select paper-prop-input">
+        {% for x in paper_content_choices %}
+          <option value="{{ x }}" {% if pr.paper_content == x %}selected{% endif %}>{{ paper_choice_label_co(x) }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="note-props__field">
+      <label class="note-props__label" for="paper-reproduced">Reproduced</label>
+      <select name="paper_reproduced" id="paper-reproduced" class="note-props__select paper-prop-input">
+        {% for x in paper_reproduced_choices %}
+          <option value="{{ x }}" {% if pr.paper_reproduced == x %}selected{% endif %}>{{ paper_choice_label_rep(x) }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="note-props__field note-props__field--favorite">
+      <span class="note-props__label" id="paper-favorite-label">Favorite</span>
+      <button
+        type="button"
+        class="paper-favorite-toggle paper-prop-input"
+        aria-labelledby="paper-favorite-label"
+        aria-pressed="{{ 'true' if pr.paper_favorite else 'false' }}"
+      >
+        <span class="paper-favorite-toggle__stars" aria-hidden="true">
+          <svg class="paper-favorite-star paper-favorite-star--outline" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          <svg class="paper-favorite-star paper-favorite-star--fill" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><polygon fill="currentColor" points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        </span>
+        <span class="paper-favorite-toggle__text">{{ 'Favorited' if pr.paper_favorite else 'Add to favorites' }}</span>
+      </button>
+    </div>
+  {% endif %}
+</div>

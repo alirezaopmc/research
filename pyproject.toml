@@ -12,6 +12,7 @@ dependencies = [
     "pydantic-settings>=2.6.0",
     "jinja2>=3.1.4",
     "pyyaml>=6.0.2",
+    "linkify-it-py>=2.1.0",
 ]
 
 [project.optional-dependencies]
@@ -23,6 +24,10 @@ dev = [
 
 [project.scripts]
 research-serve = "research.api.cli:main"
+
+[tool.uv]
+# Keep the project virtualenv at `./.venv` (repo root); used by Makefile / agents via UV_PROJECT_ENVIRONMENT.
+managed = true
 
 [build-system]
 requires = ["hatchling"]

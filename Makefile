@@ -1,20 +1,25 @@
 .PHONY: install dev lint format test serve
 
+# Always use `./.venv` for this repo, even if another venv is active in the shell (`VIRTUAL_ENV`).
+# See README / AGENTS.md / `.cursor/rules/uv-environment.mdc`.
+export UV_PROJECT_ENVIRONMENT := $(CURDIR)/.venv
+UV := env -u VIRTUAL_ENV uv
+
 install:
-	uv sync
+	$(UV) sync
 
 dev:
-	uv sync --all-extras
+	$(UV) sync --all-extras
 
 lint:
-	uv run ruff check src tests scripts
-	uv run ruff format --check src tests scripts
+	$(UV) run ruff check src tests scripts
+	$(UV) run ruff format --check src tests scripts
 
 format:
-	uv run ruff format src tests scripts
+	$(UV) run ruff format src tests scripts
 
 test:
-	uv run pytest -q
+	$(UV) run pytest -q
 
 serve:
-	uv run python -m research.api.cli
+	$(UV) run python -m research.api.cli

@@ -18,6 +18,7 @@
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 </head>
 <body>
+  <div class="layout-root">
   <aside class="layout-sidebar" aria-label="Site">
     <div class="sidebar-header">
       <a class="sidebar-brand" href="/viewer/">
@@ -54,7 +55,13 @@
       </div>
     </div>
     <div class="sidebar-scroll">
-      <div class="nav-label">Browse</div>
+      <div class="sidebar-favorites-block">
+        <div class="nav-label nav-label--favorites-heading">Favorites</div>
+        <div id="favorites-root" class="favorites-root">
+          {% include "_favorites_fragment.html" %}
+        </div>
+      </div>
+      <div class="nav-label nav-label--browse-heading">Browse</div>
       <div class="tree-filter">
         <label for="tree-filter-input" class="tree-filter__label">Filter tree titles</label>
         <input
@@ -114,11 +121,20 @@
   </aside>
   <div class="layout-main">
     <div class="layout-main__inner">
-      <main id="main">
-        {% block main %}{% endblock %}
-      </main>
+      <div id="doc-layout" class="doc-layout {% block doc_layout_mod %}{% endblock %}">
+        <main id="main">
+          {% block main %}{% endblock %}
+        </main>
+        <aside class="layout-right-sidebar" aria-label="Note metadata">
+          <div class="layout-right-sidebar__scroll">
+            {% block right_sidebar %}{% endblock %}
+          </div>
+        </aside>
+      </div>
     </div>
   </div>
+  </div>
+  <div id="toast-stack" class="toast-stack" aria-live="polite" aria-atomic="true"></div>
   <script>
     (function () {
       var THEME_KEY = "research-theme";
@@ -162,7 +178,8 @@
       });
 
       document.body.addEventListener("htmx:afterSwap", function (e) {
-        if (!e.detail || e.detail.target.id !== "main") return;
+        var tgt = e.detail && e.detail.target;
+        if (!tgt || (tgt.id !== "main" && tgt.id !== "doc-layout")) return;
         document.querySelectorAll(".tree a.is-active").forEach(function (el) {
           el.classList.remove("is-active");
         });
@@ -286,6 +303,177 @@
       });
 
       initBrowseTreeFilter();
+    })();
+  </script>
+  <script>
+    (function () {
+      var toastHideTimer = null;
+      var toastRemoveTimer = null;
+
+      function dismissPaperSaveToast(kind) {
+        if (toastHideTimer) {
+          clearTimeout(toastHideTimer);
+          toastHideTimer = null;
+        }
+        if (toastRemoveTimer) {
+          clearTimeout(toastRemoveTimer);
+          toastRemoveTimer = null;
+        }
+        if (kind === "saving") return;
+        var ms = kind === "error" ? 5200 : 2800;
+        toastHideTimer = setTimeout(function () {
+          var stack = document.getElementById("toast-stack");
+          var el = stack && stack.firstElementChild;
+          if (!el || el.nodeType !== 1 || !el.classList.contains("toast")) return;
+          el.classList.remove("toast--visible");
+          toastRemoveTimer = setTimeout(function () {
+            if (el.parentNode) el.parentNode.removeChild(el);
+          }, 240);
+        }, ms);
+      }
+
+      function paperSaveToast(kind, message) {
+        var stack = document.getElementById("toast-stack");
+        if (!stack) return;
+        if (toastHideTimer) {
+          clearTimeout(toastHideTimer);
+          toastHideTimer = null;
+        }
+        if (toastRemoveTimer) {
+          clearTimeout(toastRemoveTimer);
+          toastRemoveTimer = null;
+        }
+        stack.innerHTML = "";
+        var el = document.createElement("div");
+        el.className = "toast toast--" + kind;
+        el.textContent = message;
+        stack.appendChild(el);
+        requestAnimationFrame(function () {
+          el.classList.add("toast--visible");
+        });
+        dismissPaperSaveToast(kind);
+      }
+
+      function refreshFavorites() {
+        var el = document.getElementById("favorites-root");
+        if (!el) return;
+        fetch("/viewer/fragments/favorites")
+          .then(function (r) {
+            return r.text();
+          })
+          .then(function (html) {
+            el.innerHTML = html;
+          })
+          .catch(function () {});
+      }
+
+      function updatePaperDependencyControls(panel) {
+        var abSel = panel.querySelector('select[name="paper_abstract"]');
+        var coSel = panel.querySelector('select[name="paper_content"]');
+        var reSel = panel.querySelector('select[name="paper_reproduced"]');
+        if (!abSel || !coSel || !reSel) return;
+        var ab = abSel.value;
+        var co = coSel.value;
+
+        coSel.disabled = ab !== "READ";
+
+        if (ab !== "READ") {
+          coSel.value = "UNREAD";
+          co = "UNREAD";
+        }
+
+        reSel.disabled = co === "UNREAD";
+        if (reSel.disabled) {
+          reSel.value = "NO";
+        }
+      }
+
+      function applyServerRow(panel, row) {
+        var abSel = panel.querySelector('select[name="paper_abstract"]');
+        var coSel = panel.querySelector('select[name="paper_content"]');
+        var reSel = panel.querySelector('select[name="paper_reproduced"]');
+        var favBtn = panel.querySelector(".paper-favorite-toggle");
+        var ftext = panel.querySelector(".paper-favorite-toggle__text");
+        if (abSel) abSel.value = row.paper_abstract;
+        if (coSel) coSel.value = row.paper_content;
+        if (reSel) reSel.value = row.paper_reproduced;
+        if (favBtn) {
+          var on = !!row.paper_favorite;
+          favBtn.setAttribute("aria-pressed", on ? "true" : "false");
+          if (ftext) ftext.textContent = on ? "Favorited" : "Add to favorites";
+        }
+        updatePaperDependencyControls(panel);
+      }
+
+      function patchPaperMetadata(panel) {
+        var path = panel.getAttribute("data-note-path");
+        if (!path) return;
+        var abSel = panel.querySelector('select[name="paper_abstract"]');
+        var coSel = panel.querySelector('select[name="paper_content"]');
+        var reSel = panel.querySelector('select[name="paper_reproduced"]');
+        var favBtn = panel.querySelector(".paper-favorite-toggle");
+        if (!abSel || !coSel || !reSel || !favBtn) return;
+
+        paperSaveToast("saving", "Saving…");
+
+        fetch("/api/papers/" + encodeURIComponent(path), {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({
+            paper_abstract: abSel.value,
+            paper_content: coSel.value,
+            paper_reproduced: reSel.value,
+            paper_favorite: favBtn.getAttribute("aria-pressed") === "true",
+          }),
+        })
+          .then(function (r) {
+            if (!r.ok) throw new Error("HTTP " + r.status);
+            return r.json();
+          })
+          .then(function (row) {
+            applyServerRow(panel, row);
+            paperSaveToast("success", "Saved");
+            refreshFavorites();
+          })
+          .catch(function () {
+            paperSaveToast("error", "Save failed");
+          });
+      }
+
+      function bindPaperMetadataPanel(panel) {
+        if (!panel.classList.contains("paper-metadata-panel")) return;
+        if (panel.dataset.pmBound === "1") return;
+        panel.dataset.pmBound = "1";
+        updatePaperDependencyControls(panel);
+
+        panel.querySelectorAll("select.paper-prop-input").forEach(function (el) {
+          el.addEventListener("change", function () {
+            updatePaperDependencyControls(panel);
+            patchPaperMetadata(panel);
+          });
+        });
+
+        var favBtn = panel.querySelector(".paper-favorite-toggle");
+        if (favBtn) {
+          favBtn.addEventListener("click", function () {
+            var on = favBtn.getAttribute("aria-pressed") === "true";
+            favBtn.setAttribute("aria-pressed", on ? "false" : "true");
+            updatePaperDependencyControls(panel);
+            patchPaperMetadata(panel);
+          });
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".paper-metadata-panel").forEach(bindPaperMetadataPanel);
+      });
+
+      document.body.addEventListener("htmx:afterSwap", function (e) {
+        var tgt = e.detail && e.detail.target;
+        if (!tgt || tgt.id !== "doc-layout") return;
+        var panel = document.querySelector(".paper-metadata-panel");
+        if (panel) bindPaperMetadataPanel(panel);
+      });
     })();
   </script>
 </body>

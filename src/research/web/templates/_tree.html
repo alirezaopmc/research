@@ -15,7 +15,8 @@
           class="{% if n.path == current_path %}is-active{% endif %}"
           href="/viewer/note/{{ n.path | quote_path }}"
           hx-get="/viewer/note/{{ n.path | quote_path }}"
-          hx-target="#main"
+          hx-target="#doc-layout"
+          hx-swap="outerHTML"
           hx-push-url="true"
         >{{ n.name }}</a>
       {% endif %}

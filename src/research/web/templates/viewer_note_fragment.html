@@ -1,2 +1,13 @@
-{# HTMX partial: main column only #}
-{% include "_note_article.html" %}
+{# HTMX: replace entire #doc-layout so the right rail appears/disappears with paper notes. #}
+<div id="doc-layout" class="doc-layout{% if note.paper_reading %} doc-layout--paper{% endif %}">
+  <main id="main">
+    {% include "_note_article.html" %}
+  </main>
+  <aside class="layout-right-sidebar" aria-label="Note metadata">
+    <div class="layout-right-sidebar__scroll">
+      {% if note.paper_reading %}
+        {% include "_paper_props_pane.html" %}
+      {% endif %}
+    </div>
+  </aside>
+</div>

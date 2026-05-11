@@ -1,85 +1,59 @@
----
-title: Study roadmap — efficient ML, data-centric AI, XAI
-date: 2026-05-09
----
+# Roadmap: RL for LLM Agents
 
-# Roadmap
+## TL;DR
 
-Purpose: build enough literacy in three pillars to decide whether you enjoy the **research style** (reading, reproducing small experiments, critiquing assumptions) and the **engineering style** (deployment constraints, datasets, evaluation).
+Best research bet: **low-compute RL and RL-adjacent methods for LLM agents**: tool use, web/code agents, preference optimization, feedback loops, and evaluation.
 
-Hub: [[research/topics/focus-areas]].
+This is better than classic deep RL for you because it has stronger hype, clearer industry demand, and can be studied without training giant models from scratch.
 
-## Phase 0 — Orientation (≈1–2 weeks)
+## Why This Field Fits
 
-| Step | Action |
-|------|--------|
-| Skim | One survey per pillar: [[papers/tinyml-survey-ml-oriented]], skim data-centric framing (topic note + Confident Learning intro), skim [[papers/shap-neurips-2017]] or [[papers/lime-kdd-2016]] abstracts |
-| Tools | Pick **one** tiny runtime target for toy demos later (e.g. ONNX Runtime, `torch.quantization` docs, or Edge Impulse free tier—choose one and stay consistent) |
-| Writing | In personal notes: “What felt tedious vs exciting?” after each skim |
+- **Compute:** many useful projects can run with small models, existing APIs, synthetic tasks, logged traces, or preference datasets.
+- **Hype / market:** agents, RLHF, post-training, tool-use learning, and autonomous workflows are hot.
+- **Industry:** maps to coding agents, customer-support agents, data-analysis agents, workflow automation, recommender/ranking systems, and model evaluation.
 
-## Phase 1 — Efficient / Tiny ML depth (≈3–4 weeks)
+## Research Wedge
 
-Read (order flexible):
+Focus on:
 
-1. [[papers/knowledge-distillation-hinton-2015]]
-2. [[papers/mobilenets-efficient-mobile-vision]]
-3. [[papers/quantization-int8-jacob-2018]]
-4. [[papers/lottery-ticket-hypothesis]]
+> How can small LLM agents learn from feedback, preferences, and environment outcomes under tight compute limits?
 
-Hands-on (pick **one**):
+Good subproblems:
 
-- Train a small CNN on CIFAR-10 → prune or distill → measure latency/size **before/after** on CPU (sandbox experiment; log in `sandbox/` per repo rules).
+- Agent evaluation: reliable benchmarks for tool-use and long-horizon tasks.
+- Feedback learning: using successes/failures, critiques, rewards, and preferences.
+- Low-cost post-training: DPO/RLAIF-style methods instead of expensive PPO.
+- Agent memory and self-improvement: what should be stored, revised, or discarded?
+- Credit assignment: identifying which action in a trajectory caused success/failure.
 
-Books / courses (optional but strong signal):
+## Reading Order
 
-- **Book:** Pete Warden & Daniel Situnayake — *TinyML* (O’Reilly). Practical microcontroller framing.
-- **Course:** MIT **TinyML and Efficient Deep Learning** (materials vary by year; search course number **6.S965** / related offerings for open lectures & slides).
+1. [[papers/instructgpt-rlhf]] — RLHF foundation.
+2. [[papers/webgpt]] — RLHF for browser/tool use.
+3. [[papers/react]] — reasoning + acting agent pattern.
+4. [[papers/toolformer]] — self-supervised tool-use learning.
+5. [[papers/reflexion]] — lightweight feedback/self-improvement loop.
+6. [[papers/voyager]] — long-horizon agent skill library.
+7. [[papers/direct-preference-optimization]] — simpler alternative to PPO-style RLHF.
+8. [[papers/constitutional-ai]] — AI feedback and RLAIF.
+9. [[papers/self-rewarding-language-models]] — model-generated rewards for improvement.
 
-## Phase 2 — Data-centric AI (≈3–4 weeks)
+## First 30 Days
 
-Read:
+- Week 1: read RLHF, ReAct, WebGPT.
+- Week 2: read Toolformer, Reflexion, Voyager.
+- Week 3: read DPO, Constitutional AI, Self-Rewarding LMs.
+- Week 4: reproduce a small agent benchmark with no training: ReAct vs Reflexion on a toy tool-use task.
 
-1. [[papers/confident-learning-northcutt]]
-2. [[papers/dataset-cartography]]
+## Project Ideas
 
-Themes to internalize: label noise, slice-level failures, data versioning, weak supervision—not only bigger models.
+- **Low-compute Reflexion benchmark:** compare plain ReAct vs ReAct + verbal feedback on small tasks.
+- **Preference data for agents:** collect trajectory pairs and train/evaluate a small reward or preference model.
+- **Agent credit assignment:** label which step caused failure and test whether targeted feedback beats whole-trajectory feedback.
+- **Tool-use safety:** measure when agents call tools unnecessarily, hallucinate tool outputs, or loop.
 
-Courses / talks:
+## Avoid For Now
 
-- **Stanford CS329T:** Trustworthy Machine Learning (covers robustness, data issues, evaluation mindset—overlap with XAI).
-- Andrew Ng’s **data-centric AI** lectures / interviews (conceptual framing; pair with the papers above).
-
-Hands-on:
-
-- Run **one** cleaning iteration on a small noisy subset (e.g. Confident Learning tutorial notebook)—measure validation delta.
-
-## Phase 3 — Explainable AI (≈2–3 weeks)
-
-Read:
-
-1. [[papers/lime-kdd-2016]]
-2. [[papers/shap-neurips-2017]]
-
-Follow-up (when motivated): Grad-CAM / attribution zoo—add a paper note when you pick one concrete method for a project.
-
-Hands-on:
-
-- Apply LIME or SHAP to **one** tabular or vision model you trained in Phase 1; write 5 bullets: what helped, what misled, runtime cost.
-
-## Phase 4 — Decision checkpoint
-
-Answer honestly:
-
-1. Which pillar produced the **most ideas** you wanted to try next?
-2. Did you prefer **proving impossibility/tradeoffs**, **building demos**, or **measuring human-facing explanations**?
-3. Compute budget: everything above should stay feasible on **≤1× H100** or consumer GPU; if not, narrow scope.
-
-Next steps if still interested: pick **one** intersection (e.g. explainability under quantization; data-centric evaluation of compressed models) and draft a one-page problem statement for an advisor.
-
-## Paper index (this vault)
-
-| Pillar | Notes |
-|--------|--------|
-| Efficient / Tiny ML | [[papers/knowledge-distillation-hinton-2015]], [[papers/mobilenets-efficient-mobile-vision]], [[papers/quantization-int8-jacob-2018]], [[papers/lottery-ticket-hypothesis]], [[papers/tinyml-survey-ml-oriented]] |
-| Data-centric AI | [[papers/confident-learning-northcutt]], [[papers/dataset-cartography]] |
-| XAI | [[papers/lime-kdd-2016]], [[papers/shap-neurips-2017]] |
+- Atari/MuJoCo deep RL as the main research identity.
+- Training RL agents from scratch at scale.
+- Robotics RL unless you have hardware access or strong simulation support.

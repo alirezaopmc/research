@@ -1,0 +1,18 @@
+{% if favorite_papers %}
+<ul class="favorites-list">
+  {% for f in favorite_papers %}
+    <li>
+      <a
+        class="favorites-list__link"
+        href="/viewer/note/{{ f.path | quote_path }}"
+        hx-get="/viewer/note/{{ f.path | quote_path }}"
+        hx-target="#doc-layout"
+        hx-swap="outerHTML"
+        hx-push-url="true"
+      >{{ f.title }}</a>
+    </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="favorites-empty">Star a paper to list it here.</p>
+{% endif %}

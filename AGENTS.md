@@ -18,7 +18,7 @@ When suggesting directions, weight:
 
 | Area | Rule |
 |------|------|
-| Papers | **No PDFs in git.** Note in `docs/papers/{slug}.md` with `url` / `arxiv` in frontmatter. |
+| Papers | **No PDFs in git.** One note per paper: `docs/papers/{slug}.md`. Track reading with **`paper_abstract`** (`UNREAD` \| `READ`), **`paper_content`** (`UNREAD` \| `READING` \| `READ` — only meaningful after abstract is read), **`paper_reproduced`** (`NO` \| `WORKING` \| `BLOCKED` \| `DONE` — only after content starts), **`paper_favorite`**. Legacy `reading_status` is migrated on sync. Mirrored to SQLite (`RESEARCH_STATE_DB`). |
 | Big binaries | `assets/` + optional Git LFS; datasets later → DVC, not raw git. |
 | External code | Prefer `vendor/` **submodules** or sibling repos. |
 | Experiments | Only under `sandbox/<slug>/` (gitignored). Log in `AGENT_LOG.md` there. |
@@ -38,8 +38,10 @@ When suggesting directions, weight:
 
 ## Code / runs
 
-- Prefer `uv run …` for Python in this repo.
-- Long-running or messy work: `sandbox/<experiment-slug>/` + `AGENT_LOG.md` (commands, results, decisions).
+- From repo root use **`make test`**, **`make lint`**, **`make serve`** (they pin `./.venv` via `UV_PROJECT_ENVIRONMENT` and `env -u VIRTUAL_ENV`; see Makefile).
+- If you must invoke **`uv`/`python` directly**, use `./.venv/bin/python -m …` after **`make install`/`make dev`**, or `./scripts/with-repo-uv.sh run …`.
+- Avoid relying on whichever `PYTHON`/`VIRTUAL_ENV` happens to be active in an outer shell—it may point at another project (e.g. `~/.venv`).
+- Long-running or messy work: `sandbox/<experiment-slug>/` + `AGENT_LOG.md`.
 
 ## App
 

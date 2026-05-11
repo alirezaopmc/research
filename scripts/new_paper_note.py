@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Create docs/papers/<slug>.md from an arXiv id/URL or a generic URL."""
+
 from __future__ import annotations
 
 import argparse
@@ -48,7 +49,12 @@ def main(argv: list[str] | None = None) -> int:
         front = (
             "---\n"
             f"title:\nauthors:\nyear:\nvenue:\narxiv: {arxiv_id}\n"
-            f"url: {url}\ntags: []\nstatus: to-read\n---\n\n"
+            f"url: {url}\ntags: []\n"
+            "paper_abstract: UNREAD\n"
+            "paper_content: UNREAD\n"
+            "paper_reproduced: 'NO'\n"
+            "paper_favorite: false\n"
+            "---\n\n"
         )
     else:
         u = args.source.strip()
@@ -63,7 +69,12 @@ def main(argv: list[str] | None = None) -> int:
         front = (
             "---\n"
             f"title:\nauthors:\nyear:\nvenue:\narxiv:\n"
-            f"url: {url}\ntags: []\nstatus: to-read\n---\n\n"
+            f"url: {url}\ntags: []\n"
+            "paper_abstract: UNREAD\n"
+            "paper_content: UNREAD\n"
+            "paper_reproduced: 'NO'\n"
+            "paper_favorite: false\n"
+            "---\n\n"
         )
 
     dest = papers / f"{slug}.md"

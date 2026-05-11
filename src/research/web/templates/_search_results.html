@@ -9,7 +9,8 @@
         <a
           href="/viewer/note/{{ h.path | quote_path }}"
           hx-get="/viewer/note/{{ h.path | quote_path }}"
-          hx-target="#main"
+          hx-target="#doc-layout"
+          hx-swap="outerHTML"
           hx-push-url="true"
         >{{ h.path }}</a>
         <span class="snippet">{{ h.snippet }}</span>

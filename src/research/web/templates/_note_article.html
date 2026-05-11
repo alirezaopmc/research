@@ -12,7 +12,8 @@
             <a
               href="/viewer/note/{{ b | quote_path }}"
               hx-get="/viewer/note/{{ b | quote_path }}"
-              hx-target="#main"
+              hx-target="#doc-layout"
+              hx-swap="outerHTML"
               hx-push-url="true"
             >{{ b }}</a>
           </li>

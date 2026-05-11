@@ -1,12 +1,14 @@
-# docs
+# Research Notes
 
-Markdown vault: research notes, papers (links only), glossary.
+Fresh focus: **low-compute reinforcement learning for LLM agents**.
 
-Use `[[relative/path]]` wikilinks (no `.md`, relative to this folder).
+Start here:
 
-Entry points:
+- [[research/roadmap]]
+- [[research/topics/rl-llm-agents]]
 
-- [[research/roadmap]] — phased reading + optional hands-on
-- [[research/topics/focus-areas]] — three pillars
+Primary lens:
 
-Navigate locally via `make serve` → **http://127.0.0.1:8000/viewer/**
+- **Compute:** feasible with small open models, API-based evaluation, or no training.
+- **Hype / market:** LLM agents, post-training, tool use, evaluation.
+- **Industry:** agent reliability, automation, coding agents, browser/workflow agents.

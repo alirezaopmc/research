@@ -6,12 +6,13 @@ venue:
 arxiv:
 url:
 tags: [] # e.g. tinyml | quantization | distillation | data-centric | labels | xai | attribution
-status: to-read
+paper_abstract: UNREAD
+paper_content: UNREAD
+paper_reproduced: 'NO'
+paper_favorite: false
 ---
 
 ## Paper link
-
-The viewer renders note **body** only (YAML frontmatter is hidden). Mirror the canonical landing page here—typically the same as frontmatter `url` (and `https://arxiv.org/abs/<id>` when `arxiv` is set). Scaffolding with `uv run python scripts/new_paper_note.py …` fills this line automatically.
 
 - **Paper:**
 

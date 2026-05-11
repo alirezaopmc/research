@@ -36,7 +36,8 @@ def split_frontmatter(raw: str) -> tuple[dict, str]:
 
 
 def _md_renderer() -> MarkdownIt:
-    return MarkdownIt("commonmark", {"html": False}).enable(["table", "strikethrough"])
+    # gfm-like enables linkify (bare https://…) so paper URLs in lists render as clickable links.
+    return MarkdownIt("gfm-like", {"html": False}).enable(["table", "strikethrough"])
 
 
 def extract_wikilinks(text: str) -> list[str]:
