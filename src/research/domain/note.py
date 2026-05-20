@@ -12,6 +12,15 @@ class TreeNode(BaseModel):
     type: Literal["file", "dir"]
     path: str | None = None
     children: list[TreeNode] = Field(default_factory=list)
+    # Display label for sidebar link (vault: basename.md; papers: title without .md when known).
+    sidebar_label: str | None = None
+    # Reading progress dot chrome (outside link).
+    paper_badge_kind: str | None = None
+    paper_badge_tooltip: str | None = None
+    paper_repro_kind: str | None = None
+    paper_repro_tooltip: str | None = None
+    paper_topic: str | None = None
+    paper_to_read: bool | None = None
 
 
 class NoteDetail(BaseModel):

@@ -5,11 +5,13 @@ year:
 venue:
 arxiv:
 url:
-tags: [] # e.g. tinyml | quantization | distillation | data-centric | labels | xai | attribution
+tags: [] # e.g. agents | rlhf | prompting | icl | rag | tool-use
+topic: llm-techniques
 paper_abstract: UNREAD
 paper_content: UNREAD
 paper_reproduced: 'NO'
 paper_favorite: false
+paper_to_read: true
 ---
 
 ## Paper link
@@ -27,7 +29,7 @@ paper_favorite: false
 > - **Compute:** train/deploy cost vs ~**1× H100** (or edge MCU)—feasible to reproduce?
 > - **Hype / market:** why people cite it now.
 > - **Industry:** deployment, tooling, regulation, or product relevance.
-> - **Pillar fit:** **Efficient/Tiny ML** · **Data-centric AI** · **XAI**—which applies, and how strongly?
+> - **Topic fit:** how this connects to [[research/topics/rl-llm-agents]] (agents, feedback, eval, post-training).
 
 ## Method
 
@@ -39,8 +41,8 @@ paper_favorite: false
 
 ## Notes / quotes
 
-> Grab verbatim lines worth citing; link related vault notes with wikilinks (`[[research/topics/efficient-tiny-ml]]`, other papers under `[[papers/…]]`, roadmap `[[research/roadmap]]`, …).
+> Grab verbatim lines worth citing; link related vault notes with wikilinks (`[[research/topics/rl-llm-agents]]`, other papers under `[[papers/llm-techniques/…]]`, roadmap `[[research/roadmap]]`, …).
 
 ## Open questions
 
-> Uncertainties, reproduction caveats, and **cross-pillar** hooks (e.g. does compression hurt explanations? does label noise interact with edge deployment?).
+> Uncertainties, reproduction caveats, and hooks to agent eval / low-compute experiments.

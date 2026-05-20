@@ -49,6 +49,43 @@ def test_render_markdown_linkifies_bare_https_urls():
     assert '<a href="https://arxiv.org/abs/2210"' in html
 
 
+def test_build_tree_paper_sidebar_dots_use_store(tmp_path: Path) -> None:
+    from research.services.paper_reading.sqlite_store import PaperReadingStore
+
+    docs = tmp_path / "docs"
+    (docs / "papers").mkdir(parents=True)
+    (docs / "papers" / "a.md").write_text(
+        "---\ntitle: Paper display title\npaper_abstract: READ\npaper_content: READING\n"
+        "paper_reproduced: 'NO'\n---\n",
+        encoding="utf-8",
+    )
+    (docs / "papers" / "b.md").write_text(
+        "---\ntitle: Reproduced paper\npaper_abstract: READ\npaper_content: READ\n"
+        "paper_reproduced: 'DONE'\n---\n",
+        encoding="utf-8",
+    )
+    (docs / "home.md").write_text("# Hi\n", encoding="utf-8")
+    db = tmp_path / "state.sqlite"
+    store = PaperReadingStore(db)
+    store.sync_from_disk(docs)
+
+    roots = build_tree(docs, store)
+
+    papers = next(n for n in roots if n.type == "dir" and n.name == "papers")
+    a_leaf = next(c for c in papers.children if c.name == "a.md")
+    assert a_leaf.sidebar_label == "Paper display title"
+    assert a_leaf.paper_badge_kind == "content_reading"
+    assert a_leaf.paper_badge_tooltip == "Reading"
+    assert a_leaf.paper_repro_kind == "none"
+    assert a_leaf.paper_repro_tooltip == "Reproduction idle"
+    b_leaf = next(c for c in papers.children if c.name == "b.md")
+    assert b_leaf.paper_repro_kind == "done"
+    assert "reproduced" in b_leaf.paper_repro_tooltip.lower()
+
+    home = next(n for n in roots if n.type == "file" and n.name == "home.md")
+    assert home.paper_badge_kind is None
+
+
 def test_build_tree_hides_papers_template_stub(tmp_path: Path) -> None:
     docs = tmp_path / "docs"
     (docs / "papers").mkdir(parents=True)
@@ -60,6 +97,58 @@ def test_build_tree_hides_papers_template_stub(tmp_path: Path) -> None:
 
     assert "_template.md" not in file_names
     assert "shown.md" in file_names
+
+
+def test_build_tree_nonpaper_uses_frontmatter_title(tmp_path: Path) -> None:
+    docs = tmp_path / "docs"
+    docs.mkdir()
+    (docs / "note.md").write_text("---\ntitle: Human Readable Title\n---\n# x\n", encoding="utf-8")
+    roots = build_tree(docs)
+    leaf = next(n for n in roots if n.type == "file")
+    assert leaf.name == "note.md"
+    assert leaf.sidebar_label == "Human Readable Title"
+
+
+def test_viewer_browse_tree_fragment_reflects_store(tmp_path: Path) -> None:
+    """Sidebar tree fragment updates from paper store (same source as PATCH)."""
+    from fastapi.testclient import TestClient
+
+    docs = tmp_path / "docs"
+    (docs / "papers").mkdir(parents=True)
+    (docs / "papers" / "x.md").write_text(
+        "---\n"
+        "title: X\n"
+        "paper_abstract: READ\n"
+        "paper_content: READING\n"
+        "paper_reproduced: WORKING\n"
+        "---\n"
+        "# X\n",
+        encoding="utf-8",
+    )
+    app = create_app(
+        docs_dir_override=docs,
+        search_db_override=tmp_path / "search.sqlite",
+        state_db_override=tmp_path / "state.sqlite",
+    )
+    with TestClient(app) as client:
+        r = client.get("/viewer/fragments/browse-tree", params={"current": "papers/x.md"})
+        assert r.status_code == 200
+        assert "<!DOCTYPE" not in r.text
+        assert '<ul class="tree"' in r.text
+        assert "tree-paper-dot--content_reading" in r.text
+        assert "tree-repro-btn--working" in r.text
+
+        patch = {
+            "paper_abstract": "READ",
+            "paper_content": "READ",
+            "paper_reproduced": "DONE",
+            "paper_favorite": False,
+        }
+        cr = client.patch("/api/papers/papers/x.md", json=patch)
+        assert cr.status_code == 200
+        r2 = client.get("/viewer/fragments/browse-tree")
+        assert "tree-paper-dot--content_read" in r2.text
+        assert "tree-repro-btn--done" in r2.text
 
 
 def test_backlinks(docs_dir: Path) -> None:
@@ -164,6 +253,7 @@ def test_viewer_sidebar_tree_expand_and_title_filter_ui(tmp_path: Path) -> None:
     assert r.status_code == 200
     body = r.text
     assert 'id="browse-tree-root"' in body
+    assert 'id="paper-prop-confirm-modal"' in body
     assert 'id="tree-filter-input"' in body
     assert 'class="tree-branch"' in body
     assert 'class="tree-branch" open' in body  # current note under papers/
@@ -208,7 +298,7 @@ def test_viewer_paper_note_includes_props_pane_markup(tmp_path: Path) -> None:
         r = client.get("/viewer/note/papers/one.md")
     assert r.status_code == 200
     assert "layout-right-sidebar" in r.text
-    assert 'id="paper-abstract"' in r.text
+    assert 'id="paper-abstract-toggle"' in r.text
 
 
 def test_viewer_paper_fragment_htmx_includes_props_pane(tmp_path: Path) -> None:

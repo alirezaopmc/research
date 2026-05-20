@@ -72,7 +72,7 @@ class SqliteFtsBackend:
                     SELECT path, snippet(docs, 2, '', '', ' … ', 24) AS snippet
                     FROM docs
                     WHERE docs MATCH ?
-                    ORDER BY bm25(docs) DESC
+                    ORDER BY bm25(docs) ASC
                     LIMIT ?
                     """,
                     (match, limit),
@@ -83,6 +83,7 @@ class SqliteFtsBackend:
                     SELECT path, snippet(docs, 2, '', '', ' … ', 24) AS snippet
                     FROM docs
                     WHERE docs MATCH ?
+                    ORDER BY bm25(docs) ASC
                     LIMIT ?
                     """,
                     (match, limit),

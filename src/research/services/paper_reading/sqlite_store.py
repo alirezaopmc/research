@@ -11,7 +11,16 @@ from research.domain.paper_reading import (
 from research.services.notes import split_frontmatter
 
 _EXPECTED_COLUMNS = frozenset(
-    {"path", "paper_abstract", "paper_content", "paper_reproduced", "paper_favorite", "paper_title"}
+    {
+        "path",
+        "paper_abstract",
+        "paper_content",
+        "paper_reproduced",
+        "paper_favorite",
+        "paper_topic",
+        "paper_to_read",
+        "paper_title",
+    }
 )
 
 
@@ -21,7 +30,7 @@ def list_paper_note_paths(docs: Path) -> list[str]:
     if not papers_dir.is_dir():
         return []
     out: list[str] = []
-    for p in sorted(papers_dir.glob("*.md")):
+    for p in sorted(papers_dir.rglob("*.md")):
         if p.name == "_template.md":
             continue
         out.append(p.relative_to(docs).as_posix())
@@ -53,6 +62,8 @@ class PaperReadingStore:
                   paper_content TEXT NOT NULL,
                   paper_reproduced TEXT NOT NULL,
                   paper_favorite INTEGER NOT NULL,
+                  paper_topic TEXT NOT NULL,
+                  paper_to_read INTEGER NOT NULL,
                   paper_title TEXT NOT NULL DEFAULT ''
                 )
                 """
@@ -72,13 +83,15 @@ class PaperReadingStore:
                     """
                     INSERT INTO paper_reading
                       (path, paper_abstract, paper_content, paper_reproduced,
-                       paper_favorite, paper_title)
-                    VALUES (?, ?, ?, ?, ?, ?)
+                       paper_favorite, paper_topic, paper_to_read, paper_title)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                     ON CONFLICT(path) DO UPDATE SET
                       paper_abstract = excluded.paper_abstract,
                       paper_content = excluded.paper_content,
                       paper_reproduced = excluded.paper_reproduced,
                       paper_favorite = excluded.paper_favorite,
+                      paper_topic = excluded.paper_topic,
+                      paper_to_read = excluded.paper_to_read,
                       paper_title = excluded.paper_title
                     """,
                     (
@@ -87,6 +100,8 @@ class PaperReadingStore:
                         row.paper_content,
                         row.paper_reproduced,
                         int(row.paper_favorite),
+                        row.paper_topic,
+                        int(row.paper_to_read),
                         row.paper_title,
                     ),
                 )
@@ -114,7 +129,8 @@ class PaperReadingStore:
             conn.row_factory = sqlite3.Row
             row = conn.execute(
                 "SELECT path, paper_abstract, paper_content, paper_reproduced, "
-                "paper_favorite, paper_title FROM paper_reading WHERE path = ?",
+                "paper_favorite, paper_topic, paper_to_read, paper_title "
+                "FROM paper_reading WHERE path = ?",
                 (rel_norm,),
             ).fetchone()
             if row is None:
@@ -125,6 +141,8 @@ class PaperReadingStore:
                 paper_content=row["paper_content"],
                 paper_reproduced=row["paper_reproduced"],
                 paper_favorite=bool(row["paper_favorite"]),
+                paper_topic=row["paper_topic"],
+                paper_to_read=bool(row["paper_to_read"]),
                 paper_title=row["paper_title"] or "",
             )
 
@@ -134,7 +152,8 @@ class PaperReadingStore:
             conn.row_factory = sqlite3.Row
             cur = conn.execute(
                 "SELECT path, paper_abstract, paper_content, paper_reproduced, "
-                "paper_favorite, paper_title FROM paper_reading ORDER BY path"
+                "paper_favorite, paper_topic, paper_to_read, paper_title "
+                "FROM paper_reading ORDER BY path"
             )
             rows = cur.fetchall()
         return [
@@ -144,6 +163,8 @@ class PaperReadingStore:
                 paper_content=row["paper_content"],
                 paper_reproduced=row["paper_reproduced"],
                 paper_favorite=bool(row["paper_favorite"]),
+                paper_topic=row["paper_topic"],
+                paper_to_read=bool(row["paper_to_read"]),
                 paper_title=row["paper_title"] or "",
             )
             for row in rows

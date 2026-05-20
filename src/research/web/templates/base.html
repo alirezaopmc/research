@@ -55,22 +55,48 @@
       </div>
     </div>
     <div class="sidebar-scroll">
-      <div class="sidebar-favorites-block">
-        <div class="nav-label nav-label--favorites-heading">Favorites</div>
+      <details class="sidebar-favorites-details">
+        <summary class="sidebar-favorites-details__summary">
+          <span class="sidebar-favorites-details__title">Favorites</span>
+          <span class="sidebar-favorites-details__count">
+            (<span id="favorites-count">{{ favorite_papers | length }}</span>)
+          </span>
+        </summary>
         <div id="favorites-root" class="favorites-root">
           {% include "_favorites_fragment.html" %}
         </div>
-      </div>
+      </details>
       <div class="nav-label nav-label--browse-heading">Browse</div>
       <div class="tree-filter">
         <label for="tree-filter-input" class="tree-filter__label">Filter tree titles</label>
         <input
           id="tree-filter-input"
           type="search"
-          placeholder="Match note / folder names…"
+          placeholder="Match note titles and folder names…"
           autocomplete="off"
-          aria-label="Filter sidebar tree by title"
+          aria-label="Filter browse tree by note title"
         />
+        <div class="tree-filter__row">
+          {% if paper_topic_choices | length > 1 %}
+          <div class="tree-filter__field">
+            <label for="tree-filter-topic" class="tree-filter__label">Topic</label>
+            <select id="tree-filter-topic" class="tree-filter__select" aria-label="Filter papers by topic">
+              <option value="">All topics</option>
+              {% for slug in paper_topic_choices %}
+                <option value="{{ slug }}">{{ paper_topic_labels[slug] }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          {% endif %}
+          <div class="tree-filter__field">
+            <label for="tree-filter-to-read" class="tree-filter__label">To read</label>
+            <select id="tree-filter-to-read" class="tree-filter__select" aria-label="Filter papers by to-read queue">
+              <option value="">All papers</option>
+              <option value="yes">To read only</option>
+              <option value="no">Not queued</option>
+            </select>
+          </div>
+        </div>
       </div>
       <div id="browse-tree-root" class="browse-tree-root">
         {% from "_tree.html" import render_tree %}
@@ -135,6 +161,26 @@
   </div>
   </div>
   <div id="toast-stack" class="toast-stack" aria-live="polite" aria-atomic="true"></div>
+
+  <dialog id="paper-prop-confirm-modal" class="paper-confirm-dialog" aria-modal="true" aria-labelledby="paper-confirm-title">
+    <div class="paper-confirm-dialog__scrim" data-paper-confirm-dismiss tabindex="-1" aria-hidden="true"></div>
+    <div class="paper-confirm-dialog__panel" role="document">
+      <h2 id="paper-confirm-title" class="paper-confirm-dialog__title">Confirm dependent resets</h2>
+      <p id="paper-confirm-desc" class="paper-confirm-dialog__lede">
+        Dependent fields may be reset to defaults. Values below are what will be saved.
+      </p>
+      <ul class="paper-confirm-dialog__summary" id="paper-confirm-summary" aria-describedby="paper-confirm-desc"></ul>
+      <div class="paper-confirm-dialog__actions">
+        <button type="button" class="paper-confirm-dialog__btn paper-confirm-dialog__btn--secondary" data-paper-confirm-cancel>
+          Cancel
+        </button>
+        <button type="button" class="paper-confirm-dialog__btn paper-confirm-dialog__btn--primary" data-paper-confirm-save>
+          Save changes
+        </button>
+      </div>
+    </div>
+  </dialog>
+
   <script>
     (function () {
       var THEME_KEY = "research-theme";
@@ -180,11 +226,11 @@
       document.body.addEventListener("htmx:afterSwap", function (e) {
         var tgt = e.detail && e.detail.target;
         if (!tgt || (tgt.id !== "main" && tgt.id !== "doc-layout")) return;
-        document.querySelectorAll(".tree a.is-active").forEach(function (el) {
+        document.querySelectorAll(".tree a.tree__link.is-active").forEach(function (el) {
           el.classList.remove("is-active");
         });
         var path = window.location.pathname;
-        document.querySelectorAll(".tree a[href]").forEach(function (a) {
+        document.querySelectorAll(".tree a.tree__link[href]").forEach(function (a) {
           if (a.getAttribute("href") === path) a.classList.add("is-active");
         });
       });
@@ -192,6 +238,8 @@
       function initBrowseTreeFilter() {
         var root = document.getElementById("browse-tree-root");
         var input = document.getElementById("tree-filter-input");
+        var topicSel = document.getElementById("tree-filter-topic");
+        var toReadSel = document.getElementById("tree-filter-to-read");
         if (!root || !input) return;
 
         var preFilterDetailsOpen = null;
@@ -206,11 +254,31 @@
           return d;
         }
 
+        function paperMetaMatches(li) {
+          var topicFilter = topicSel ? topicSel.value : "";
+          var toReadFilter = toReadSel ? toReadSel.value : "";
+          if (!topicFilter && !toReadFilter) return true;
+          if (!li.classList.contains("tree__li--paper")) return true;
+          if (topicFilter) {
+            var t = li.getAttribute("data-paper-topic");
+            if (t !== topicFilter) return false;
+          }
+          if (toReadFilter) {
+            var queued = li.getAttribute("data-paper-to-read") === "true";
+            if (toReadFilter === "yes" && !queued) return false;
+            if (toReadFilter === "no" && queued) return false;
+          }
+          return true;
+        }
+
         function apply() {
           var query = input.value.trim().toLowerCase();
+          var topicFilter = topicSel ? topicSel.value : "";
+          var toReadFilter = toReadSel ? toReadSel.value : "";
+          var active = !!(query || topicFilter || toReadFilter);
           var lis = Array.prototype.slice.call(root.querySelectorAll("li"));
 
-          if (!query) {
+          if (!active) {
             lis.forEach(function (li) {
               li.classList.remove("tree-filter-hidden", "tree-filter-match");
             });
@@ -236,11 +304,26 @@
 
           lis.forEach(function (li) {
             li.classList.remove("tree-filter-match");
-            var link = li.querySelector(":scope > a");
+            var link = li.querySelector("a.tree__link");
             var branch = li.querySelector(":scope > details.tree-branch");
             var match = false;
             if (link) {
-              match = link.textContent.trim().toLowerCase().includes(query);
+              var metaOk = paperMetaMatches(li);
+              if (!metaOk) {
+                match = false;
+              } else if (!query) {
+                match = true;
+              } else {
+                var byTitle = link.getAttribute("data-tree-title");
+                var label = link.querySelector(".tree__link-text");
+                var hay =
+                  byTitle !== null && byTitle !== ""
+                    ? byTitle
+                    : label && label.textContent
+                      ? label.textContent
+                      : link.textContent;
+                match = hay.trim().toLowerCase().includes(query);
+              }
             } else if (branch) {
               var summary = branch.querySelector(":scope > summary");
               var dirLabel = (summary ? summary.textContent : "")
@@ -253,7 +336,13 @@
                     return childLi.classList.contains("tree-filter-match");
                   })
                 : false;
-              match = dirLabel.includes(query) || anyChild;
+              if (anyChild) {
+                match = true;
+              } else if (query) {
+                match = dirLabel.includes(query);
+              } else {
+                match = false;
+              }
             }
             li.classList.toggle("tree-filter-match", match);
             li.classList.toggle("tree-filter-hidden", !match);
@@ -262,19 +351,24 @@
         }
 
         var debounce = null;
-        input.addEventListener("input", function () {
+        function scheduleApply() {
           clearTimeout(debounce);
           debounce = setTimeout(apply, 140);
-        });
+        }
+        input.addEventListener("input", scheduleApply);
         input.addEventListener("search", function () {
           if (!input.value) apply();
         });
         input.addEventListener("keydown", function (e) {
           if (e.key === "Escape") {
             input.value = "";
+            if (topicSel) topicSel.value = "";
+            if (toReadSel) toReadSel.value = "";
             apply();
           }
         });
+        if (topicSel) topicSel.addEventListener("change", apply);
+        if (toReadSel) toReadSel.addEventListener("change", apply);
       }
 
       var btn = document.getElementById("theme-toggle");
@@ -363,16 +457,64 @@
           })
           .then(function (html) {
             el.innerHTML = html;
+            var badge = document.getElementById("favorites-count");
+            if (badge) {
+              var n = el.querySelectorAll(".favorites-list .favorites-list__link").length;
+              badge.textContent = String(n);
+            }
           })
           .catch(function () {});
       }
 
+      /** Re-render browse tree after paper metadata PATCH (SQLite + labels + chrome). */
+      function refreshBrowseTree(currentRelPath) {
+        var root = document.getElementById("browse-tree-root");
+        if (!root) return Promise.resolve();
+        var q = "?current=" + encodeURIComponent(currentRelPath || "");
+        return fetch("/viewer/fragments/browse-tree" + q)
+          .then(function (r) {
+            if (!r.ok) return null;
+            return r.text();
+          })
+          .then(function (html) {
+            if (html === null || html === undefined) return;
+            root.innerHTML = html;
+            var inp = document.getElementById("tree-filter-input");
+            var topicSel = document.getElementById("tree-filter-topic");
+            var toReadSel = document.getElementById("tree-filter-to-read");
+            var filtersActive =
+              (inp && inp.value.trim()) ||
+              (topicSel && topicSel.value) ||
+              (toReadSel && toReadSel.value);
+            if (inp && filtersActive) inp.dispatchEvent(new Event("input", { bubbles: true }));
+            var path = window.location.pathname;
+            document.querySelectorAll(".tree a.tree__link.is-active").forEach(function (el) {
+              el.classList.remove("is-active");
+            });
+            document.querySelectorAll(".tree a.tree__link[href]").forEach(function (a) {
+              if (a.getAttribute("href") === path) a.classList.add("is-active");
+            });
+          })
+          .catch(function () {});
+      }
+
+      function syncAbstractToggleUI(panel) {
+        var abIn = panel.querySelector('input[name="paper_abstract"]');
+        var btn = panel.querySelector(".paper-abstract-toggle");
+        if (!abIn || !btn) return;
+        var read = abIn.value === "READ";
+        btn.setAttribute("aria-pressed", read ? "true" : "false");
+        var label = btn.querySelector(".paper-abstract-toggle__text");
+        if (label) label.textContent = read ? "Read" : "Unread";
+      }
+
       function updatePaperDependencyControls(panel) {
-        var abSel = panel.querySelector('select[name="paper_abstract"]');
+        var abIn = panel.querySelector('input[name="paper_abstract"]');
         var coSel = panel.querySelector('select[name="paper_content"]');
         var reSel = panel.querySelector('select[name="paper_reproduced"]');
-        if (!abSel || !coSel || !reSel) return;
-        var ab = abSel.value;
+        if (!abIn || !coSel || !reSel) return;
+        syncAbstractToggleUI(panel);
+        var ab = abIn.value;
         var co = coSel.value;
 
         coSel.disabled = ab !== "READ";
@@ -388,31 +530,202 @@
         }
       }
 
-      function applyServerRow(panel, row) {
-        var abSel = panel.querySelector('select[name="paper_abstract"]');
+      var PAPER_LABEL_CO = { UNREAD: "Unread", READING: "Reading", READ: "Read" };
+      var PAPER_LABEL_REP = { NO: "No", WORKING: "Working", BLOCKED: "Blocked", DONE: "Done" };
+
+      function readPaperPanelSnapshot(panel) {
+        var ab = panel.querySelector('input[name="paper_abstract"]');
+        var co = panel.querySelector('select[name="paper_content"]');
+        var re = panel.querySelector('select[name="paper_reproduced"]');
+        return {
+          abstract: ab ? ab.value : "",
+          content: co ? co.value : "UNREAD",
+          repro: re ? re.value : "NO",
+        };
+      }
+
+      function rememberPaperPanelSnapshot(panel) {
+        panel._pmSnapshot = readPaperPanelSnapshot(panel);
+      }
+
+      function restorePaperPanelSnapshot(panel) {
+        var s = panel._pmSnapshot;
+        if (!s) return;
+        var ab = panel.querySelector('input[name="paper_abstract"]');
+        var co = panel.querySelector('select[name="paper_content"]');
+        var re = panel.querySelector('select[name="paper_reproduced"]');
+        if (ab) ab.value = s.abstract;
+        if (co) co.value = s.content;
+        if (re) re.value = s.repro;
+        syncAbstractToggleUI(panel);
+        updatePaperDependencyControls(panel);
+      }
+
+      /**
+       * After dependency rules run: confirm only when a "lower" choice clears other stored values.
+       * — Content → UNREAD disables reproduction and forces repro to NO when repro was in progress.
+       * — Abstract → UNREAD forces content + repro to defaults when either had progress.
+       */
+      function paperContentDowngradeWipesRepro(snapBefore, panel) {
+        var ab = panel.querySelector('input[name="paper_abstract"]');
+        var co = panel.querySelector('select[name="paper_content"]');
+        if (!ab || !co || ab.value !== "READ") return false;
+        if (co.value !== "UNREAD") return false;
+        if (snapBefore.content === "UNREAD") return false;
+        return snapBefore.repro !== "NO";
+      }
+
+      function paperAbstractDowngradeWipesProgress(snapBefore, panel) {
+        var ab = panel.querySelector('input[name="paper_abstract"]');
+        if (!ab || ab.value !== "UNREAD") return false;
+        if (snapBefore.abstract !== "READ") return false;
+        return snapBefore.content !== "UNREAD" || snapBefore.repro !== "NO";
+      }
+
+      function escHtml(s) {
+        var n = document.createElement("span");
+        n.textContent = s;
+        return n.innerHTML;
+      }
+
+      function fillPaperConfirmModal(panel) {
         var coSel = panel.querySelector('select[name="paper_content"]');
         var reSel = panel.querySelector('select[name="paper_reproduced"]');
+        var ul = document.getElementById("paper-confirm-summary");
+        if (!coSel || !reSel || !ul) return;
+        var lc = PAPER_LABEL_CO[coSel.value] || coSel.value;
+        var lr = PAPER_LABEL_REP[reSel.value] || reSel.value;
+        ul.innerHTML =
+          '<li class="paper-confirm-dialog__row">' +
+          '<span class="paper-confirm-dialog__key">Content</span>' +
+          '<span class="paper-confirm-dialog__val">' +
+          escHtml(lc) +
+          "</span></li>" +
+          '<li class="paper-confirm-dialog__row">' +
+          '<span class="paper-confirm-dialog__key">Reproduced</span>' +
+          '<span class="paper-confirm-dialog__val">' +
+          escHtml(lr) +
+          "</span></li>";
+      }
+
+      function wirePaperConfirmModal() {
+        var dlg = document.getElementById("paper-prop-confirm-modal");
+        if (!dlg || dlg.dataset.paperConfirmWired === "1") return;
+        dlg.dataset.paperConfirmWired = "1";
+
+        dlg.addEventListener("close", function () {
+          var p = dlg._paperConfirmPending;
+          if (!p) return;
+          dlg._paperConfirmPending = null;
+          var r = dlg.returnValue;
+          dlg.returnValue = "";
+          var prev = dlg._paperConfirmPrevFocus;
+          dlg._paperConfirmPrevFocus = null;
+          if (r === "confirm") p.onConfirm();
+          else p.onCancel();
+          if (prev && typeof prev.focus === "function") {
+            try {
+              prev.focus();
+            } catch (e) {}
+          }
+        });
+
+        dlg.addEventListener("click", function (e) {
+          if (e.target && e.target.getAttribute("data-paper-confirm-dismiss") != null) {
+            dlg.returnValue = "cancel";
+            dlg.close();
+          }
+        });
+
+        var btnCancel = dlg.querySelector("[data-paper-confirm-cancel]");
+        var btnSave = dlg.querySelector("[data-paper-confirm-save]");
+        if (btnCancel)
+          btnCancel.addEventListener("click", function () {
+            dlg.returnValue = "cancel";
+            dlg.close();
+          });
+        if (btnSave)
+          btnSave.addEventListener("click", function () {
+            dlg.returnValue = "confirm";
+            dlg.close();
+          });
+      }
+
+      function openPaperProgressConfirmModal(panel, onConfirm, onCancel) {
+        var dlg = document.getElementById("paper-prop-confirm-modal");
+        if (!dlg || typeof dlg.showModal !== "function") {
+          if (
+            window.confirm(
+              "Saving will reset dependent fields as shown. Continue and write to frontmatter?"
+            )
+          ) {
+            onConfirm();
+          } else {
+            onCancel();
+          }
+          return;
+        }
+        wirePaperConfirmModal();
+        fillPaperConfirmModal(panel);
+        dlg._paperConfirmPending = { onConfirm: onConfirm, onCancel: onCancel };
+        dlg._paperConfirmPrevFocus = document.activeElement;
+        dlg.returnValue = "";
+        try {
+          dlg.showModal();
+        } catch (e) {
+          dlg._paperConfirmPending = null;
+          if (
+            window.confirm(
+              "Saving will reset dependent fields as shown. Continue and write to frontmatter?"
+            )
+          ) {
+            onConfirm();
+          } else {
+            onCancel();
+          }
+          return;
+        }
+        var primary = dlg.querySelector("[data-paper-confirm-save]");
+        if (primary && typeof primary.focus === "function") primary.focus();
+      }
+
+      function applyServerRow(panel, row) {
+        var abIn = panel.querySelector('input[name="paper_abstract"]');
+        var coSel = panel.querySelector('select[name="paper_content"]');
+        var reSel = panel.querySelector('select[name="paper_reproduced"]');
+        var topicSel = panel.querySelector('select[name="paper_topic"]');
+        var toReadBtn = panel.querySelector(".paper-to-read-toggle");
+        var toReadText = panel.querySelector(".paper-to-read-toggle__text");
         var favBtn = panel.querySelector(".paper-favorite-toggle");
         var ftext = panel.querySelector(".paper-favorite-toggle__text");
-        if (abSel) abSel.value = row.paper_abstract;
+        if (abIn) abIn.value = row.paper_abstract;
         if (coSel) coSel.value = row.paper_content;
         if (reSel) reSel.value = row.paper_reproduced;
+        if (topicSel && row.paper_topic) topicSel.value = row.paper_topic;
+        if (toReadBtn) {
+          var queued = !!row.paper_to_read;
+          toReadBtn.setAttribute("aria-pressed", queued ? "true" : "false");
+          if (toReadText) toReadText.textContent = queued ? "Queued" : "Not queued";
+        }
         if (favBtn) {
           var on = !!row.paper_favorite;
           favBtn.setAttribute("aria-pressed", on ? "true" : "false");
           if (ftext) ftext.textContent = on ? "Favorited" : "Add to favorites";
         }
         updatePaperDependencyControls(panel);
+        rememberPaperPanelSnapshot(panel);
       }
 
-      function patchPaperMetadata(panel) {
+      function commitPaperMetadataPatch(panel) {
         var path = panel.getAttribute("data-note-path");
         if (!path) return;
-        var abSel = panel.querySelector('select[name="paper_abstract"]');
+        var abIn = panel.querySelector('input[name="paper_abstract"]');
         var coSel = panel.querySelector('select[name="paper_content"]');
         var reSel = panel.querySelector('select[name="paper_reproduced"]');
+        var topicSel = panel.querySelector('select[name="paper_topic"]');
+        var toReadBtn = panel.querySelector(".paper-to-read-toggle");
         var favBtn = panel.querySelector(".paper-favorite-toggle");
-        if (!abSel || !coSel || !reSel || !favBtn) return;
+        if (!abIn || !coSel || !reSel || !favBtn || !topicSel || !toReadBtn) return;
 
         paperSaveToast("saving", "Saving…");
 
@@ -420,10 +733,12 @@
           method: "PATCH",
           headers: { "Content-Type": "application/json", Accept: "application/json" },
           body: JSON.stringify({
-            paper_abstract: abSel.value,
+            paper_abstract: abIn.value,
             paper_content: coSel.value,
             paper_reproduced: reSel.value,
             paper_favorite: favBtn.getAttribute("aria-pressed") === "true",
+            paper_topic: topicSel.value,
+            paper_to_read: toReadBtn.getAttribute("aria-pressed") === "true",
           }),
         })
           .then(function (r) {
@@ -434,10 +749,39 @@
             applyServerRow(panel, row);
             paperSaveToast("success", "Saved");
             refreshFavorites();
+            refreshBrowseTree(row.path);
           })
           .catch(function () {
             paperSaveToast("error", "Save failed");
           });
+      }
+
+      function patchPaperMetadata(panel) {
+        commitPaperMetadataPatch(panel);
+      }
+
+      function copyPmSnapshot(s) {
+        if (!s) return null;
+        return { abstract: s.abstract, content: s.content, repro: s.repro };
+      }
+
+      function onPaperSelectChanged(panel) {
+        var snapBefore = copyPmSnapshot(panel._pmSnapshot) || readPaperPanelSnapshot(panel);
+        updatePaperDependencyControls(panel);
+        if (paperContentDowngradeWipesRepro(snapBefore, panel)) {
+          panel._pmSnapshot = snapBefore;
+          openPaperProgressConfirmModal(
+            panel,
+            function () {
+              commitPaperMetadataPatch(panel);
+            },
+            function () {
+              restorePaperPanelSnapshot(panel);
+            }
+          );
+        } else {
+          commitPaperMetadataPatch(panel);
+        }
       }
 
       function bindPaperMetadataPanel(panel) {
@@ -445,13 +789,63 @@
         if (panel.dataset.pmBound === "1") return;
         panel.dataset.pmBound = "1";
         updatePaperDependencyControls(panel);
+        rememberPaperPanelSnapshot(panel);
+
+        panel.addEventListener(
+          "focusin",
+          function (ev) {
+            var t = ev.target;
+            if (!t || !t.matches) return;
+            var sel = t.matches("select.paper-prop-input") ? t : null;
+            if (!sel && t.closest) sel = t.closest("select.paper-prop-input");
+            if (!sel || (sel.name !== "paper_content" && sel.name !== "paper_reproduced")) return;
+            rememberPaperPanelSnapshot(panel);
+          },
+          true
+        );
 
         panel.querySelectorAll("select.paper-prop-input").forEach(function (el) {
           el.addEventListener("change", function () {
-            updatePaperDependencyControls(panel);
-            patchPaperMetadata(panel);
+            onPaperSelectChanged(panel);
           });
         });
+
+        var abToggle = panel.querySelector(".paper-abstract-toggle");
+        if (abToggle) {
+          abToggle.addEventListener("click", function () {
+            var abIn = panel.querySelector('input[name="paper_abstract"]');
+            if (!abIn) return;
+            var snapBefore = readPaperPanelSnapshot(panel);
+            abIn.value = abIn.value === "READ" ? "UNREAD" : "READ";
+            syncAbstractToggleUI(panel);
+            updatePaperDependencyControls(panel);
+            if (paperAbstractDowngradeWipesProgress(snapBefore, panel)) {
+              panel._pmSnapshot = snapBefore;
+              openPaperProgressConfirmModal(
+                panel,
+                function () {
+                  commitPaperMetadataPatch(panel);
+                },
+                function () {
+                  restorePaperPanelSnapshot(panel);
+                }
+              );
+            } else {
+              commitPaperMetadataPatch(panel);
+            }
+          });
+        }
+
+        var toReadBtn = panel.querySelector(".paper-to-read-toggle");
+        if (toReadBtn) {
+          toReadBtn.addEventListener("click", function () {
+            var on = toReadBtn.getAttribute("aria-pressed") === "true";
+            toReadBtn.setAttribute("aria-pressed", on ? "false" : "true");
+            var t = panel.querySelector(".paper-to-read-toggle__text");
+            if (t) t.textContent = on ? "Not queued" : "Queued";
+            patchPaperMetadata(panel);
+          });
+        }
 
         var favBtn = panel.querySelector(".paper-favorite-toggle");
         if (favBtn) {
@@ -465,6 +859,7 @@
       }
 
       document.addEventListener("DOMContentLoaded", function () {
+        wirePaperConfirmModal();
         document.querySelectorAll(".paper-metadata-panel").forEach(bindPaperMetadataPanel);
       });
 

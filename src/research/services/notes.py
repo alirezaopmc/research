@@ -159,23 +159,140 @@ def _insert(trie: _Trie, parts: list[str], fullpath: str) -> None:
     _insert(trie.dirs[head], rest, fullpath)
 
 
-def _trie_to_nodes(trie: _Trie) -> list[TreeNode]:
+def _paper_sidebar_store_maps(
+    store: object | None,
+) -> tuple[
+    dict[str, tuple[str, str]],
+    dict[str, str],
+    dict[str, tuple[str, str]],
+    dict[str, str],
+    dict[str, bool],
+]:
+    """path -> reading dot; titles; reproduction chrome; topic; to-read."""
+    if store is None:
+        return {}, {}, {}, {}, {}
+    rows_fn = getattr(store, "list_rows", None)
+    if not callable(rows_fn):
+        return {}, {}, {}, {}, {}
+    from research.domain.paper_reading import paper_repro_sidebar, paper_sidebar_badge
+
+    badges: dict[str, tuple[str, str]] = {}
+    titles: dict[str, str] = {}
+    repros: dict[str, tuple[str, str]] = {}
+    topics: dict[str, str] = {}
+    to_reads: dict[str, bool] = {}
+    for row in rows_fn():
+        badges[row.path] = paper_sidebar_badge(row)
+        repros[row.path] = paper_repro_sidebar(row)
+        raw_title = getattr(row, "paper_title", "") or ""
+        titles[row.path] = raw_title.strip() if isinstance(raw_title, str) else ""
+        topics[row.path] = getattr(row, "paper_topic", "") or ""
+        to_reads[row.path] = bool(getattr(row, "paper_to_read", False))
+    return badges, titles, repros, topics, to_reads
+
+
+def _paper_leaf_sidebar(
+    path: str | None,
+    badges: dict[str, tuple[str, str]],
+    titles_from_store: dict[str, str],
+    repros_from_store: dict[str, tuple[str, str]],
+    topics_from_store: dict[str, str],
+    to_reads_from_store: dict[str, bool],
+) -> tuple[str | None, str | None, str | None, str | None, str | None, str | None, bool | None]:
+    """Papers/**/*.md sidebar chrome; returns reading + repro + filter attrs + label."""
+    if (
+        path is None
+        or not path.startswith("papers/")
+        or not path.endswith(".md")
+        or path in _SIDEBAR_SKIP_PATHS
+    ):
+        return None, None, None, None, None, None, None
+    bk, bt = badges[path] if path in badges else ("abs_unread", "Abstract")
+    rk, rt = repros_from_store[path] if path in repros_from_store else ("none", "Reproduction idle")
+    stem = Path(path).stem
+    raw_title = titles_from_store.get(path, "")
+    sidebar_label = raw_title.strip() if raw_title.strip() else stem
+    topic = topics_from_store.get(path)
+    to_read = to_reads_from_store.get(path)
+    return bk, bt, sidebar_label, rk, rt, topic, to_read
+
+
+def _vault_leaf_sidebar_label(path: str, paper_slab: str | None, docs: Path) -> str:
+    """Display + filter text for a file leaf: paper store title, else YAML title, else filename."""
+    if paper_slab is not None:
+        return paper_slab
+    try:
+        meta, _, _ = read_note_raw(docs, path)
+        t = meta.get("title")
+        if isinstance(t, str) and t.strip():
+            return t.strip()
+    except (OSError, FileNotFoundError, ValueError):
+        pass
+    return Path(path).name
+
+
+def _trie_to_nodes(
+    trie: _Trie,
+    badges: dict[str, tuple[str, str]],
+    titles_from_store: dict[str, str],
+    repros_from_store: dict[str, tuple[str, str]],
+    topics_from_store: dict[str, str],
+    to_reads_from_store: dict[str, bool],
+    docs: Path,
+) -> list[TreeNode]:
     nodes: list[TreeNode] = []
     for name in sorted(trie.dirs):
         sub = trie.dirs[name]
-        nodes.append(TreeNode(name=name, type="dir", children=_trie_to_nodes(sub)))
+        nodes.append(
+            TreeNode(
+                name=name,
+                type="dir",
+                children=_trie_to_nodes(
+                    sub,
+                    badges,
+                    titles_from_store,
+                    repros_from_store,
+                    topics_from_store,
+                    to_reads_from_store,
+                    docs,
+                ),
+            )
+        )
     for name, path in sorted(trie.files, key=lambda x: x[0].casefold()):
-        nodes.append(TreeNode(name=name, type="file", path=path))
+        bk, bt, slab, rk, rt, topic, to_read = _paper_leaf_sidebar(
+            path,
+            badges,
+            titles_from_store,
+            repros_from_store,
+            topics_from_store,
+            to_reads_from_store,
+        )
+        label = _vault_leaf_sidebar_label(path, slab, docs)
+        nodes.append(
+            TreeNode(
+                name=name,
+                type="file",
+                path=path,
+                sidebar_label=label,
+                paper_badge_kind=bk,
+                paper_badge_tooltip=bt,
+                paper_repro_kind=rk,
+                paper_repro_tooltip=rt,
+                paper_topic=topic,
+                paper_to_read=to_read,
+            )
+        )
     return nodes
 
 
-def build_tree(docs: Path) -> list[TreeNode]:
+def build_tree(docs: Path, paper_reading_store: object | None = None) -> list[TreeNode]:
+    badges, titles, repros, topics, to_reads = _paper_sidebar_store_maps(paper_reading_store)
     root = _Trie()
     for rel in list_markdown_paths(docs):
         if rel in _SIDEBAR_SKIP_PATHS:
             continue
         _insert(root, rel.split("/"), rel)
-    return _trie_to_nodes(root)
+    return _trie_to_nodes(root, badges, titles, repros, topics, to_reads, docs)
 
 
 def get_note_detail(docs: Path, rel_path: str) -> NoteDetail:

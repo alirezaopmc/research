@@ -43,12 +43,6 @@ This connects directly to coding agents, support automation, browser agents, dat
 
 ## Related Papers
 
-- [[papers/instructgpt-rlhf]]
-- [[papers/webgpt]]
-- [[papers/react]]
-- [[papers/toolformer]]
-- [[papers/reflexion]]
-- [[papers/voyager]]
-- [[papers/direct-preference-optimization]]
-- [[papers/constitutional-ai]]
-- [[papers/self-rewarding-language-models]]
+- [[papers/llm-techniques/in-context-learning-survey]]
+- [[papers/llm-techniques/prompt-engineering-survey]]
+- [[papers/llm-techniques/context-engineering-survey]]

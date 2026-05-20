@@ -10,12 +10,18 @@
   {% set pr = note.paper_reading %}
   {% if pr %}
     <div class="note-props__field">
-      <label class="note-props__label" for="paper-abstract">Abstract</label>
-      <select name="paper_abstract" id="paper-abstract" class="note-props__select paper-prop-input">
-        {% for x in paper_abstract_choices %}
-          <option value="{{ x }}" {% if pr.paper_abstract == x %}selected{% endif %}>{{ paper_choice_label_abs(x) }}</option>
-        {% endfor %}
-      </select>
+      <span class="note-props__label" id="paper-abstract-heading">Abstract</span>
+      <input type="hidden" name="paper_abstract" id="paper-abstract-value" value="{{ pr.paper_abstract | e }}" />
+      <button
+        type="button"
+        class="paper-abstract-toggle"
+        id="paper-abstract-toggle"
+        aria-labelledby="paper-abstract-heading"
+        aria-pressed="{{ 'true' if pr.paper_abstract == 'READ' else 'false' }}"
+      >
+        <span class="paper-abstract-toggle__thumb" aria-hidden="true"></span>
+        <span class="paper-abstract-toggle__text">{{ paper_choice_label_abs(pr.paper_abstract) }}</span>
+      </button>
     </div>
 
     <div class="note-props__field">
@@ -34,6 +40,33 @@
           <option value="{{ x }}" {% if pr.paper_reproduced == x %}selected{% endif %}>{{ paper_choice_label_rep(x) }}</option>
         {% endfor %}
       </select>
+    </div>
+
+    {% if paper_topic_choices | length > 1 %}
+    <div class="note-props__field">
+      <label class="note-props__label" for="paper-topic">Topic</label>
+      <select name="paper_topic" id="paper-topic" class="note-props__select paper-prop-input">
+        {% for slug in paper_topic_choices %}
+          <option value="{{ slug }}" {% if pr.paper_topic == slug %}selected{% endif %}>
+            {{ paper_topic_labels[slug] }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    {% else %}
+    <input type="hidden" name="paper_topic" id="paper-topic" value="{{ paper_topic_choices[0] }}" />
+    {% endif %}
+
+    <div class="note-props__field">
+      <span class="note-props__label" id="paper-to-read-label">To read</span>
+      <button
+        type="button"
+        class="paper-to-read-toggle paper-prop-input"
+        aria-labelledby="paper-to-read-label"
+        aria-pressed="{{ 'true' if pr.paper_to_read else 'false' }}"
+      >
+        <span class="paper-to-read-toggle__text">{{ 'Queued' if pr.paper_to_read else 'Not queued' }}</span>
+      </button>
     </div>
 
     <div class="note-props__field note-props__field--favorite">

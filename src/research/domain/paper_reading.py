@@ -7,6 +7,7 @@ from pydantic import BaseModel, model_validator
 type PaperAbstractStatus = Literal["UNREAD", "READ"]
 type PaperContentStatus = Literal["UNREAD", "READING", "READ"]
 type PaperReproducedStatus = Literal["NO", "WORKING", "BLOCKED", "DONE"]
+type PaperTopicSlug = Literal["llm-techniques"]
 
 PAPER_ABSTRACT_CHOICES: tuple[PaperAbstractStatus, ...] = ("UNREAD", "READ")
 PAPER_CONTENT_CHOICES: tuple[PaperContentStatus, ...] = ("UNREAD", "READING", "READ")
@@ -16,6 +17,11 @@ PAPER_REPRODUCED_CHOICES: tuple[PaperReproducedStatus, ...] = (
     "BLOCKED",
     "DONE",
 )
+PAPER_TOPIC_CHOICES: tuple[PaperTopicSlug, ...] = ("llm-techniques",)
+PAPER_TOPIC_LABELS: dict[PaperTopicSlug, str] = {
+    "llm-techniques": "LLM Techniques",
+}
+_PAPER_TOPIC_SLUGS: frozenset[str] = frozenset(PAPER_TOPIC_CHOICES)
 
 # Legacy single-field enum (maps to quartet)
 type ReadingStatus = Literal[
@@ -63,6 +69,39 @@ def _parse_content(meta: dict[str, Any]) -> PaperContentStatus | None:
     s = _norm_upper(meta.get("paper_content"))
     if s in {"UNREAD", "READING", "READ"}:
         return s  # type: ignore[return-value]
+    return None
+
+
+def _parse_topic(meta: dict[str, Any]) -> PaperTopicSlug | None:
+    raw = meta.get("topic")
+    if raw is None:
+        raw = meta.get("Topic")
+    if not isinstance(raw, str):
+        return None
+    slug = raw.strip().lower().replace("_", "-").replace(" ", "-")
+    if slug in _PAPER_TOPIC_SLUGS:
+        return slug  # type: ignore[return-value]
+    return None
+
+
+def topic_slug_from_paper_path(path: str) -> PaperTopicSlug | None:
+    """Infer topic from docs/papers/<topic>/<file>.md when frontmatter omits it."""
+    parts = path.replace("\\", "/").split("/")
+    if len(parts) >= 3 and parts[0] == "papers" and parts[1] in _PAPER_TOPIC_SLUGS:
+        return parts[1]  # type: ignore[return-value]
+    return None
+
+
+def _parse_to_read(meta: dict[str, Any]) -> bool | None:
+    if "paper_to_read" in meta:
+        return _truthy_legacy(meta.get("paper_to_read"))
+    if meta.get("status") == "to-read":
+        return True
+    rs = _legacy_reading_status(meta) or _legacy_status_line(meta)
+    if rs == "UNREAD":
+        return True
+    if rs is not None:
+        return False
     return None
 
 
@@ -123,6 +162,8 @@ class PaperMetadataState(BaseModel):
     paper_content: PaperContentStatus = "UNREAD"
     paper_reproduced: PaperReproducedStatus = "NO"
     paper_favorite: bool = False
+    paper_topic: PaperTopicSlug = "llm-techniques"
+    paper_to_read: bool = False
 
     model_config = {"frozen": True}
 
@@ -140,6 +181,8 @@ class PaperMetadataState(BaseModel):
                 paper_content="UNREAD",
                 paper_reproduced="NO",
                 paper_favorite=self.paper_favorite,
+                paper_topic=self.paper_topic,
+                paper_to_read=self.paper_to_read,
             )
         if co == "UNREAD":
             if re == "NO":
@@ -149,6 +192,8 @@ class PaperMetadataState(BaseModel):
                 paper_content="UNREAD",
                 paper_reproduced="NO",
                 paper_favorite=self.paper_favorite,
+                paper_topic=self.paper_topic,
+                paper_to_read=self.paper_to_read,
             )
         return self
 
@@ -159,9 +204,37 @@ class PaperReadingRow(BaseModel):
     paper_content: PaperContentStatus
     paper_reproduced: PaperReproducedStatus
     paper_favorite: bool
+    paper_topic: PaperTopicSlug
+    paper_to_read: bool
     paper_title: str = ""
 
     model_config = {"frozen": True}
+
+
+def paper_sidebar_badge(row: PaperReadingRow) -> tuple[str, str]:
+    """Browsing UX: compact status dot — (css_suffix, tooltip one word).
+
+    Covers abstract unread, content queue/reading/read (abstract READ implied for the last three).
+    """
+    if row.paper_abstract == "UNREAD":
+        return "abs_unread", "Abstract"
+    if row.paper_content == "UNREAD":
+        return "content_unread", "Queued"
+    if row.paper_content == "READING":
+        return "content_reading", "Reading"
+    return "content_read", "Read"
+
+
+def paper_repro_sidebar(row: PaperReadingRow) -> tuple[str, str]:
+    """Sidebar repro tool — (css modifier, descriptive tooltip phrase)."""
+    key = row.paper_reproduced
+    if key == "NO":
+        return "none", "Reproduction idle"
+    if key == "WORKING":
+        return "working", "Reproducing"
+    if key == "BLOCKED":
+        return "blocked", "Reproduction blocked"
+    return "done", "Results reproduced"
 
 
 class PaperFavoriteEntry(BaseModel):
@@ -171,12 +244,18 @@ class PaperFavoriteEntry(BaseModel):
     model_config = {"frozen": True}
 
 
-def paper_metadata_from_frontmatter(meta: dict[str, Any]) -> PaperMetadataState:
+def paper_metadata_from_frontmatter(
+    meta: dict[str, Any],
+    *,
+    path: str | None = None,
+) -> PaperMetadataState:
     """Build metadata from YAML; maps legacy reading_status / booleans."""
     pa = _parse_abstract(meta)
     pc = _parse_content(meta)
     pr = _parse_reproduced(meta)
     fav = _truthy_legacy(meta.get("paper_favorite"))
+    topic = _parse_topic(meta) or (topic_slug_from_paper_path(path) if path else None)
+    to_read = _parse_to_read(meta)
 
     if pa is not None and pc is not None and pr is not None:
         return PaperMetadataState(
@@ -184,6 +263,8 @@ def paper_metadata_from_frontmatter(meta: dict[str, Any]) -> PaperMetadataState:
             paper_content=pc,
             paper_reproduced=pr,
             paper_favorite=fav,
+            paper_topic=topic or "llm-techniques",
+            paper_to_read=to_read if to_read is not None else False,
         )
 
     rs = _legacy_reading_status(meta) or _legacy_status_line(meta)
@@ -198,11 +279,14 @@ def paper_metadata_from_frontmatter(meta: dict[str, Any]) -> PaperMetadataState:
             rs = "UNREAD"
 
     a, c, r = _from_legacy_reading(rs)
+    resolved_to_read = to_read if to_read is not None else rs == "UNREAD"
     return PaperMetadataState(
         paper_abstract=pa or a,
         paper_content=pc or c,
         paper_reproduced=pr or r,
         paper_favorite=fav,
+        paper_topic=topic or "llm-techniques",
+        paper_to_read=resolved_to_read,
     )
 
 
@@ -215,7 +299,7 @@ def display_title_from_meta(meta: dict[str, Any], rel_path: str) -> str:
 
 
 def paper_reading_row_from_meta(path: str, meta: dict[str, Any]) -> PaperReadingRow:
-    state = paper_metadata_from_frontmatter(meta)
+    state = paper_metadata_from_frontmatter(meta, path=path)
     title = display_title_from_meta(meta, path)
     return PaperReadingRow(
         path=path,
@@ -223,5 +307,7 @@ def paper_reading_row_from_meta(path: str, meta: dict[str, Any]) -> PaperReading
         paper_content=state.paper_content,
         paper_reproduced=state.paper_reproduced,
         paper_favorite=state.paper_favorite,
+        paper_topic=state.paper_topic,
+        paper_to_read=state.paper_to_read,
         paper_title=title,
     )

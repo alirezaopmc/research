@@ -45,6 +45,8 @@ def write_paper_metadata(docs: Path, rel_path: str, state: PaperMetadataState) -
     meta["paper_content"] = state.paper_content
     meta["paper_reproduced"] = state.paper_reproduced
     meta["paper_favorite"] = state.paper_favorite
+    meta["topic"] = state.paper_topic
+    meta["paper_to_read"] = state.paper_to_read
 
     fm = yaml.safe_dump(
         meta,

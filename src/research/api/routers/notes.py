@@ -11,7 +11,10 @@ router = APIRouter()
 
 @router.get("/", response_model=list[TreeNode])
 def tree(request: Request) -> list[TreeNode]:
-    return build_tree(request.app.state.docs_dir)
+    return build_tree(
+        request.app.state.docs_dir,
+        getattr(request.app.state, "paper_reading", None),
+    )
 
 
 @router.get("/{path:path}", response_model=NoteDetail)

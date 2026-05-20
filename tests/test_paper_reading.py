@@ -7,9 +7,34 @@ from fastapi.testclient import TestClient
 from research.api.main import create_app
 from research.domain.paper_reading import (
     PaperMetadataState,
+    PaperReadingRow,
     paper_metadata_from_frontmatter,
+    paper_sidebar_badge,
 )
 from research.services.paper_reading.sqlite_store import PaperReadingStore
+
+
+def test_paper_sidebar_badge_four_states() -> None:
+    def mk(**kwargs: object) -> PaperReadingRow:
+        d: dict = {
+            "path": "papers/z.md",
+            "paper_abstract": "READ",
+            "paper_content": "READ",
+            "paper_reproduced": "NO",
+            "paper_favorite": False,
+            "paper_topic": "llm-techniques",
+            "paper_to_read": False,
+        }
+        d.update(kwargs)
+        return PaperReadingRow(**d)
+
+    assert paper_sidebar_badge(mk(paper_abstract="UNREAD", paper_content="UNREAD")) == (
+        "abs_unread",
+        "Abstract",
+    )
+    assert paper_sidebar_badge(mk(paper_content="UNREAD")) == ("content_unread", "Queued")
+    assert paper_sidebar_badge(mk(paper_content="READING")) == ("content_reading", "Reading")
+    assert paper_sidebar_badge(mk(paper_content="READ")) == ("content_read", "Read")
 
 
 def test_legacy_status_maps_to_unread_defaults() -> None:
@@ -17,6 +42,20 @@ def test_legacy_status_maps_to_unread_defaults() -> None:
     assert state.paper_abstract == "UNREAD"
     assert state.paper_content == "UNREAD"
     assert state.paper_reproduced == "NO"
+    assert state.paper_to_read is True
+
+
+def test_topic_from_path_when_frontmatter_missing() -> None:
+    state = paper_metadata_from_frontmatter(
+        {},
+        path="papers/llm-techniques/demo.md",
+    )
+    assert state.paper_topic == "llm-techniques"
+
+
+def test_unknown_topic_defaults_to_llm_techniques() -> None:
+    state = paper_metadata_from_frontmatter({"topic": "efficient-tiny-ml"})
+    assert state.paper_topic == "llm-techniques"
 
 
 def test_reading_status_normalized_lowercase() -> None:
@@ -117,6 +156,8 @@ def test_api_patch_paper_metadata(tmp_path: Path) -> None:
                 paper_content="READING",
                 paper_reproduced="NO",
                 paper_favorite=True,
+                paper_topic="llm-techniques",
+                paper_to_read=False,
             ).model_dump(),
         )
         assert r.status_code == 200

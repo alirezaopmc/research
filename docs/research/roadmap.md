@@ -28,22 +28,16 @@ Good subproblems:
 
 ## Reading Order
 
-1. [[papers/instructgpt-rlhf]] — RLHF foundation.
-2. [[papers/webgpt]] — RLHF for browser/tool use.
-3. [[papers/react]] — reasoning + acting agent pattern.
-4. [[papers/toolformer]] — self-supervised tool-use learning.
-5. [[papers/reflexion]] — lightweight feedback/self-improvement loop.
-6. [[papers/voyager]] — long-horizon agent skill library.
-7. [[papers/direct-preference-optimization]] — simpler alternative to PPO-style RLHF.
-8. [[papers/constitutional-ai]] — AI feedback and RLAIF.
-9. [[papers/self-rewarding-language-models]] — model-generated rewards for improvement.
+1. [[papers/llm-techniques/in-context-learning-survey]] — ICL foundations (demonstrations, training, mechanisms).
+2. [[papers/llm-techniques/prompt-engineering-survey]] — prompting taxonomy (CoT, RAG, ReAct, tool-use patterns).
+3. [[papers/llm-techniques/context-engineering-survey]] — context pipelines for agents (RAG, memory, multi-agent).
 
 ## First 30 Days
 
-- Week 1: read RLHF, ReAct, WebGPT.
-- Week 2: read Toolformer, Reflexion, Voyager.
-- Week 3: read DPO, Constitutional AI, Self-Rewarding LMs.
-- Week 4: reproduce a small agent benchmark with no training: ReAct vs Reflexion on a toy tool-use task.
+- Week 1: read ICL survey; skim prompting survey taxonomy.
+- Week 2: read context-engineering survey (RAG, memory, tool-integrated reasoning).
+- Week 3: map survey techniques to your agent wedge (feedback, credit assignment, eval).
+- Week 4: pick one low-compute baseline from the surveys (e.g. ReAct or Reflexion-style) on a toy tool-use task.
 
 ## Project Ideas
 

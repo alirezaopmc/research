@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create docs/papers/<slug>.md from an arXiv id/URL or a generic URL."""
+"""Create docs/papers/llm-techniques/<slug>.md from an arXiv id/URL or a generic URL."""
 
 from __future__ import annotations
 
@@ -7,8 +7,6 @@ import argparse
 import re
 import sys
 from pathlib import Path
-
-_PAPER_LINK_LINE = re.compile(r"^(- \*\*Paper:\*\*)\s*$", re.MULTILINE)
 
 
 def _parse_arxiv(source: str) -> str | None:
@@ -27,19 +25,16 @@ def _slugify_arxiv(aid: str) -> str:
 
 
 def main(argv: list[str] | None = None) -> int:
-    p = argparse.ArgumentParser(description="Scaffold a paper note under docs/papers/")
+    p = argparse.ArgumentParser(description="Scaffold a paper note under docs/papers/llm-techniques/")
     p.add_argument("source", help="arXiv URL/id or generic https URL")
     p.add_argument("--slug", help="filename slug (default: derived)")
     p.add_argument("--repo-root", type=Path, default=Path.cwd(), help="repo root (default: cwd)")
     args = p.parse_args(argv)
 
     root: Path = args.repo_root
-    papers = root / "docs" / "papers"
+    topic = "llm-techniques"
+    papers = root / "docs" / "papers" / topic
     papers.mkdir(parents=True, exist_ok=True)
-    tpl = papers / "_template.md"
-    if not tpl.is_file():
-        print("missing docs/papers/_template.md", file=sys.stderr)
-        return 1
 
     arxiv_id = _parse_arxiv(args.source)
     url: str
@@ -50,10 +45,12 @@ def main(argv: list[str] | None = None) -> int:
             "---\n"
             f"title:\nauthors:\nyear:\nvenue:\narxiv: {arxiv_id}\n"
             f"url: {url}\ntags: []\n"
+            f"topic: {topic}\n"
             "paper_abstract: UNREAD\n"
             "paper_content: UNREAD\n"
             "paper_reproduced: 'NO'\n"
             "paper_favorite: false\n"
+            "paper_to_read: true\n"
             "---\n\n"
         )
     else:
@@ -70,10 +67,12 @@ def main(argv: list[str] | None = None) -> int:
             "---\n"
             f"title:\nauthors:\nyear:\nvenue:\narxiv:\n"
             f"url: {url}\ntags: []\n"
+            f"topic: {topic}\n"
             "paper_abstract: UNREAD\n"
             "paper_content: UNREAD\n"
             "paper_reproduced: 'NO'\n"
             "paper_favorite: false\n"
+            "paper_to_read: true\n"
             "---\n\n"
         )
 
@@ -82,17 +81,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"refusing to overwrite {dest}", file=sys.stderr)
         return 1
 
-    body = tpl.read_text(encoding="utf-8")
-    if body.startswith("---"):
-        _parts = body.split("---", 2)
-        body = _parts[2].lstrip("\n") if len(_parts) >= 3 else body
-
-    def repl(_m: re.Match[str]) -> str:
-        return f"{_m.group(1)} [{url}]({url})"
-
-    body, _ = _PAPER_LINK_LINE.subn(repl, body, count=1)
-
-    dest.write_text(front + body, encoding="utf-8")
+    dest.write_text(front, encoding="utf-8")
     print(dest)
     return 0
 
