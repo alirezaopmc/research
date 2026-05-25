@@ -9,6 +9,7 @@ import yaml
 from markdown_it import MarkdownIt
 
 from research.domain.note import NoteDetail, TreeNode
+from research.domain.paper_reading import PAPER_TOPIC_LABELS
 
 WIKILINK_RE = re.compile(r"\[\[([^\]|]+)(?:\|([^\]]+))?\]\]")
 
@@ -231,6 +232,12 @@ def _vault_leaf_sidebar_label(path: str, paper_slab: str | None, docs: Path) -> 
     return Path(path).name
 
 
+def _paper_topic_dir_label(dir_name: str, path_prefix: str) -> str | None:
+    if path_prefix == "papers" and dir_name in PAPER_TOPIC_LABELS:
+        return PAPER_TOPIC_LABELS[dir_name]  # type: ignore[index]
+    return None
+
+
 def _trie_to_nodes(
     trie: _Trie,
     badges: dict[str, tuple[str, str]],
@@ -239,14 +246,18 @@ def _trie_to_nodes(
     topics_from_store: dict[str, str],
     to_reads_from_store: dict[str, bool],
     docs: Path,
+    *,
+    path_prefix: str = "",
 ) -> list[TreeNode]:
     nodes: list[TreeNode] = []
     for name in sorted(trie.dirs):
         sub = trie.dirs[name]
+        child_prefix = f"{path_prefix}/{name}" if path_prefix else name
         nodes.append(
             TreeNode(
                 name=name,
                 type="dir",
+                sidebar_label=_paper_topic_dir_label(name, path_prefix),
                 children=_trie_to_nodes(
                     sub,
                     badges,
@@ -255,6 +266,7 @@ def _trie_to_nodes(
                     topics_from_store,
                     to_reads_from_store,
                     docs,
+                    path_prefix=child_prefix,
                 ),
             )
         )

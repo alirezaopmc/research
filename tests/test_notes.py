@@ -99,6 +99,15 @@ def test_build_tree_hides_papers_template_stub(tmp_path: Path) -> None:
     assert "shown.md" in file_names
 
 
+def test_build_tree_paper_topic_dir_shows_label(tmp_path: Path) -> None:
+    docs = tmp_path / "docs"
+    (docs / "papers" / "llm-techniques").mkdir(parents=True)
+    (docs / "papers" / "llm-techniques" / "x.md").write_text("---\ntitle: X\n---\n", encoding="utf-8")
+    papers = next(n for n in build_tree(docs) if n.type == "dir" and n.name == "papers")
+    topic = next(n for n in papers.children if n.name == "llm-techniques")
+    assert topic.sidebar_label == "LLM Techniques"
+
+
 def test_build_tree_nonpaper_uses_frontmatter_title(tmp_path: Path) -> None:
     docs = tmp_path / "docs"
     docs.mkdir()
