@@ -5,7 +5,7 @@
 
 #let topic-subheading(title) = [
   #v(space-sm)
-  #text-base-heading("# " + title)
+  #text-base-heading(title)
   #v(space-xs)
 ]
 
