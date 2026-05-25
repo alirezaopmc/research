@@ -5,7 +5,7 @@ year:
 venue:
 arxiv:
 url:
-tags: [] # e.g. agents | rlhf | prompting | icl | rag | tool-use
+tags: [] # e.g. prompting | icl | rag | tool-use | agents
 topic: llm-techniques
 paper_abstract: UNREAD
 paper_content: UNREAD
@@ -29,7 +29,7 @@ paper_to_read: true
 > - **Compute:** train/deploy cost vs ~**1× H100** (or edge MCU)—feasible to reproduce?
 > - **Hype / market:** why people cite it now.
 > - **Industry:** deployment, tooling, regulation, or product relevance.
-> - **Topic fit:** how this connects to [[research/topics/rl-llm-agents]] (agents, feedback, eval, post-training).
+> - **Topic fit:** how this connects to [[research/topics/llm-techniques]] (ICL, prompting, context).
 
 ## Method
 
@@ -41,8 +41,8 @@ paper_to_read: true
 
 ## Notes / quotes
 
-> Grab verbatim lines worth citing; link related vault notes with wikilinks (`[[research/topics/rl-llm-agents]]`, other papers under `[[papers/llm-techniques/…]]`, roadmap `[[research/roadmap]]`, …).
+> Grab verbatim lines worth citing; link related vault notes with wikilinks (`[[research/topics/llm-techniques]]`, other papers under `[[papers/llm-techniques/…]]`, roadmap `[[research/roadmap]]`, …).
 
 ## Open questions
 
-> Uncertainties, reproduction caveats, and hooks to agent eval / low-compute experiments.
+> Uncertainties, reproduction caveats, and hooks to small inference-only experiments.

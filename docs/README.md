@@ -1,14 +1,14 @@
 # Research Notes
 
-Fresh focus: **low-compute reinforcement learning for LLM agents**.
+Fresh focus: **LLM techniques** (ICL, prompting, context engineering).
 
 Start here:
 
 - [[research/roadmap]]
-- [[research/topics/rl-llm-agents]]
+- [[research/topics/llm-techniques]]
 
 Primary lens:
 
-- **Compute:** feasible with small open models, API-based evaluation, or no training.
-- **Hype / market:** LLM agents, post-training, tool use, evaluation.
-- **Industry:** agent reliability, automation, coding agents, browser/workflow agents.
+- **Compute:** feasible with APIs and small open models; surveys first, then small experiments.
+- **Hype / market:** prompting, RAG, agents, and context limits.
+- **Industry:** reliable context design beats ad-hoc prompts in production.
