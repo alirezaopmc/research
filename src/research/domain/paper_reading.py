@@ -7,7 +7,7 @@ from pydantic import BaseModel, model_validator
 type PaperAbstractStatus = Literal["UNREAD", "READ"]
 type PaperContentStatus = Literal["UNREAD", "READING", "READ"]
 type PaperReproducedStatus = Literal["NO", "WORKING", "BLOCKED", "DONE"]
-type PaperTopicSlug = Literal["llm-techniques"]
+type PaperTopicSlug = Literal["llm-techniques", "efficient-sequence-models"]
 
 PAPER_ABSTRACT_CHOICES: tuple[PaperAbstractStatus, ...] = ("UNREAD", "READ")
 PAPER_CONTENT_CHOICES: tuple[PaperContentStatus, ...] = ("UNREAD", "READING", "READ")
@@ -17,9 +17,13 @@ PAPER_REPRODUCED_CHOICES: tuple[PaperReproducedStatus, ...] = (
     "BLOCKED",
     "DONE",
 )
-PAPER_TOPIC_CHOICES: tuple[PaperTopicSlug, ...] = ("llm-techniques",)
+PAPER_TOPIC_CHOICES: tuple[PaperTopicSlug, ...] = (
+    "llm-techniques",
+    "efficient-sequence-models",
+)
 PAPER_TOPIC_LABELS: dict[PaperTopicSlug, str] = {
     "llm-techniques": "LLM Techniques",
+    "efficient-sequence-models": "Efficient Sequence Models",
 }
 _PAPER_TOPIC_SLUGS: frozenset[str] = frozenset(PAPER_TOPIC_CHOICES)
 
