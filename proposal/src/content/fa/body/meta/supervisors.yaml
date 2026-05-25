@@ -1,0 +1,25 @@
+rows:
+  - role: primary
+    name: ""
+    rank: ""
+    share: ""
+    workplace: ""
+    signature: ""
+  - role: secondary
+    name: ""
+    rank: ""
+    share: ""
+    workplace: ""
+    signature: ""
+  - role: advisor-primary
+    name: ""
+    rank: ""
+    share: ""
+    workplace: ""
+    signature: ""
+  - role: advisor-secondary
+    name: ""
+    rank: ""
+    share: ""
+    workplace: ""
+    signature: ""

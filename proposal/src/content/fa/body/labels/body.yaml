@@ -1,0 +1,37 @@
+section-summary: خلاصه‌ی اطلاعات پایان نامه
+section-supervisors: اطلاعات استاد راهنما و مشاور
+section-student: اطلاعات دانشجو
+section-topic: مشخصات موضوعی پایان نامه
+section-topic-problem: تعریف مسئله، هدف و ضرورت انجام
+
+title-fa: عنوان (فارسی)
+title-en: عنوان (انگلیسی)
+thesis-type: نوع
+
+thesis-type-fundamental: بنیادی
+thesis-type-applied: کاربردی
+thesis-type-developmental: توسعه‌ای
+
+supervisor-col-role: نوع مسئولیت
+supervisor-col-name: نام و نام خانوادگی
+supervisor-col-rank: مرتبه علمی
+supervisor-col-share: درصد مشارکت
+supervisor-col-workplace: محل خدمت
+supervisor-col-signature: امضا و تاریخ
+
+supervisor-role-primary: استاد راهنمای اول (مجری)
+supervisor-role-secondary: استاد راهنمای دوم (حسب نیاز)
+supervisor-role-advisor-primary: استاد مشاور اول
+supervisor-role-advisor-secondary: استاد مشاور دوم (حسب نیاز)
+
+student-name: نام و نام خانوادگی
+student-phone: تلفن ثابت/همراه
+student-degree: مقطع و نوع پذیرش
+student-email: آدرس ایمیل
+student-field: رشته و گرایش
+student-signature: امضا و تاریخ
+
+topic-definition: تعریف
+topic-goal: هدف
+topic-necessity: ضرورت
+topic-research-questions: پرسش‌های پژوهش
