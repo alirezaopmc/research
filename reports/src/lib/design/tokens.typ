@@ -6,7 +6,9 @@
 
 #let size-body = 11pt
 #let size-section = 13pt
-#let size-subsection = 11pt
+#let size-content-heading = 12pt
+#let size-subsection = 11.5pt
+#let size-subsubsection = 11pt
 #let size-title = 22pt
 #let size-researcher = 12pt
 #let size-position = 10.5pt
@@ -32,7 +34,11 @@
 #let space-lg = 1.5em
 #let space-xl = 2em
 #let space-section = 1.1em
-#let space-subsection = 0.5em
+#let space-subsection = 0.7em
+#let space-subsubsection = 0.55em
+#let space-content-after-heading = 0.65em
+#let space-content-between-blocks = 0.85em
+#let indent-content-nested = 1.25em
 
 // Challenge entries
 #let space-challenge-item-par = 0.45em

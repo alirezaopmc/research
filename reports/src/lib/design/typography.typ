@@ -20,7 +20,21 @@
 #let text-challenge-detail = make-style(size: size-body, fill: luma(15%))
 
 #let text-section = make-style(size: size-section, weight: weight-strong, fill: color-accent)
-#let text-subsection = make-style(size: size-subsection, weight: weight-strong)
+#let text-content-heading = make-style(
+  size: size-content-heading,
+  weight: weight-strong,
+  fill: color-accent,
+)
+#let text-subsection = make-style(
+  size: size-subsection,
+  weight: weight-strong,
+  fill: black,
+)
+#let text-subsubsection = make-style(
+  size: size-subsubsection,
+  weight: weight-strong,
+  fill: black,
+)
 #let text-panel-title = make-style(size: size-subsection, weight: weight-strong, fill: color-accent)
 #let text-tldr-body = make-style(size: 11.5pt, fill: luma(15%))
 
