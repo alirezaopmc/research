@@ -1,46 +1,32 @@
-# research — notes & doc server
+# research — thesis notes & documents
 
-Local-first markdown notes, FastAPI `/api/*`, minimal `/viewer` (htmx).
+Markdown vault for papers and notes, plus Typst builds for the thesis proposal and weekly reports. No web viewer — edit files in the repo or your editor.
 
-## Setup
-
-Use the **virtualenv in this repo** (`./.venv`). Prefer **`make`** (`make dev`, `make test`, `make serve`); targets set **`UV_PROJECT_ENVIRONMENT`** and clear a stray **`VIRTUAL_ENV`** so `uv` uses this project’s interpreter, not another activated venv.
+## Quick commands
 
 ```bash
-make dev           # wraps: uv sync --all-extras
-make test && make lint
-make serve         # wraps: uv run python -m research.api.cli
+make proposal              # build proposal PDFs (see proposal/Makefile)
+make -C reports PROJECT=llm_hallucination WEEK=2026-W1   # one weekly report PDF
 ```
 
-If you run **`uv`** yourself instead of **`make`** (e.g. in CI shells), invoke it from repo root **after**:
-
-```bash
-export UV_PROJECT_ENVIRONMENT="$(pwd)/.venv"
-unset VIRTUAL_ENV
-uv sync --all-extras && uv run pytest -q
-```
-
-Or wrap any `uv …` invocation with `./scripts/with-repo-uv.sh` (same env as `make`).
-
-
-## Run
-
-```bash
-make serve
-```
-
-Open `http://127.0.0.1:8000/viewer/`. API: `http://127.0.0.1:8000/docs`.
-
-Search uses **SQLite FTS5** on startup (index under `.research/`, gitignored). Override path with `RESEARCH_SEARCH_DB` if needed.
-
-**Papers:** set **`paper_abstract`**, **`paper_content`**, **`paper_reproduced`**, and **`paper_favorite`** in frontmatter (legacy **`reading_status`** is still mapped on load but replaced on save via the viewer). Values are mirrored into **`RESEARCH_STATE_DB`** on startup. The `/viewer` **Paper** panel updates them with `PATCH /api/papers/{path}`.
-
-Override the state DB with **`RESEARCH_STATE_DB`** when needed.
+Requires `typst` (`brew install typst`). Persian proposal needs fonts in `proposal/assets/fonts/` (see `proposal/assets/fonts/README.md`).
 
 ## Layout
 
-- `docs/` — markdown vault (papers: links only; no PDFs in git)
-- `src/research/` — app code
-- `sandbox/` — local experiments (gitignored except `README.md`)
+```text
+docs/
+  papers/_template.md     Scaffold for new paper notes (no PDFs in git)
+  notes/                  General notes
+proposal/                 Typst thesis proposal (fa + en)
+reports/                  Typst weekly progress reports
+sandbox/                  Local experiments (gitignored except README)
+assets/                   Shared static assets
+```
 
-See [AGENTS.md](AGENTS.md).
+## Paper notes
+
+1. Copy `docs/papers/_template.md` → `docs/papers/<slug>.md`.
+2. Fill frontmatter and sections; link related notes with wikilinks (`[[path/no-ext]]`).
+3. Never commit PDFs — links only.
+
+See [AGENTS.md](AGENTS.md) for agent and workflow conventions.

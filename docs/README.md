@@ -1,14 +1,8 @@
-# Research Notes
+# Research notes
 
-Fresh focus: **LLM techniques** (ICL, prompting, context engineering).
+Markdown vault — papers, scratch notes, no PDFs in git.
 
-Start here:
+- Paper scaffold: [`papers/_template.md`](papers/_template.md)
+- Scratch: [`notes/`](notes/)
 
-- [[research/roadmap]]
-- [[research/topics/llm-techniques]]
-
-Primary lens:
-
-- **Compute:** feasible with APIs and small open models; surveys first, then small experiments.
-- **Hype / market:** prompting, RAG, agents, and context limits.
-- **Industry:** reliable context design beats ad-hoc prompts in production.
+Start a new paper note by copying the template into `papers/<slug>.md`.

@@ -8,4 +8,4 @@ sandbox/<slug>/
   ...
 ```
 
-Promote summaries to `docs/research/topics/`. Do not commit large artifacts here.
+Promote summaries into committed markdown (`docs/papers/`, `docs/notes/`). Do not commit large artifacts here.

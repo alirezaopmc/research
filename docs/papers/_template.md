@@ -5,8 +5,8 @@ year:
 venue:
 arxiv:
 url:
-tags: [] # e.g. prompting | icl | rag | tool-use | agents
-topic: llm-techniques
+tags: [] # e.g. sae | hallucination | interpretability
+topic:
 paper_abstract: UNREAD
 paper_content: UNREAD
 paper_reproduced: 'NO'

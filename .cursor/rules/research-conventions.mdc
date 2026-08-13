@@ -9,4 +9,4 @@ alwaysApply: true
 - **Minimal replies** unless user asks for detail.
 - Default lens: limited compute (~1× H100 ceiling), hype/market, industry relevance.
 - Papers: markdown notes + links only; never commit PDFs.
-- Experiments: `sandbox/` + `AGENT_LOG.md`; promote summaries to `docs/research/topics/`.
+- Experiments: `sandbox/` + `AGENT_LOG.md`; promote summaries into `docs/papers/` or `docs/notes/`.
