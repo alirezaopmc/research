@@ -1,5 +1,4 @@
 // Design tokens: single source for fonts, sizes, spacing, page, assets.
-// Paths are relative to this file (lib/design/).
 
 // Typography
 #let font-persian = "XB Niloofar"
@@ -22,13 +21,13 @@
 
 // Spacing
 #let space-xs = 0.35em
-#let space-sm = 0.75em
+#let space-sm = 0.65em
 #let space-md = 1em
-#let space-lg = 1.5em
-#let space-xl = 2em
-#let space-stack-tight = 0.45em
-#let space-stack-normal = 0.65em
-#let space-stack-relaxed = 0.9em
+#let space-lg = 1.25em
+#let space-xl = 1.75em
+#let space-stack-tight = 0.4em
+#let space-stack-normal = 0.6em
+#let space-stack-relaxed = 0.85em
 #let radio-row-gap = 5em
 #let gutter-field = 0.5em
 #let gutter-radio = 1em
@@ -38,31 +37,25 @@
 #let width-cover-form = 72%
 #let width-cover-option-label = 2.6cm
 
-// Reference digit boxes
-#let count-ref-box = 4
+#let count-ref-box = 5
 #let width-ref-box = 1.1cm
 #let height-ref-box = 0.75cm
-
-// Body tables
-#let height-supervisor-table-header = 1.05cm
-#let height-supervisor-table-row = 1.2cm
 
 // Page
 #let paper = "a4"
 #let margin-page = (x: 1.4cm, y: 1.4cm)
-#let margin-cover = (x: 2cm, y: 2.2cm)
+#let margin-cover = (x: 2cm, y: 2cm)
 
-// Assets (see lib/assets.typ for paths)
-#let logo-height-cover = 4.8cm
+#let logo-height-cover = 4.2cm
 
-// Page chrome (running header/footer)
+// Page chrome
 #let size-page-header = 13pt
 #let size-page-number = 11pt
 #let size-footnote = 10pt
 #let stroke-page-rule = 0.5pt
-#let space-header-rule = 0.35em
+#let space-header-rule = 0.3em
 #let space-footer-rule = 0.25em
-#let space-footer-notes = 0.35em
-#let space-footnote-gap = 0.35em
-#let header-ascent-page = 1.15cm
-#let footer-descent-page = 1.1cm
+#let space-footer-notes = 0.3em
+#let space-footnote-gap = 0.3em
+#let header-ascent-page = 1.1cm
+#let footer-descent-page = 1.05cm

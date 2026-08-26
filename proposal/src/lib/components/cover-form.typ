@@ -1,5 +1,6 @@
-// Cover form UI: radio options and reference digit boxes.
+// Cover form UI — minimal radios and reference boxes.
 #import "../design/tokens.typ": *
+#import "shared.typ": to-persian-digits
 
 #let radio-circle(selected: false, size: size-radio) = circle(
   radius: size / 2,
@@ -13,11 +14,6 @@
 #let radio-label(label) = box(width: width-cover-option-label)[
   #align(left + horizon)[#label]
 ]
-
-#let radio-option(label, selected: false) = (
-  radio-label(label),
-  radio-circle(selected: selected),
-)
 
 #let cover-options-grid(
   start-top-label,
@@ -86,7 +82,7 @@
     align: horizon,
     [],
     ..range(count).map(i => {
-      let digit = if i < digits.len() { digits.at(i) } else { "" }
+      let digit = if i < digits.len() { to-persian-digits(digits.at(i)) } else { "" }
       box(
         width: box-width,
         height: box-height,

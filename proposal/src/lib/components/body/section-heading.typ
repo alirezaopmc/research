@@ -1,4 +1,4 @@
-// Numbered section heading for body pages.
+// Numbered section heading.
 #import "../../design/typography.typ": text-base-heading
 
 #let body-section-heading(number, title) = [

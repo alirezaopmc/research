@@ -1,9 +1,9 @@
 rows:
   - role: primary
-    name: ""
+    name: دکتر روح‌الله عابدیان
     rank: ""
     share: ""
-    workplace: ""
+    workplace: دانشکده علوم مهندسی
     signature: ""
   - role: secondary
     name: ""
@@ -12,7 +12,7 @@ rows:
     workplace: ""
     signature: ""
   - role: advisor-primary
-    name: ""
+    name: دکتر علی فهیم
     rank: ""
     share: ""
     workplace: ""

@@ -1,6 +1,6 @@
 # degree: masters | phd
 degree: masters
-# study-mode: day | evening (label: روزانه | شبانه)
-study-mode: day
+# study-mode: day | evening (label: روزانه | نوبت دوم)
+study-mode: evening
 campus-entry: ""
 reference-number: ""

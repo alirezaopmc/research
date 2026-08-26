@@ -107,3 +107,9 @@ Use `{{key}}` placeholders; keys resolve from letter meta (author, research, cor
 Edit `src/lib/design/tokens.typ` for sizes, spacing, form width, logo height.
 
 Typography roles: `src/lib/design/typography.typ` (`text-cover-*`, `text-base-*`, `text-letter-*`).
+
+## Design system
+
+See [proposal-design.md](../../docs/notes/proposal-design.md) for layout rules, table styles, and QA.
+
+**Body table styles:** §2 → `registry`; §3 → `fields`; timeline → `grid`. Shared API in `lib/components/shared/data-table.typ`.
