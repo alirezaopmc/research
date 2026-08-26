@@ -1,8 +1,20 @@
-# Research notes
+# Research Notes & Vault
 
-Markdown vault — papers, scratch notes, no PDFs in git.
+Markdown vault for papers, research strategy, and experiment notes. No PDFs in git.
 
-- Paper scaffold: [`papers/_template.md`](papers/_template.md)
-- Scratch: [`notes/`](notes/)
+## Core Documents
 
-Start a new paper note by copying the template into `papers/<slug>.md`.
+- **Research Strategy & Proposal Plan:** [`notes/research-strategy.md`](notes/research-strategy.md)
+- **Paper Scaffold:** [`papers/_template.md`](papers/_template.md)
+- **Scratch & Notes:** [`notes/`](notes/)
+
+## Priority Papers
+
+| Paper | Topic |
+|:---|:---|
+| [`papers/gemma-scope.md`](papers/gemma-scope.md) | Gemma Scope: Pretrained SAEs (DeepMind 2024) |
+| [`papers/scaling-monosemanticity.md`](papers/scaling-monosemanticity.md) | Scaling Monosemanticity & Steering (Anthropic 2024) |
+| [`papers/geometry-of-truth.md`](papers/geometry-of-truth.md) | The Geometry of Truth (Marks & Tegmark 2023) |
+| [`papers/language-models-know.md`](papers/language-models-know.md) | Language Models (Mostly) Know What They Know (2022) |
+| [`papers/representation-engineering.md`](papers/representation-engineering.md) | Representation Engineering (Zou et al. 2023) |
+| [`papers/sae-survey.md`](papers/sae-survey.md) | A Survey on Sparse Autoencoders (2025) |

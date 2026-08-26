@@ -2,3 +2,6 @@
 
 sandbox/*
 !sandbox/README.md
+
+# Agent skills installed locally (large vendor trees)
+.agents/
