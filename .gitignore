@@ -5,3 +5,5 @@ sandbox/*
 
 # Agent skills installed locally (large vendor trees)
 .agents/
+
+tmp/
