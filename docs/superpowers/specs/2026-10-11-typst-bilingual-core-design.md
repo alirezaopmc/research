@@ -1,8 +1,8 @@
 # Bilingual Typst Core — Architecture Design
 
-**Status:** Design for review
+**Status:** Approved for implementation planning
 **Date:** 2026-10-11
-**Proposed repository:** `alirezaopmc/negaresh` (name not finalized)
+**Proposed repository and package:** `alirezaopmc/dorost` / `dorost`
 
 ## Goal
 
@@ -28,9 +28,11 @@ Typst's template guidance uses a function to wrap the document, and its package 
 - Document setup and overridable page geometry.
 - Typography roles, spacing, color, and layout tokens with sensible defaults.
 - Explicit language, direction, and font configuration for English, Persian, and mixed content.
-- Reusable semantic primitives for headings, paragraphs, lists, tables, links, code, and page furniture.
-- Bidi helpers for inline LTR/RTL spans, URLs, identifiers, and punctuation-sensitive examples.
+- Explicit direction helpers for inline LTR/RTL spans and blocks, especially URLs and identifiers embedded in Persian prose.
 - Optional numeral-formatting helpers; no automatic digit conversion by default.
+- A small showable document wrapper with configurable page, language, direction, font roles, and typography defaults.
+
+Prefer Typst's native headings, paragraphs, lists, tables, links, code, and math. Add wrappers only where they solve a demonstrated bilingual behavior or provide a coherent configurable default; do not mirror built-ins with a second generic component API.
 
 ### Excluded from the core
 
@@ -38,6 +40,7 @@ Typst's template guidance uses a function to wrap the document, and its package 
 - Proposal, weekly-report, course, thesis, or slide content schemas and workflows.
 - Bibliography policy, research-specific sections, and YAML content loading.
 - External assets whose license or provenance is unclear.
+- Semantic aliases for standard Typst elements that add no bilingual or customization value.
 
 Consumer projects may build these concerns on top of the public API without forking the core.
 
@@ -74,7 +77,7 @@ Keep modules cohesive, but do not create a separate file for every token or one-
 
 ## Public API shape
 
-The starter should expose a minimal `#show: document.with(...)` workflow. Configuration should make language, direction, font roles, page settings, and theme overrides visible at the call site. It should not require a fixed title/author model or prescribe sections.
+The starter should expose a minimal `#show: document.with(...)` workflow. Configuration should make language, direction, font roles, page settings, typography/spacing defaults, and a small neutral color palette visible at the call site. It should not require a fixed title/author model or prescribe sections.
 
 The locale model must allow `lang`, `direction`, fonts, and number formatting to be configured independently. Inline helpers must let mixed Persian/English text, code, URLs, punctuation, and math retain their intended direction. English and Persian examples should be complete and independently compilable.
 
@@ -115,26 +118,24 @@ Compile the English, Persian, and mixed-direction fixtures with the minimum and 
 
 Do not extract proposal/report content schemas or promise a complete suite of document-type templates in the first release.
 
-## Repository name candidates
+## Name
 
-The repository owner is confirmed as `alirezaopmc`. Candidate names are use-case-neutral; final GitHub and Typst Universe slug availability must be checked before creation.
+The project name is **Dorost** (`درست`), transliterated as the universal slug `dorost`. Use the same slug for the GitHub repository (`alirezaopmc/dorost`) and Typst package (`@preview/dorost`) to keep discovery, installation, and documentation consistent. Confirm availability before creating either. The name is use-case-neutral and reflects correctness and sound composition without tying the project to a university, proposal, or document category.
 
-| Name | Association | Assessment |
-| --- | --- | --- |
-| **Negaresh** (`نگارش`) | Writing, composition | Recommended: describes document craft without naming a language or document type. |
-| **Dabireh** (`دبیره`) | Script, writing system | Distinctive and culturally rooted; pronunciation may be less obvious to English speakers. |
-| **Ravesh** (`روش`) | Method, approach | Clear conceptually; spelling/transliteration may be less distinctive. |
-| **Dastur** (`دستور`) | Rule, form, or style | Short and memorable; can suggest command/instruction in English. |
-| **Ghalam** (`قلم`) | Pen, writing | Friendly and broad; less directly signals typesetting. |
-| **Hamzaban** (`هم‌زبان`) | Shared language | Strong bilingual cue; more feature-specific than the other names. |
+Typst package guidance discourages including `typst` in package names as redundant, so `dorost` also fits the ecosystem convention. [Package naming rules](https://github.com/typst/packages/blob/main/docs/manifest.md).
 
-`negaresh` is the proposed working slug, not a final selection. Avoid `typst` in the package name; Typst's registry treats it as redundant and applies additional naming rules. [Package naming rules](https://github.com/typst/packages/blob/main/docs/manifest.md).
+## Source audit and reference lessons
+
+- `proposal/src/lib/locale.typ` and the proposal's shared helpers contain the strongest Persian candidates: explicit RTL document setup, Persian digit mapping, and LTR value isolation. Extract the digit mapping as opt-in formatting and direction isolation as explicit helpers; do not carry over the heuristic `ltr-value` that combines regex guessing, direction, and numeral conversion.
+- `reports/src/lib/design/{tokens,layout}.typ` provide a useful token ownership pattern, but their fixed English defaults and report-specific page chrome are consumer policy, not shared defaults.
+- Proposal labels, YAML loading, university marks, forms, footnotes, and report sections remain in their source projects. They have no place in Dorost's core API.
+- `aputir/course-materials` is a reference for one shared theme, semantic mixed-script helpers, font provenance, and recorded rendering checks. Its course configuration, institutional identity, document workflows, and editorial defaults are intentionally excluded.
+- The current proposal refers to XB Niloofar but does not establish redistribution rights. Do not copy it. Evaluate OFL-licensed Vazirmatn and other clearly licensed fonts with a per-file provenance record before bundling anything.
 
 ## Decisions for review
 
-1. Approve or revise the package boundary and extraction phases.
-2. Select the repository/package name after checking slug availability; `Negaresh` is the recommendation.
-3. Approve the proposed license model before any font assets or starter files are published.
-4. Set the minimum Typst version based on the API and path/resource behavior selected in the API phase.
+1. Use `dorost` for the repository and package; check slug availability before creation.
+2. Confirm the proposed code/template license split before publishing the package.
+3. Set the minimum Typst version from the implemented API and verified build matrix; local baseline is Typst 0.15.1.
 
 No extraction has started. The existing uncommitted changes in the research repository are outside this design and must remain untouched.
