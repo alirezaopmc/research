@@ -1,19 +1,19 @@
 entries:
   - >-
-    Bricken, T., et al. (2023). Towards Monosemanticity: Decomposing Language
-    Models With Dictionary Learning. Anthropic.
+    Liang, P., et al. (2022). Holistic Evaluation of Language Models.
+    arXiv:2211.09110.
   - >-
-    Gao, L., et al. (2024). Scaling and Evaluating Sparse Autoencoders.
-    arXiv:2406.04093.
+    Perez, E., et al. (2022). Discovering Language Model Behaviors with
+    Model-Written Evaluations. arXiv:2212.09251.
   - >-
-    Burns, C., et al. (2022). Discovering Latent Knowledge in the Behavior of
-    Large Language Models Without Supervision. NeurIPS.
+    Weidinger, L., et al. (2021). Ethical and Social Risks of Harm from
+    Language Models. arXiv:2112.04359.
   - >-
-    Kadavath, S., et al. (2022). Language Models (Mostly) Know What They Know.
-    arXiv:2207.05221.
+    Zou, A., et al. (2023). Representation Engineering: A Top-Down Approach to
+    AI Transparency. arXiv:2310.01405.
   - >-
-    Ji, Z., et al. (2023). Survey of Hallucination in Natural Language
-    Generation. ACM Computing Surveys.
+    Kadavath, S., et al. (2022). Language Models (Mostly) Know What They
+    Know. arXiv:2207.05221.
   - >-
-    Templeton, A., et al. (2024). Scaling Monosemanticity: Extracting
-    Interpretable Features from Claude 3 Sonnet. Anthropic.
+    Bommasani, R., et al. (2021). On the Opportunities and Risks of Foundation
+    Models. arXiv:2108.07258.

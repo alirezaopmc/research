@@ -1,8 +1,6 @@
 title-fa: >-
-  تفسیرپذیری سیگنال‌های آگاهی از دانش در مدل‌های زبانی بزرگ:
-  تحلیل، تشخیص و کاهش توهم با ویژگی‌های خودرمزنگار پراکنده
+  توصیف و هدایت رفتار مدل‌های زبانی بزرگ در زمینه‌های گوناگون
 title-en: >-
-  Interpretability of Internal Knowledge-Awareness Signals in Large Language
-  Models: Analysis, Detection, and Mitigation of Hallucination Using Sparse
-  Autoencoder Features
+  Characterizing and Steering the Behavior of Large Language Models Across
+  Contexts
 thesis-type: fundamental

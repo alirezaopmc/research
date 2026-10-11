@@ -2,9 +2,10 @@
 
 ## Core Thesis
 
-- **Title:** *Interpretability of Internal Knowledge-Awareness Signals in Large Language Models: Analysis, Detection, and Mitigation of Hallucination Using Sparse Autoencoder (SAE) Features*
+- **Title:** *Characterizing and Steering the Behavior of Large Language Models Across Contexts* (توصیف و هدایت رفتار مدل‌های زبانی بزرگ در زمینه‌های گوناگون)
 - **Discipline:** M.Sc. Algorithms & Computation, University of Tehran
-- **Core Hypothesis:** Mid-layer activations decomposed via Sparse Autoencoders (SAEs) isolate monosemantic epistemic confidence signals, enabling pre-generation hallucination detection and lightweight intervention under constrained compute ($\le 1\times$ GPU / Colab T4).
+- **Research scope:** Study how LLM behavior varies across tasks and contexts; characterize and detect selected behaviors, including bias, uncertainty, and factual inconsistency; and evaluate interventions that steer model outputs.
+- **Current research direction:** Test whether interpretable features from pretrained Sparse Autoencoders (SAEs) help detect factual errors and support lightweight interventions under a constrained compute budget (one GPU / Colab T4). This is an initial case study within the broader topic.
 
 ---
 

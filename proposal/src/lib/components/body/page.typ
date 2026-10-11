@@ -23,6 +23,7 @@
       #body-supervisors-table(labels, meta)
       #v(space-lg)
       #body-student-info(labels, meta)
+      #pagebreak()
       #v(space-lg)
       #body-topic-section(labels, meta)
       #body-methodology-section(labels, meta)

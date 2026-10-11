@@ -39,7 +39,7 @@ Cover page has no running header/footer. Letter pages use `apply-page-chrome` vi
 
 - **Header:** left-aligned title (`shared/labels/common.yaml` → `page-header-title`) + horizontal rule
 - **Footer:** page number + horizontal rule
-- **Footnotes:** numbered listing above footer (Typst default); styled via `footnote.entry`
+- **Footnotes:** Persian-numbered markers and a numbered listing above the footer; styled via `footnote.entry`.
 
 Edit title in `src/content/fa/shared/labels/common.yaml`. Tune spacing in `src/lib/design/tokens.typ` (`size-page-*`, `space-*-page`).
 

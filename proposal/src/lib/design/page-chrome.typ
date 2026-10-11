@@ -39,6 +39,7 @@
 }
 
 #let apply-page-chrome(title) = {
+  set footnote(numbering: "۱")
   set page(
     header: page-header-block(title),
     header-ascent: header-ascent-page,
