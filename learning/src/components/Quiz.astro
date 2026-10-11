@@ -1,0 +1,64 @@
+---
+type Quiz = {
+	prompt: string;
+	options: {
+		label: string;
+		correct: boolean;
+		explanation: string;
+	}[];
+};
+
+interface Props {
+	quiz: Quiz;
+	id: string;
+}
+
+const { quiz, id } = Astro.props;
+const correctIndex = quiz.options.findIndex((option) => option.correct);
+---
+
+<div class="quiz" x-data={`quiz('${id}', ${correctIndex})`}>
+	<div class="quiz__eyebrow">Active recall · one checkpoint</div>
+	<p class="quiz__prompt">{quiz.prompt}</p>
+	<div class="quiz__options">
+		{quiz.options.map((option, index) => (
+				<button
+					class="quiz__option"
+					type="button"
+					:aria-pressed={`selected === ${index}`}
+					:class={`{ 'is-selected': selected === ${index}, 'is-correct': submitted && ${index} === correctIndex, 'is-wrong': submitted && selected === ${index} && ${index} !== correctIndex }`}
+					@click={`choose(${index})`}
+				>
+					<span class="quiz__letter">{String.fromCharCode(65 + index)}</span>
+					<span>{option.label}</span>
+				</button>
+			))}
+	</div>
+	<div class="quiz__actions">
+		<button
+			class="button button--small"
+			type="button"
+			@click="submit()"
+			:disabled="selected === null || submitted"
+		>
+			<span :hidden="submitted">Check answer</span>
+			<span :hidden="!submitted">Checked</span>
+		</button>
+		<button class="text-button" type="button" :hidden="!submitted" @click="retry()">
+			Try again
+		</button>
+	</div>
+	<div class="quiz__feedback" :class={`{ 'is-active': submitted }`} aria-live="polite">
+		<div class="quiz__feedback-head">
+			<strong x-text="selected === correctIndex ? 'Correct read' : 'Keep the distinction in view'">
+				Correct read
+			</strong>
+			<span x-text="selected === correctIndex ? '✓' : '↺'" aria-hidden="true">✓</span>
+		</div>
+		{quiz.options.map((option, index) => (
+				<p>
+					<strong>{index === correctIndex ? 'Good read.' : 'Not quite.'}</strong> {option.explanation}
+				</p>
+			))}
+	</div>
+</div>

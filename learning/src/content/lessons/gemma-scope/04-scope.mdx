@@ -1,0 +1,37 @@
+---
+paperSlug: gemma-scope
+id: scope
+order: 4
+number: "04"
+kicker: "Scale"
+title: "Coverage is the contribution"
+summary: "The suite spans residual stream, MLP output, and attention output sites. That coverage matters because circuits cross sub-layers and layers."
+idea: "Residual-stream SAEs observe the communication bottleneck between blocks. MLP and attention SAEs isolate additions made by particular sub-systems. The same concept may look different depending on where you measure it."
+bullets:
+  - "The 2B and 9B base suites cover all layers at selected widths; 27B coverage is selective."
+  - "Most SAEs use 4–16B training tokens; the widest configurations use the largest data budgets."
+  - "Training infrastructure was enormous, but using released weights is an inference-scale problem instead of an SAE-pretraining problem."
+cues:
+  remember: "Where you measure changes what a feature can mean."
+  test: "Why might the same concept look different in attention and residual output?"
+  do: "Choose one site and one layer before choosing a feature."
+callout: "For a first experiment, choose one model, one site, one layer, and one canonical SAE before exploring the full matrix."
+source:
+  label: "Gemma Scope · §3 Training details"
+  url: "https://arxiv.org/html/2408.05147#S3"
+quiz:
+  prompt: "Why is site selection scientifically important?"
+  options:
+    - label: "Different sites expose different parts of the computation"
+      correct: true
+      explanation: "Correct. An MLP output, attention output, and residual stream have different causal roles."
+    - label: "Only residual-stream SAEs can ever be loaded"
+      correct: false
+      explanation: "The release includes attention and MLP sites as well."
+    - label: "Site selection only changes the page’s visual layout"
+      correct: false
+      explanation: "It changes the activation distribution, reconstruction behavior, and interpretation."
+---
+
+The coverage matrix is a scientific choice. A result at one hook point is not
+automatically a result about the whole model.

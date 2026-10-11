@@ -1,0 +1,37 @@
+---
+paperSlug: gemma-scope
+id: related
+order: 6
+number: "06"
+kicker: "Connect the dots"
+title: "From dictionary learning to truth monitoring"
+summary: "The thesis question sits at the intersection of several lines of work: scalable SAEs, linear truth representations, calibration, and activation steering."
+idea: "Gemma Scope supplies the microscope. Geometry of Truth supplies a raw hidden-state probing baseline. Language Models (Mostly) Know What They Know frames internal calibration. Scaling Monosemanticity and Representation Engineering motivate feature-level interpretation and intervention."
+bullets:
+  - "Compare raw-state probes against SAE-feature probes rather than assuming the SAE is automatically better."
+  - "Use diverse truth/falsehood data: negations and topic shifts help expose spurious correlations."
+  - "Treat steering as a causal follow-up after detection is stable; a predictive feature is not automatically a safe intervention."
+cues:
+  remember: "The thesis claim must be comparative and compute-aware."
+  test: "What baseline isolates the value of SAE decomposition?"
+  do: "Write the raw-state baseline next to every SAE-feature result."
+callout: "The defensible thesis claim is comparative: does SAE decomposition improve a defined detector under a defined compute budget?"
+source:
+  label: "Research strategy and related paper notes"
+  url: "https://arxiv.org/abs/2310.06824"
+quiz:
+  prompt: "What is the fairest first baseline for an SAE-feature detector?"
+  options:
+    - label: "A probe on the same layer’s raw hidden state"
+      correct: true
+      explanation: "Correct. It tests whether the decomposition adds value beyond a simple internal representation baseline."
+    - label: "A larger proprietary model with more parameters"
+      correct: false
+      explanation: "That changes too many variables and does not isolate the value of SAE features."
+    - label: "A human rating with no fixed evaluation set"
+      correct: false
+      explanation: "Human inspection can complement the experiment, but it is not a controlled detector baseline."
+---
+
+The surrounding literature turns a compelling interpretability story into a
+set of comparisons, controls, and falsifiable questions.

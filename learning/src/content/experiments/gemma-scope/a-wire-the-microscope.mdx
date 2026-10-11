@@ -1,0 +1,168 @@
+---
+paperSlug: gemma-scope
+slug: a-wire-the-microscope
+number: "A"
+title: "Wire the microscope"
+purpose: "Prove the model, hook, SAE, device, dtype, and tensor shapes agree before collecting results."
+status: ready
+estimatedTime: "45–90 minutes"
+compute: "CPU first; then a tiny CUDA slice on a Colab T4 or equivalent"
+prerequisites:
+  - "Read the Gemma Scope lesson through the JumpReLU and evaluation chapters."
+  - "Create a fresh Colab runtime and accept the Gemma model license with a Hugging Face token."
+  - "Choose one model, one layer, one site, one SAE width, one dtype, and one seed."
+resources:
+  - label: "SAELens usage"
+    url: "https://decoderesearch.github.io/SAELens/latest/usage/"
+  - label: "Gemma Scope 2B residual SAE card"
+    url: "https://huggingface.co/google/gemma-scope-2b-pt-res"
+  - label: "Original Gemma Scope paper"
+    url: "https://arxiv.org/abs/2408.05147"
+stopConditions:
+  - "Stop at a model/SAE hook or hidden-size mismatch."
+  - "Stop if reconstruction, activation norms, or mean L0 are implausible and unexplained."
+  - "Stop if the GPU run exceeds the memory budget; shrink the sample before changing the experiment."
+artifacts:
+  - "A printed configuration block with model, SAE release, SAE ID, layer, site, dtype, device, seed, and sample size."
+  - "One compact metrics record containing tensor shapes, activation norms, mean L0, reconstruction error, runtime, and peak memory."
+  - "An AGENT_LOG.md entry under sandbox/gemma-scope-wire-the-microscope/."
+nextSlug: b-find-features
+---
+
+## Outcome
+
+At the end of this gate you should be able to explain the complete path for
+one short prompt:
+
+```text
+tokens → Gemma 2 activation → SAE encode → sparse features → SAE decode
+```
+
+Do not optimize the notebook yet. The goal is a trustworthy invariant check,
+not a benchmark.
+
+## Colab setup
+
+1. Start with a clean Python runtime. Record the runtime type, Python version,
+   PyTorch version, GPU name, and available memory.
+2. Install the smallest dependency set that supports your chosen path:
+   `sae-lens`, `transformer-lens`, `transformers`, `torch`, and a tokenizer
+   dependency if your model wrapper requires it.
+3. Authenticate with Hugging Face only through Colab secrets. Never paste a
+   token into a committed cell or an `AGENT_LOG.md` file.
+4. Set a deterministic seed and define configuration variables at the top of
+   the notebook:
+
+```python
+MODEL_NAME = "google/gemma-2-2b"
+SAE_RELEASE = "gemma-scope-2b-pt-res-canonical"
+SAE_ID = "layer_12/width_16k/canonical"
+LAYER = 12
+SITE = "residual"
+DTYPE = "bfloat16"
+PROMPTS = ["The capital of France is"]
+SEED = 0
+```
+
+Confirm the exact model identifier and SAE hook mapping from the current
+library documentation before running. Treat configuration as data so another
+agent can reproduce the run.
+
+## Cell-by-cell scaffold
+
+### Cell 1 — environment and memory
+
+Print the runtime, device, dtype, and GPU memory before loading anything.
+Keep a small helper that records allocated and reserved CUDA memory around each
+major operation.
+
+### Cell 2 — model and tokenizer
+
+Load the 2B model in inference mode with the selected dtype. Tokenize one
+short prompt and print the token IDs, decoded tokens, batch shape, and device.
+Do not generate long text in this gate.
+
+### Cell 3 — SAE
+
+Load the canonical residual-stream SAE with `SAE.from_pretrained`. Print its
+release, SAE ID, hook name, input dimension, feature width, threshold
+configuration, and device.
+
+The canonical variant is a starting point, not a universal best choice. Keep
+the release and ID in the output.
+
+### Cell 4 — activation capture
+
+Run one forward pass while capturing the activation at the SAE hook. Record
+the shape and dtype. Check that the final activation dimension equals the SAE
+input dimension.
+
+Pseudocode:
+
+```python
+with torch.inference_mode():
+    logits, cache = run_model_with_cache(model, tokens, hook_name=sae.cfg.metadata.hook_name)
+    activations = cache[sae.cfg.metadata.hook_name]
+assert activations.shape[-1] == sae.cfg.d_in
+```
+
+Use the wrapper’s documented hook API. If the selected model wrapper exposes a
+different hook name, resolve that mismatch explicitly rather than slicing the
+tensor until it fits.
+
+### Cell 5 — encode and decode
+
+Call `sae.encode(activations)` and `sae.decode(features)`. Record feature shape,
+mean L0, activation norm, reconstruction norm, mean squared reconstruction
+error, and relative reconstruction error.
+
+```python
+features = sae.encode(activations)
+reconstruction = sae.decode(features)
+mean_l0 = (features > 0).float().sum(dim=-1).mean().item()
+relative_error = (activations - reconstruction).norm() / activations.norm()
+```
+
+The exact sparsity behavior depends on the JumpReLU implementation and the
+library version; use the library’s documented active-feature convention when
+computing L0.
+
+### Cell 6 — tiny GPU repeat
+
+Only after CPU shape checks pass, move the same short prompt and SAE to the
+GPU. Repeat the measurements with a tiny batch. Compare CPU and GPU values
+within a reasonable floating-point tolerance and record wall-clock time.
+
+## Invariant checklist
+
+- Model hidden size equals SAE input dimension.
+- Captured hook corresponds to the configured layer and site.
+- Features have shape `[..., d_sae]`; the width is not mistaken for the model
+  hidden size.
+- Reconstruction has the same shape as the captured activation.
+- Mean L0 is finite, nonzero for ordinary text, and consistent with the
+  selected canonical SAE.
+- Relative reconstruction error is finite and recorded, not hidden behind a
+  single rounded score.
+- CPU and GPU runs use the same prompt, layer, SAE ID, dtype, and seed.
+- Peak memory and runtime are recorded before scaling the sample.
+
+## Failure modes
+
+- **Hook mismatch:** verify the model wrapper and SAE metadata; do not rename a
+  hook by guesswork.
+- **Out-of-memory:** reduce batch and sequence length first. Do not switch to
+  4-bit quantization without recording that the representation path changed.
+- **All-zero features:** inspect input scale, dtype, device, and threshold
+  behavior before interpreting the result as a dead SAE.
+- **Large reconstruction error:** check site/layer/SAE compatibility, then
+  check whether the model wrapper applies normalization expected by the SAE.
+- **Different CPU/GPU results:** compare dtype and inference mode before
+  changing seeds or tolerances.
+
+## Handoff
+
+Write the compact metrics record and a one-paragraph interpretation to
+`sandbox/gemma-scope-wire-the-microscope/AGENT_LOG.md`. The next gate is ready
+only when another agent can load the same configuration and reproduce the
+shape and reconstruction checks.

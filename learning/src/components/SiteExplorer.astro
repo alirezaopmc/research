@@ -1,0 +1,72 @@
+<section class="site-explorer" x-data="siteExplorer()">
+	<div class="site-explorer__head">
+		<div>
+			<div class="eyebrow">Choose your lens</div>
+			<h3>Where do you measure?</h3>
+		</div>
+		<span class="micro-label">Gemma 2 block</span>
+	</div>
+	<div class="site-explorer__diagram" aria-hidden="true">
+		<div class="diagram-node diagram-node--input">residual in</div>
+		<div class="diagram-line"></div>
+		<div class="diagram-node" :class="{ 'is-active': selected === 'attention' }">attention</div>
+		<div class="diagram-line"></div>
+		<div class="diagram-node" :class="{ 'is-active': selected === 'mlp' }">MLP</div>
+		<div class="diagram-line"></div>
+		<div class="diagram-node" :class="{ 'is-active': selected === 'residual' }">residual out</div>
+	</div>
+	<div class="site-explorer__tabs" role="tablist" aria-label="Activation sites">
+		<button
+			id="site-tab-residual"
+			type="button"
+			role="tab"
+			:aria-selected="selected === 'residual'"
+			:aria-controls="'site-panel'"
+			:tabindex="selected === 'residual' ? 0 : -1"
+			:class="{ 'is-active': selected === 'residual' }"
+			@click="focusTab('residual')"
+			@keydown.arrow-right.prevent="focusTab('mlp')"
+			@keydown.arrow-left.prevent="focusTab('attention')"
+		>
+			Residual
+		</button>
+		<button
+			id="site-tab-mlp"
+			type="button"
+			role="tab"
+			:aria-selected="selected === 'mlp'"
+			:aria-controls="'site-panel'"
+			:tabindex="selected === 'mlp' ? 0 : -1"
+			:class="{ 'is-active': selected === 'mlp' }"
+			@click="focusTab('mlp')"
+			@keydown.arrow-right.prevent="focusTab('attention')"
+			@keydown.arrow-left.prevent="focusTab('residual')"
+		>
+			MLP output
+		</button>
+		<button
+			id="site-tab-attention"
+			type="button"
+			role="tab"
+			:aria-selected="selected === 'attention'"
+			:aria-controls="'site-panel'"
+			:tabindex="selected === 'attention' ? 0 : -1"
+			:class="{ 'is-active': selected === 'attention' }"
+			@click="focusTab('attention')"
+			@keydown.arrow-right.prevent="focusTab('residual')"
+			@keydown.arrow-left.prevent="focusTab('mlp')"
+		>
+			Attention
+		</button>
+	</div>
+	<div
+		id="site-panel"
+		class="site-explorer__copy"
+		role="tabpanel"
+		aria-live="polite"
+		:aria-labelledby="'site-tab-' + selected"
+	>
+		<strong x-text="sites[selected].short">The communication bottleneck</strong>
+		<p x-text="sites[selected].body">A full representation passed between transformer blocks.</p>
+	</div>
+</section>

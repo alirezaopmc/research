@@ -1,0 +1,38 @@
+---
+paperSlug: gemma-scope
+id: evaluation
+order: 5
+number: "05"
+kicker: "Read the evidence"
+title: "Fidelity is not interpretability"
+summary: "Gemma Scope evaluates reconstruction and downstream loss, while noting that no single metric captures whether latents are useful or “true.”"
+idea: "FVU asks how much activation variance the SAE leaves unexplained. Delta LM loss asks how much the language model suffers when the SAE reconstruction is spliced into the forward pass. Neither metric proves a latent is a clean concept."
+bullets:
+  - "Residual-stream SAEs can have higher delta loss because the residual is the bottleneck for later computation."
+  - "Wider SAEs improve the sparsity-fidelity frontier but can split existing features into more specialized latents."
+  - "Base-model SAEs transfer reasonably to instruction-tuned activations in loss terms, but the paper leaves room for more targeted multi-turn evaluation."
+  - "The paper reports negligible impact from switching SAE and LM inference from float32 to bfloat16 in its tested settings."
+cues:
+  remember: "Faithful reconstruction is necessary evidence, not proof of interpretability."
+  test: "Which metric asks about x̂, and which asks about the model after the splice?"
+  do: "Record FVU and delta loss as separate columns in your experiment log."
+callout: "A good reconstruction is a prerequisite for causal analysis, not a causal analysis."
+source:
+  label: "Gemma Scope · §4 Evaluation"
+  url: "https://arxiv.org/html/2408.05147#S4"
+quiz:
+  prompt: "Which statement best separates FVU and delta LM loss?"
+  options:
+    - label: "FVU measures activation reconstruction; delta loss measures downstream model impact"
+      correct: true
+      explanation: "Correct. They answer related but different questions about an SAE splice."
+    - label: "They are two names for exactly the same metric"
+      correct: false
+      explanation: "FVU is a normalized reconstruction measure; delta loss measures next-token loss change."
+    - label: "Delta loss measures whether humans find a feature interpretable"
+      correct: false
+      explanation: "Interpretability was assessed separately through human and automated studies."
+---
+
+Metrics tell us which part of the instrument is behaving. They do not remove
+the need for causal or task-level validation.

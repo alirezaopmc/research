@@ -1,0 +1,37 @@
+---
+paperSlug: gemma-scope
+id: orientation
+order: 1
+number: "01"
+kicker: "Start here"
+title: "The microscope, not the diagnosis"
+summary: "Gemma Scope gives us a reusable dictionary of internal directions. It does not by itself prove that a feature means truth, confidence, or hallucination."
+idea: "Think of a model activation as a crowded mixture. An SAE tries to express that mixture as a short weighted combination of learned directions. Gemma Scope releases those dictionaries so the next experiment can begin at inference time."
+bullets:
+  - "The release covers every layer and several sub-layer sites for Gemma 2 2B and 9B, plus selected sites for 27B base models."
+  - "The main release contains more than 400 SAEs, with multiple sparsity settings bringing the total above 2,000."
+  - "The paper’s promise is enabling research; downstream claims still need task-specific validation and causal tests."
+cues:
+  remember: "Gemma Scope is an instrument library, not a truth detector."
+  test: "Can you name one claim the release enables but does not prove?"
+  do: "Open one released SAE before reading another result."
+callout: "Research posture: use the SAE as an instrument, then calibrate the instrument."
+source:
+  label: "Gemma Scope · abstract and introduction"
+  url: "https://arxiv.org/html/2408.05147#S1"
+quiz:
+  prompt: "What does Gemma Scope contribute most directly?"
+  options:
+    - label: "A pretrained library of SAE dictionaries for Gemma 2"
+      correct: true
+      explanation: "Correct. It lowers the cost of inspecting activations; it does not solve a downstream task automatically."
+    - label: "A classifier that detects every hallucination"
+      correct: false
+      explanation: "That is a possible research application, not a result delivered by the release."
+    - label: "A new Gemma language model checkpoint"
+      correct: false
+      explanation: "Gemma Scope analyzes Gemma 2; it is a suite of sparse autoencoders and tooling."
+---
+
+The first discipline is epistemic: a released dictionary makes inspection
+cheaper, not conclusions automatic.

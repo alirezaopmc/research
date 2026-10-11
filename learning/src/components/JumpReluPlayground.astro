@@ -1,0 +1,66 @@
+<section class="playground" x-data="jumpRelu()">
+	<div class="playground__head">
+		<div>
+			<div class="eyebrow">Interactive instrument</div>
+			<h3>Raise the gate, keep the signal</h3>
+		</div>
+		<div class="metric">
+			<span class="metric__value" x-text="activeCount">6</span>
+			<span class="metric__label">active latents</span>
+		</div>
+	</div>
+	<p class="playground__copy">
+		Each bar is a latent pre-activation. JumpReLU keeps a value only when it clears the learned
+		threshold θ.
+	</p>
+	<div class="playground__chart">
+		<div class="axis-label axis-label--top">strong</div>
+		<div class="threshold-line" :style="'bottom: calc(0.2rem + ' + (threshold * 100) + '%)'">
+			<span>θ</span>
+		</div>
+		<div class="bars">
+			<template x-for="(value, index) in values" :key="index">
+				<div class="bar-wrap">
+					<div
+						class="bar"
+						:class="{ 'is-muted': !isActive(value) }"
+						:style="'height: ' + (value * 100) + '%'"
+						:title="'Latent ' + (index + 1) + ': ' + value.toFixed(2)"
+					>
+						<span
+							class="sr-only"
+							x-text="'Latent ' + (index + 1) + ', value ' + value.toFixed(2)"
+						></span>
+					</div>
+					<span class="bar-index" x-text="index + 1">1</span>
+				</div>
+			</template>
+		</div>
+		<div class="axis-label axis-label--bottom">weak</div>
+	</div>
+	<fieldset class="playground__legend">
+		<legend class="sr-only">Chart legend</legend>
+		<span><i class="legend-swatch legend-swatch--active" aria-hidden="true"></i>active</span>
+		<span><i class="legend-swatch legend-swatch--muted" aria-hidden="true"></i>gated</span>
+		<span><i class="legend-rule" aria-hidden="true"></i>threshold</span>
+	</fieldset>
+	<label class="range-label" for="threshold">
+		<span>Threshold θ</span>
+		<output x-text="threshold.toFixed(2)" for="threshold">0.35</output>
+	</label>
+	<input
+		id="threshold"
+		class="range"
+		type="range"
+		min="0.05"
+		max="0.95"
+		step="0.01"
+		x-model.number="threshold"
+	>
+	<p class="playground__status" aria-live="polite">
+		<span x-text="activeCount">6</span>
+		active ·
+		<span x-text="values.length - activeCount">2</span>
+		gated. The surviving magnitudes stay the same.
+	</p>
+</section>

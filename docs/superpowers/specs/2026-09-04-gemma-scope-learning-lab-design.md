@@ -66,9 +66,14 @@ The memorable interaction is the JumpReLU threshold playground: changing a thres
 ## Interaction and accessibility
 
 - Sticky chapter navigation with current section and completion state.
+- A live study bar keeps the current chapter, progress, and next move visible while reading.
 - Lesson cards with one concept, one visual/equation, one implication, and one recall check.
+- Each lesson closes with a compact Remember / Test yourself / Do next cue trio.
+- Subtle scroll reveals and state transitions reinforce sequence without hiding content from no-JS users.
 - Threshold slider with a text-equivalent live explanation.
+- JumpReLU visual includes an explicit threshold marker plus active/gated counts.
 - Transformer-site selector for attention, MLP, and residual stream.
+- Site tabs use selected state, panel relationships, and arrow-key navigation.
 - Inline fidelity/sparsity visual that distinguishes FVU from downstream delta LM loss.
 - Quiz feedback with retry and persisted answers.
 - Keyboard operation for every control, visible focus, semantic landmarks, labels, and no hover-only meaning.

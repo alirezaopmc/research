@@ -1,0 +1,138 @@
+---
+import type { CollectionEntry } from "astro:content";
+import type { AstroComponentFactory } from "astro/runtime/server/index.js";
+import JumpReluPlayground from "./JumpReluPlayground.astro";
+import Quiz from "./Quiz.astro";
+import SiteExplorer from "./SiteExplorer.astro";
+
+interface Props {
+	lesson: CollectionEntry<"lessons">;
+	Content: AstroComponentFactory;
+}
+
+const { lesson, Content } = Astro.props;
+const { data } = lesson;
+---
+
+<article class="lesson" id={data.id} data-reveal="lesson" data-section-index={data.order - 1}>
+	<div class="lesson__number">{data.number}</div>
+	<div class="lesson__body">
+		<div class="lesson__heading">
+			<div>
+				<p class="eyebrow">{data.kicker}</p>
+				<h2>{data.title}</h2>
+			</div>
+			<button
+				class="complete-toggle"
+				type="button"
+				:class={`{ 'is-complete': isComplete('${data.id}') }`}
+				:aria-pressed={`isComplete('${data.id}')`}
+				@click={`toggleComplete('${data.id}')`}
+			>
+				<span class="complete-toggle__icon" aria-hidden="true">✓</span>
+				<span x-text={`isComplete('${data.id}') ? 'Completed' : 'Mark complete'`}
+					>Mark complete</span
+				>
+			</button>
+		</div>
+		<p class="lesson__summary">{data.summary}</p>
+		<div class="lesson__grid">
+			<div>
+				<p class="lesson__idea">{data.idea}</p>
+				<ul class="lesson__bullets">
+					{data.bullets.map((bullet) => <li>{bullet}</li>)}
+				</ul>
+				<aside class="lesson__cues" aria-label="Learning cues">
+					<div class="cue cue--remember">
+						<span>Remember</span>
+						<p>{data.cues.remember}</p>
+					</div>
+					<div class="cue cue--test">
+						<span>Test yourself</span>
+						<p>{data.cues.test}</p>
+					</div>
+					<div class="cue cue--do">
+						<span>Do next</span>
+						<p>{data.cues.do}</p>
+					</div>
+				</aside>
+			</div>
+			<div class="lesson__aside">
+				{data.callout && <p class="callout">{data.callout}</p>}
+				<a class="source-link" href={data.source.url} target="_blank" rel="noreferrer">
+					<span class="source-link__eyebrow">Primary thread</span>
+					<span>{data.source.label} <span aria-hidden="true">↗</span></span>
+				</a>
+			</div>
+		</div>
+		<div class="lesson__content prose">
+			<Content />
+		</div>
+		{data.id === "sae" && (
+				<div class="interactive-wrap">
+					<div class="concept-flow" data-reveal="flow">
+						<div class="concept-flow__head">
+							<div>
+								<div class="eyebrow">The decomposition</div>
+								<h3>One crowded state, four useful moves</h3>
+							</div>
+							<span class="micro-label">A mental model</span>
+						</div>
+						<ol class="concept-flow__track" aria-label="Activation to reconstruction flow">
+							<li class="concept-node concept-node--input">
+								<strong>x</strong>
+								<span>activation</span>
+							</li>
+							<li class="concept-arrow" aria-hidden="true">→</li>
+							<li class="concept-node">
+								<strong>Wenc</strong>
+								<span>propose strengths</span>
+							</li>
+							<li class="concept-arrow" aria-hidden="true">→</li>
+							<li class="concept-node concept-node--sparse">
+								<strong>f(x)</strong>
+								<span>keep a few</span>
+							</li>
+							<li class="concept-arrow" aria-hidden="true">→</li>
+							<li class="concept-node concept-node--output">
+								<strong>x̂</strong>
+								<span>reconstruct</span>
+							</li>
+						</ol>
+						<p class="concept-flow__note">
+							The dictionary is wider than the input. Sparsity is the discipline that keeps the
+							explanation selective.
+						</p>
+					</div>
+				</div>
+			)}
+		{data.id === "jumprelu" && <div class="interactive-wrap"><JumpReluPlayground /></div>}
+		{data.id === "scope" && <div class="interactive-wrap"><SiteExplorer /></div>}
+		{data.id === "evaluation" && (
+				<div class="fidelity-card">
+					<div class="fidelity-card__head">
+						<div>
+							<div class="eyebrow">Two questions, two metrics</div>
+							<h3>Does the reconstruction preserve the model’s work?</h3>
+						</div>
+						<span class="micro-label">Read this before measuring</span>
+					</div>
+					<div class="fidelity-card__columns">
+						<div class="fidelity-card__metric">
+							<span class="metric-tag">FVU</span>
+							<strong>Activation fidelity</strong>
+							<p>How much variance in x̂ remains unexplained by the SAE reconstruction.</p>
+							<div class="metric-line"><span style="width: 72%"></span></div>
+						</div>
+						<div class="fidelity-card__metric">
+							<span class="metric-tag metric-tag--gold">Δ LM loss</span>
+							<strong>Downstream impact</strong>
+							<p>How much next-token loss changes when the reconstruction is spliced into the model.</p>
+							<div class="metric-line metric-line--gold"><span style="width: 38%"></span></div>
+						</div>
+					</div>
+				</div>
+			)}
+		<Quiz quiz={data.quiz} id={`${data.paperSlug}-${data.id}`} />
+	</div>
+</article>

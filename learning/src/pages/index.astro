@@ -1,0 +1,135 @@
+---
+import { getCollection } from "astro:content";
+import ExperimentCard from "../components/ExperimentCard.astro";
+import LearningLayout from "../layouts/LearningLayout.astro";
+import "../styles/global.css";
+
+const papers = await getCollection("papers");
+const experiments = (await getCollection("experiments"))
+	.filter((experiment) => experiment.data.paperSlug === "gemma-scope")
+	.sort((a, b) => a.data.number.localeCompare(b.data.number));
+const gemmaScope = papers.find((paper) => paper.data.slug === "gemma-scope");
+
+if (!gemmaScope) {
+	throw new Error("The Gemma Scope paper entry is missing.");
+}
+
+const paper = gemmaScope.data;
+---
+
+<LearningLayout
+	title="Research learning lab"
+	description="A growing library for mastering papers and turning them into careful experiments."
+>
+	<main id="main">
+		<section class="lobby-hero page-frame" data-reveal="hero">
+			<div class="lobby-hero__copy">
+				<p class="eyebrow">A research learning lab</p>
+				<h1>Read slowly.<br><em>Experiment clearly.</em></h1>
+				<p class="hero__dek">
+					A small library of guided paper journeys, interactive mental models, and reproducible
+					experiment protocols.
+				</p>
+				<div class="hero__actions">
+					<a class="button" href="/papers/gemma-scope/"
+						>Enter the active track <span aria-hidden="true">→</span></a
+					>
+					<a class="text-button text-button--quiet" href="#tracks"
+						>Browse the library <span aria-hidden="true">↓</span></a
+					>
+				</div>
+			</div>
+			<aside class="lobby-hero__signal" aria-label="Learning lab principle">
+				<div class="signal-orbit signal-orbit--outer"></div>
+				<div class="signal-orbit signal-orbit--inner"></div>
+				<div class="signal-core">
+					<span>01</span>
+					<strong>question</strong>
+					<small>before result</small>
+				</div>
+				<p>Every page should make the next honest experiment easier to see.</p>
+			</aside>
+		</section>
+
+		<section class="lobby-strip page-frame" aria-label="Lab principles">
+			<span>Static-first</span>
+			<span>Active recall</span>
+			<span>Colab-ready protocols</span>
+			<span>Compute-aware</span>
+		</section>
+
+		<section class="tracks page-frame" id="tracks" data-reveal="stats">
+			<div class="section-intro">
+				<p class="eyebrow">The library</p>
+				<h2>One live track.<br><em>More to come.</em></h2>
+				<p>
+					Each track starts with a paper, continues through a mental model, and ends with an
+					experiment you can audit.
+				</p>
+			</div>
+			<article class="track-card">
+				<div class="track-card__index">01</div>
+				<div class="track-card__body">
+					<p class="eyebrow">{paper.series}</p>
+					<h3>{paper.title}</h3>
+					<p>{paper.dek}</p>
+					<div class="track-card__stats">
+						{paper.stats.slice(0, 3).map((stat) => (
+							<div>
+								<strong>{stat.value}</strong>
+								<span>{stat.label}</span>
+							</div>
+						))}
+					</div>
+					<a class="text-button" href={`/papers/${paper.slug}/`}
+						>Open the paper journey <span aria-hidden="true">↗</span></a
+					>
+				</div>
+				<div class="track-card__side">
+					<span class="track-card__status"><i></i> Active</span>
+					<span>7 chapters</span>
+					<span>4 experiment gates</span>
+				</div>
+			</article>
+		</section>
+
+		<section
+			class="lobby-runway page-frame"
+			data-reveal="runway"
+			aria-labelledby="lobby-runway-heading"
+		>
+			<div class="section-intro section-intro--row">
+				<div>
+					<p class="eyebrow">From reading to evidence</p>
+					<h2 id="lobby-runway-heading">The experiment runway</h2>
+				</div>
+				<p>Four gates turn a promising idea into a result you can trust on one GPU.</p>
+			</div>
+			<div class="runway-grid">
+				{experiments.map((experiment) => <ExperimentCard experiment={experiment} />)}
+			</div>
+		</section>
+
+		<section class="future-track page-frame" data-reveal="journey">
+			<div>
+				<p class="eyebrow">On the horizon</p>
+				<h2>Gemma Scope 2<br><em>is a different instrument.</em></h2>
+			</div>
+			<div>
+				<p>
+					The later Gemma 3 release adds transcoders and cross-layer tools for tracing multi-step
+					behavior. It belongs in its own track, with its own runtime and claims.
+				</p>
+				<a
+					class="source-link"
+					href="https://deepmind.google/blog/gemma-scope-2-helping-the-ai-safety-community-deepen-understanding-of-complex-language-model-behavior/"
+					target="_blank"
+					rel="noreferrer"
+				>
+					<span class="source-link__eyebrow">Future reading</span>
+					<span>Official Gemma Scope 2 overview <span aria-hidden="true">↗</span></span>
+				</a>
+			</div>
+		</section>
+	</main>
+</LearningLayout>

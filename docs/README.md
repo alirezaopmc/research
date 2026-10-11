@@ -18,3 +18,10 @@ Markdown vault for papers, research strategy, and experiment notes. No PDFs in g
 | [`papers/language-models-know.md`](papers/language-models-know.md) | Language Models (Mostly) Know What They Know (2022) |
 | [`papers/representation-engineering.md`](papers/representation-engineering.md) | Representation Engineering (Zou et al. 2023) |
 | [`papers/sae-survey.md`](papers/sae-survey.md) | A Survey on Sparse Autoencoders (2025) |
+
+## Interactive learning
+
+- [Learning Lab](../learning/) — Astro + Alpine guided lessons, beginning with Gemma Scope.
+- [Learning Lab architecture](../learning/ARCHITECTURE.md) — routes, content collections, components, and state boundaries.
+- [Learning Lab agent instructions](../learning/AGENTS.md) — conventions for extending the app.
+- [Gemma Scope roadmap](notes/gemma-scope-learning-roadmap.md) — experiment gates and future-agent handoff.

@@ -1,0 +1,140 @@
+---
+paperSlug: gemma-scope
+slug: c-fair-comparison
+number: "C"
+title: "Run the fair comparison"
+purpose: "Test whether SAE features add signal beyond a raw hidden-state probe under the same data, split, labels, and evaluation budget."
+status: next
+estimatedTime: "3–6 hours"
+compute: "Small inference dataset plus CPU-friendly linear probes; T4 optional for activation extraction"
+prerequisites:
+  - "Gate A completed and Gate B has a documented candidate-selection rule."
+  - "A small true/false or factuality dataset with topic and negation variation."
+  - "A fixed train/validation/test split and seed written before model fitting."
+resources:
+  - label: "Geometry of Truth"
+    url: "https://arxiv.org/abs/2310.06824"
+  - label: "TruthfulQA"
+    url: "https://github.com/sylinrl/TruthfulQA"
+  - label: "SAEBench"
+    url: "https://arxiv.org/abs/2503.09532"
+stopConditions:
+  - "Stop if raw and SAE examples do not share the same split, labels, or token position."
+  - "Stop if feature selection uses test labels or test activations."
+  - "Stop if you report accuracy without AUROC, AUPR, calibration, and the split definition."
+artifacts:
+  - "A dataset manifest with source, version, labels, split seed, and topic/negation counts."
+  - "Matched raw-state and SAE-feature matrices with shape and normalization records."
+  - "A metrics JSON containing AUROC, AUPR, F1, calibration, runtime, and peak memory."
+  - "A plot or compact summary comparing both baselines on the same test set."
+nextSlug: d-earn-intervention
+---
+
+## Outcome
+
+The question is not whether a probe can predict labels. The question is whether
+the SAE representation adds measurable value beyond a simple probe on the same
+model state.
+
+```text
+same examples + same split + same layer/site
+        ├── raw activation → raw-state probe
+        └── SAE feature    → SAE-feature probe
+```
+
+## Colab setup
+
+Begin with a small, explicit configuration:
+
+```python
+DATASET_NAME = "your-versioned-factuality-slice"
+SPLIT_SEED = 0
+MODEL_NAME = "google/gemma-2-2b"
+LAYER = 12
+SITE = "residual"
+FEATURE_IDS = [...]  # selected without test labels
+PROBE_C = 1.0
+```
+
+Construct examples that vary topic and include negated statements. Keep the
+label definition narrow: for example, whether a given statement is supported
+by the dataset’s reference answer. Do not silently equate factual error,
+uncertainty, refusal, and hallucination.
+
+## Cell-by-cell scaffold
+
+### Cell 1 — freeze the dataset
+
+Load the versioned slice, assign stable IDs, inspect class balance, and create
+train/validation/test splits. Stratify where appropriate, but keep related
+paraphrases or source clusters in one split to prevent leakage.
+
+### Cell 2 — extract paired representations
+
+At the same model site and token position, store:
+
+```text
+raw_activation: [n_examples, d_model]
+sae_features:   [n_examples, d_sae] or [n_examples, k]
+label:           [n_examples]
+example_id
+split
+```
+
+If using the full SAE feature vector is too large, select `k` features using
+training data only. Record `k`, selection statistic, and whether values were
+standardized.
+
+### Cell 3 — fit matched probes
+
+Fit the same lightweight model family and regularization search for both
+representations. Tune hyperparameters on validation only. Keep a constant
+random seed and record preprocessing.
+
+```python
+raw_probe = fit_logistic_probe(raw_train, y_train, validation=raw_valid)
+sae_probe = fit_logistic_probe(sae_train, y_train, validation=sae_valid)
+```
+
+Do not compare a tuned SAE probe to an untuned raw baseline.
+
+### Cell 4 — evaluate once on test
+
+Report AUROC and AUPR for ranking quality, F1 at a declared threshold, and a
+calibration metric such as Brier score or expected calibration error. Include
+confidence intervals or repeated seeds when the slice is large enough. Add
+runtime, peak memory, feature count, and extraction cost.
+
+### Cell 5 — slice the result
+
+Break down performance by topic, negation, answer length, and any other
+pre-registered subgroup. A single aggregate gain can hide a shortcut.
+
+## Checks
+
+- Both probes see exactly the same examples and labels.
+- The raw baseline uses the same layer/site and token-position convention.
+- Feature selection and normalization are fit on train data only.
+- Test labels are read only during final evaluation.
+- Thresholds are selected without test data.
+- Calibration is measured on unseen examples.
+- A null or shuffled-label control is included when practical.
+- Memory and runtime include representation extraction cost, not only probe fit.
+
+## Failure modes
+
+- **SAE wins only on one topic:** treat the result as a shortcut until cross-topic
+  evaluation survives.
+- **Raw baseline is much stronger:** this is a valid result; investigate whether
+  feature truncation or site choice explains it.
+- **Perfect test score:** audit duplicates, paraphrase leakage, label creation,
+  and threshold selection before celebrating.
+- **Poor calibration despite good AUROC:** report both; ranking and usable
+  confidence are different properties.
+
+## Handoff
+
+Save the split manifest, configuration, metrics, and a short interpretation in
+`sandbox/gemma-scope-fair-comparison/AGENT_LOG.md`. Gate D can select
+intervention candidates only from training/validation evidence and must not
+retrofit the feature list to the test result.

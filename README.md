@@ -11,6 +11,21 @@ make -C reports PROJECT=llm_hallucination WEEK=2026-W1   # one weekly report PDF
 
 Requires `typst` (`brew install typst`). Persian proposal needs fonts in `proposal/assets/fonts/` (see `proposal/assets/fonts/README.md`).
 
+## Learning Lab
+
+The interactive paper lessons live in `learning/`.
+
+```sh
+cd learning
+bun install --frozen-lockfile
+bun run dev
+```
+
+The lobby is [Learning Lab](learning/); the active track is [Gemma Scope](learning/papers/gemma-scope/), with active recall, interactive SAE explainers, and four T4-friendly experiment protocols.
+
+Read the learning-app [architecture](learning/ARCHITECTURE.md) and
+[agent instructions](learning/AGENTS.md) before extending the site.
+
 ## Layout
 
 ```text

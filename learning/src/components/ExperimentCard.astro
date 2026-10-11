@@ -1,0 +1,25 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+	experiment: CollectionEntry<"experiments">;
+}
+
+const { experiment } = Astro.props;
+const { data } = experiment;
+const href = `/papers/${data.paperSlug}/experiments/${data.slug}/`;
+---
+
+<a class="runway-card runway-card--link" href={href}>
+	<div class="runway-card__top">
+		<span class="runway-card__number">{data.number}</span>
+		<span class={`micro-label micro-label--${data.status}`}>{data.status}</span>
+	</div>
+	<h3>{data.title}</h3>
+	<p>{data.purpose}</p>
+	<div class="runway-card__meta">
+		<span>{data.estimatedTime}</span>
+		<span>{data.compute}</span>
+	</div>
+	<span class="runway-card__action">Open the protocol <span aria-hidden="true">↗</span></span>
+</a>

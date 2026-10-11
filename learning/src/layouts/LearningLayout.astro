@@ -1,0 +1,56 @@
+---
+interface Props {
+	title: string;
+	description: string;
+	series?: string;
+	homeHref?: string;
+	bodyAttributes?: Record<string, string>;
+}
+
+const {
+	title,
+	description,
+	series = "Research learning lab",
+	homeHref = "/",
+	bodyAttributes = {},
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width">
+		<meta name="theme-color" content="#102a43">
+		<meta name="description" content={description}>
+		<meta name="generator" content={Astro.generator}>
+		<title>{title} · Learning Lab</title>
+	</head>
+	<body {...bodyAttributes}>
+		<script src="../scripts/learning.ts"></script>
+		<a class="skip-link" href="#main">Skip to main content</a>
+		<header class="topbar">
+			<div class="topbar__inner">
+				<a class="brand" href={homeHref} aria-label="Learning Lab home">
+					<span class="brand__mark" aria-hidden="true">∿</span>
+					<span>Learning Lab</span>
+				</a>
+				<div class="topbar__meta">
+					<span class="topbar__series">{series}</span>
+					<slot name="topbar-action" />
+				</div>
+			</div>
+		</header>
+		<slot />
+		<footer class="footer">
+			<div class="page-frame footer__inner">
+				<div>
+					<span class="brand__mark" aria-hidden="true">∿</span>
+					<strong>Learning Lab</strong>
+				</div>
+				<p>Built for slow reading, sharp experiments, and better questions.</p>
+				<a href={homeHref}>Back to the library</a>
+			</div>
+		</footer>
+	</body>
+</html>

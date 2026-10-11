@@ -1,0 +1,64 @@
+---
+import { getCollection, getEntry, render } from "astro:content";
+import ExperimentGuide from "../../../../components/ExperimentGuide.astro";
+import LearningLayout from "../../../../layouts/LearningLayout.astro";
+import "../../../../styles/global.css";
+
+export async function getStaticPaths() {
+	const experiments = await getCollection("experiments");
+	return experiments.map((experiment) => ({
+		params: {
+			paper: experiment.data.paperSlug,
+			experiment: experiment.data.slug,
+		},
+		props: { experimentId: experiment.id },
+	}));
+}
+
+const { experimentId } = Astro.props;
+const experimentEntry = await getEntry("experiments", experimentId);
+
+if (!experimentEntry) {
+	throw new Error(`Unknown experiment: ${experimentId}`);
+}
+
+const paperEntry = await getEntry("papers", experimentEntry.data.paperSlug);
+if (!paperEntry) {
+	throw new Error(`Unknown paper for experiment: ${experimentEntry.data.paperSlug}`);
+}
+
+const experimentEntries = (
+	await getCollection(
+		"experiments",
+		(entry) => entry.data.paperSlug === experimentEntry.data.paperSlug,
+	)
+).sort((a, b) => a.data.number.localeCompare(b.data.number));
+const experimentIndex = experimentEntries.findIndex((entry) => entry.id === experimentEntry.id);
+const previousEntry = experimentEntries[experimentIndex - 1];
+const nextEntry = experimentEntries[experimentIndex + 1];
+const makeNeighbor = (entry: typeof experimentEntry | undefined) =>
+	entry
+		? {
+				title: `Gate ${entry.data.number} · ${entry.data.title}`,
+				href: `/papers/${entry.data.paperSlug}/experiments/${entry.data.slug}/`,
+			}
+		: undefined;
+const { Content } = await render(experimentEntry);
+const { data } = experimentEntry;
+---
+
+<LearningLayout
+	title={`Gate ${data.number} · ${data.title}`}
+	description={data.purpose}
+	series="Experiment runway · Gemma Scope"
+	bodyAttributes={{
+		"x-data": `experimentShell('${data.paperSlug}', '${data.slug}')`,
+	}}
+>
+	<ExperimentGuide
+		experiment={experimentEntry}
+		Content={Content}
+		previous={makeNeighbor(previousEntry)}
+		next={makeNeighbor(nextEntry)}
+	/>
+</LearningLayout>

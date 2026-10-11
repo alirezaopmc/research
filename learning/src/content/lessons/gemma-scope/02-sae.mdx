@@ -1,0 +1,37 @@
+---
+paperSlug: gemma-scope
+id: sae
+order: 2
+number: "02"
+kicker: "Mental model"
+title: "One activation, many candidate features"
+summary: "An SAE expands a d-dimensional activation into M learned latent coefficients, where M is much larger than d, then reconstructs the original activation from only a few active directions."
+idea: "The encoder proposes feature strengths; the decoder is a dictionary of directions. Sparsity makes the explanation selective, while reconstruction fidelity asks whether the selected directions still preserve what the model needs."
+bullets:
+  - "Encoder: f(x) = σ(Wenc x + benc)."
+  - "Decoder: x̂(f) = Wdec f + bdec."
+  - "The decoder columns are the learned latent directions; the active coefficients say which directions are present and by how much."
+cues:
+  remember: "Width gives the dictionary more candidate directions than the activation has dimensions."
+  test: "What does the encoder produce, and what does the decoder store?"
+  do: "Sketch x → f(x) → x̂ before looking at implementation code."
+callout: "The useful tension is not “sparse or accurate”; it is where the Pareto frontier sits for the task you care about."
+source:
+  label: "Gemma Scope · §2.1 Sparse autoencoders"
+  url: "https://arxiv.org/html/2408.05147#S2.SS1"
+quiz:
+  prompt: "Why make the dictionary wider than the activation dimension?"
+  options:
+    - label: "To offer more candidate directions while keeping each input sparse"
+      correct: true
+      explanation: "Correct. Overcompleteness gives the SAE room to represent many features in superposition."
+    - label: "To guarantee every latent is human-interpretable"
+      correct: false
+      explanation: "Width can help fidelity and feature splitting, but interpretability is empirical and incomplete."
+    - label: "To reduce the model’s parameter count"
+      correct: false
+      explanation: "The SAE itself becomes wider; it is an analysis tool, not a compression guarantee."
+---
+
+The dictionary is a coordinate system learned from model activations, not a
+human-authored taxonomy.

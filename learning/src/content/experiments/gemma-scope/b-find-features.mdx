@@ -1,0 +1,142 @@
+---
+paperSlug: gemma-scope
+slug: b-find-features
+number: "B"
+title: "Find features worth testing"
+purpose: "Use activating examples, close counterexamples, and a small ledger to understand candidate features before attaching a semantic label."
+status: next
+estimatedTime: "2–4 hours"
+compute: "Inference-only; reuse the Gate A model and SAE on a small text corpus"
+prerequisites:
+  - "Gate A completed with a reproducible shape and reconstruction record."
+  - "A small, licensed text slice with stable example IDs and source metadata."
+  - "A feature ledger template with space for evidence and uncertainty."
+resources:
+  - label: "Neuronpedia Gemma Scope explorer"
+    url: "https://www.neuronpedia.org/gemma-scope"
+  - label: "Revising and Falsifying Feature Explanations"
+    url: "https://papers.neurips.cc/paper_files/paper/2025/file/5b6ce2529a79862a2d8ac57ac0e01d90-Paper-Conference.pdf"
+  - label: "Automatically Interpreting Millions of Features"
+    url: "https://arxiv.org/html/2410.13928"
+stopConditions:
+  - "Stop when a label is supported by one example, one topic, or one token position."
+  - "Stop if top activations are dominated by formatting, punctuation, or a dataset artifact you have not logged."
+  - "Stop before fitting a detector if the feature ledger cannot distinguish activating from close non-activating examples."
+artifacts:
+  - "A feature ledger for 10–20 candidate features."
+  - "Top, middle, and low activation examples with token positions."
+  - "A short list of coherent, mixed, positional, frequency-driven, and dead-feature cases."
+  - "A reproducible selection query and the dataset slice hash or version."
+nextSlug: c-fair-comparison
+---
+
+## Outcome
+
+This gate turns a latent index into an evidence-backed candidate list. A
+feature may be useful without being monosemantic, and a coherent top-example
+description may still fail on close counterexamples.
+
+## Colab setup
+
+Reuse the exact model, hook, SAE release, SAE ID, dtype, and preprocessing from
+Gate A. Add only:
+
+```python
+MAX_EXAMPLES = 2_000
+TOP_K = 20
+FEATURE_IDS = [ ... ]  # record the selection rule, not only the final IDs
+SAVE_PATH = "feature_ledger.jsonl"
+```
+
+Use stable example IDs and preserve the original text separately from the
+tokenized representation. Never sort examples by a label you plan to evaluate
+later.
+
+## Cell-by-cell scaffold
+
+### Cell 1 — collect activations
+
+Run the validated encoding path over a small corpus in batches. Store only the
+feature activations needed for this gate, plus example ID, token position,
+token text, and activation value. Keep the raw corpus out of git.
+
+### Cell 2 — select candidates
+
+Choose candidate features with an explicit rule: highest global activation
+count, largest mean activation on a pre-registered slice, or a small random
+control set. Do not select only the features that already look like truth
+features.
+
+### Cell 3 — retrieve activation strata
+
+For every candidate feature, retrieve the top `TOP_K` examples and a few
+examples from middle and lower activation quantiles. Show the token position
+and a short context window. Record whether the feature fires at the same
+position across examples.
+
+Pseudocode:
+
+```python
+for feature_id in FEATURE_IDS:
+    values = activation_table[:, :, feature_id]
+    ranked = top_positions(values, k=TOP_K)
+    strata = quantile_sample(values, quantiles=[0.5, 0.8, 0.95])
+    display_contexts(example_ids, tokens, ranked, strata)
+```
+
+### Cell 4 — look for confounds
+
+For each feature, annotate topic, lexical overlap, punctuation, position,
+sequence length, source, and whether the context is a question, answer, or
+instruction. A feature that fires only on a delimiter can be operationally
+interesting but should not be named after the surrounding concept.
+
+### Cell 5 — construct close counterexamples
+
+Use the top activating contexts to find semantically similar contexts that do
+not activate the feature. Sentence embeddings or a simple lexical retrieval
+method can produce candidates; manually verify that the pairs are meaningfully
+close. This specifically tests precision rather than rewarding broad recall.
+
+### Cell 6 — write the ledger
+
+For every feature, record:
+
+```text
+feature_id
+selection_rule
+top_examples
+middle_examples
+close_nonactivating_examples
+common_token_positions
+topic_and_lexical_confounds
+provisional_description
+confidence: low | medium | high
+next_test
+```
+
+## Checks
+
+- The top examples are not all duplicates or near-duplicates.
+- Candidate selection was independent of the held-out labels for Gate C.
+- Every provisional description has at least one counterexample search.
+- Position and formatting effects are visible in the ledger.
+- The feature is compared with at least one random or frequency-matched control.
+- The original activation values remain available for later reproducibility.
+
+## Failure modes
+
+- **Feature looks coherent only at the top:** inspect lower quantiles and close
+  non-activating contexts before keeping the description.
+- **Feature fires on punctuation:** preserve it as a positional/formatting
+  feature and exclude it from semantic claims.
+- **Many features look similar:** record overlap instead of forcing a single
+  winner; feature splitting is itself evidence.
+- **No feature seems interpretable:** verify the corpus, hook, token positions,
+  and SAE compatibility before concluding the dictionary failed.
+
+## Handoff
+
+Promote only the candidate IDs and evidence summary, not the raw corpus, into
+the next experiment note. Gate C may use the ledger to define a pre-registered
+feature subset, but all selection rules must remain visible.

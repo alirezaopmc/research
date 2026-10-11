@@ -1,0 +1,215 @@
+---
+import { getCollection, getEntry, render } from "astro:content";
+import ExperimentCard from "../../../components/ExperimentCard.astro";
+import LessonSection from "../../../components/LessonSection.astro";
+import LearningLayout from "../../../layouts/LearningLayout.astro";
+import "../../../styles/global.css";
+
+export async function getStaticPaths() {
+	const papers = await getCollection("papers");
+	return papers.map((paper) => ({
+		params: { paper: paper.data.slug },
+		props: { paperSlug: paper.data.slug },
+	}));
+}
+
+const { paperSlug } = Astro.props;
+const paperEntry = await getEntry("papers", paperSlug);
+
+if (!paperEntry) {
+	throw new Error(`Unknown paper: ${paperSlug}`);
+}
+
+const { data: paper } = paperEntry;
+const lessons = (
+	await getCollection("lessons", (entry) => entry.data.paperSlug === paper.slug)
+).sort((a, b) => a.data.order - b.data.order);
+const experiments = (
+	await getCollection("experiments", (entry) => entry.data.paperSlug === paper.slug)
+).sort((a, b) => a.data.number.localeCompare(b.data.number));
+const renderedLessons = await Promise.all(
+	lessons.map(async (lesson) => ({
+		lesson,
+		Content: (await render(lesson)).Content,
+	})),
+);
+const sectionIds = lessons.map((lesson) => lesson.data.id);
+---
+
+<LearningLayout
+	title={paper.title}
+	description={paper.dek}
+	series={paper.series}
+	bodyAttributes={{
+		"x-data": `learningShell('${paper.slug}', ${JSON.stringify(sectionIds)})`,
+		"@quiz-complete.window": "recordQuiz($event.detail)",
+	}}
+>
+	<button slot="topbar-action" class="reset-button" type="button" @click="resetProgress()">
+		Reset progress
+	</button>
+
+	<section class="study-bar" aria-label="Study progress">
+		<div class="study-bar__inner page-frame">
+			<div class="study-bar__status" aria-live="polite">
+				<span class="study-bar__eyebrow">Now studying</span>
+				<strong x-text="currentSectionTitle()">The microscope, not the diagnosis</strong>
+			</div>
+			<div class="study-bar__progress" aria-hidden="true">
+				<span :style="'width: ' + progress() + '%'"></span>
+			</div>
+			<a class="study-bar__next" href="#sae" :href="'#' + nextSectionId()">
+				<span>Next move</span>
+				<strong x-text="nextSectionTitle()">One activation, many candidate features</strong>
+				<span aria-hidden="true">↓</span>
+			</a>
+		</div>
+	</section>
+
+	<main id="main">
+		<section class="hero page-frame" data-reveal="hero">
+			<div class="hero__copy">
+				<p class="eyebrow">A guided paper journey</p>
+				<h1>{paper.title}<span class="hero__period">.</span></h1>
+				<p class="hero__dek">{paper.dek}</p>
+				<div class="hero__actions">
+					<a class="button" href="#orientation"
+						>Begin the journey <span aria-hidden="true">↓</span></a
+					>
+					<a
+						class="text-button text-button--quiet"
+						href={paper.source.url}
+						target="_blank"
+						rel="noreferrer"
+					>
+						Read the source <span aria-hidden="true">↗</span>
+					</a>
+				</div>
+			</div>
+			<div class="hero__card">
+				<div class="hero__card-label">The central idea</div>
+				<p>{paper.abstract}</p>
+				<div class="hero__rule"></div>
+				<div class="progress-block">
+					<div class="progress-block__head">
+						<span>Your progress</span>
+						<strong><span x-text="progress()">0</span>%</strong>
+					</div>
+					<div class="progress-track" aria-hidden="true">
+						<span :style="'width: ' + progress() + '%'"></span>
+					</div>
+					<p>
+						<span x-text="completed.length">0</span>
+						of {lessons.length} chapters marked complete.
+					</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="stats page-frame" aria-label="Paper at a glance" data-reveal="stats">
+			{paper.stats.map((stat) => (
+				<div class="stat">
+					<strong>{stat.value}</strong>
+					<span>{stat.label}</span>
+				</div>
+			))}
+		</section>
+
+		<div class="learning-layout page-frame">
+			<aside class="chapter-rail" aria-label="Chapters">
+				<div class="chapter-rail__label">On this page</div>
+				<nav>
+					{lessons.map((lesson) => (
+						<a
+							href={`#${lesson.data.id}`}
+							:class={`{ 'is-complete': isComplete('${lesson.data.id}'), 'is-current': currentSectionId === '${lesson.data.id}' }`}
+							:aria-current={`currentSectionId === '${lesson.data.id}' ? 'location' : null`}
+						>
+							<span>{lesson.data.number}</span>
+							<strong>{lesson.data.title}</strong>
+							<i aria-hidden="true"></i>
+						</a>
+					))}
+				</nav>
+				<div class="rail-note">
+					<span class="rail-note__dot"></span>
+					<p>
+						Go slowly. The point is not to finish the page; it is to make the next experiment
+						obvious.
+					</p>
+				</div>
+			</aside>
+
+			<div class="lesson-stack">
+				{renderedLessons.map(({ lesson, Content }) => <LessonSection lesson={lesson} Content={Content} />)}
+			</div>
+		</div>
+
+		<section class="runway page-frame" data-reveal="runway" aria-labelledby="runway-heading">
+			<div class="section-intro">
+				<p class="eyebrow">From understanding to evidence</p>
+				<h2 id="runway-heading">Your experiment runway</h2>
+				<p>
+					Four small gates turn a compelling concept into a result you can trust on a single GPU.
+				</p>
+			</div>
+			<div class="runway-grid">
+				{experiments.map((experiment) => <ExperimentCard experiment={experiment} />)}
+			</div>
+			<div class="runway-footer">
+				<div><span class="status-dot"></span><strong>First stop condition</strong></div>
+				<p>
+					Do not interpret a feature or intervention until the activation shape, mean L0,
+					reconstruction, and baseline split are recorded.
+				</p>
+			</div>
+		</section>
+
+		<section class="journey page-frame" data-reveal="journey">
+			<div class="journey__header">
+				<div>
+					<p class="eyebrow">The longer arc</p>
+					<h2>Keep the research question in view</h2>
+				</div>
+				<p>
+					The paper opens a door. Your thesis asks whether the view through that door improves
+					knowledge-awareness monitoring under a tight compute budget.
+				</p>
+			</div>
+			<div class="journey__steps">
+				<div class="journey-step journey-step--active">
+					<span>01</span><strong>Master the instrument</strong>
+					<p>SAE mechanics, JumpReLU, sites, metrics.</p>
+				</div>
+				<div class="journey-step">
+					<span>02</span><strong>Validate the signal</strong>
+					<p>Raw-state probe versus SAE-feature probe.</p>
+				</div>
+				<div class="journey-step">
+					<span>03</span><strong>Test generalization</strong>
+					<p>Negations, topics, and held-out datasets.</p>
+				</div>
+				<div class="journey-step">
+					<span>04</span><strong>Earn intervention</strong>
+					<p>Steering, abstention, and side effects.</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="sources page-frame" data-reveal="sources" aria-labelledby="sources-heading">
+			<div>
+				<p class="eyebrow">Continue reading</p>
+				<h2 id="sources-heading">The surrounding map</h2>
+			</div>
+			<div class="source-list">
+				{paper.related.map((source, index) => (
+					<a href={source.url} target="_blank" rel="noreferrer" class="source-list__item">
+						<span>{String(index + 1).padStart(2, "0")}</span>
+						<strong>{source.label}</strong>
+						<span aria-hidden="true">↗</span>
+					</a>
+				))}
+			</div>
+		</section>
+	</main>
+</LearningLayout>

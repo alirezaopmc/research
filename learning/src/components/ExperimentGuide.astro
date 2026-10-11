@@ -1,0 +1,146 @@
+---
+import type { CollectionEntry } from "astro:content";
+import type { AstroComponentFactory } from "astro/runtime/server/index.js";
+
+interface Neighbor {
+	title: string;
+	href: string;
+}
+
+interface Props {
+	experiment: CollectionEntry<"experiments">;
+	Content: AstroComponentFactory;
+	previous?: Neighbor;
+	next?: Neighbor;
+}
+
+const { experiment, Content, previous, next } = Astro.props;
+const { data } = experiment;
+---
+
+<main id="main">
+	<section class="experiment-hero page-frame" data-reveal="hero">
+		<nav class="breadcrumbs" aria-label="Breadcrumb">
+			<a href="/">Learning Lab</a>
+			<span aria-hidden="true">/</span>
+			<a href={`/papers/${data.paperSlug}/`}>Gemma Scope</a>
+			<span aria-hidden="true">/</span>
+			<span aria-current="page">Gate {data.number}</span>
+		</nav>
+		<div class="experiment-hero__grid">
+			<div>
+				<p class="eyebrow">Experiment runway · Gate {data.number}</p>
+				<h1>{data.title}<span class="hero__period">.</span></h1>
+				<p class="hero__dek">{data.purpose}</p>
+				<div class="hero__actions">
+					<a class="button" href="#protocol">Open the protocol <span aria-hidden="true">↓</span></a>
+					<a class="text-button text-button--quiet" href={`/papers/${data.paperSlug}/`}>
+						Back to the paper <span aria-hidden="true">↗</span>
+					</a>
+				</div>
+			</div>
+			<aside class="experiment-brief" aria-label="Experiment brief">
+				<div class="experiment-brief__status">
+					<span class={`status-dot status-dot--${data.status}`}></span>
+					<span
+						>{data.status === "ready" ? "Ready to start" : data.status === "next" ? "Next gate" : "Future gate"}</span
+					>
+				</div>
+				<dl>
+					<div>
+						<dt>Time</dt>
+						<dd>{data.estimatedTime}</dd>
+					</div>
+					<div>
+						<dt>Compute</dt>
+						<dd>{data.compute}</dd>
+					</div>
+				</dl>
+				<button
+					class="complete-toggle complete-toggle--wide"
+					type="button"
+					:class="{ 'is-complete': isExperimentComplete() }"
+					:aria-pressed="isExperimentComplete()"
+					@click="toggleExperimentComplete()"
+				>
+					<span class="complete-toggle__icon" aria-hidden="true">✓</span>
+					<span x-text="isExperimentComplete() ? 'Marked complete' : 'Mark as prepared'"
+						>Mark as prepared</span
+					>
+				</button>
+			</aside>
+		</div>
+	</section>
+
+	<section class="experiment-meta page-frame" aria-label="Experiment prerequisites">
+		<div>
+			<span class="eyebrow">Before you start</span>
+			<h2>Make the run restartable.</h2>
+		</div>
+		<div class="experiment-meta__columns">
+			<div>
+				<h3>Prerequisites</h3>
+				<ul>
+					{data.prerequisites.map((item) => <li>{item}</li>)}
+				</ul>
+			</div>
+			<div>
+				<h3>Expected artifacts</h3>
+				<ul>
+					{data.artifacts.map((item) => <li>{item}</li>)}
+				</ul>
+			</div>
+		</div>
+	</section>
+
+	<section class="experiment-protocol page-frame" id="protocol" data-reveal="lesson">
+		<div class="experiment-protocol__label">
+			<span>Protocol</span>
+			<span>Colab scaffold</span>
+		</div>
+		<div class="experiment-protocol__body prose">
+			<Content />
+			<section class="stop-card" aria-labelledby="stop-heading">
+				<p class="eyebrow">Stop conditions</p>
+				<h2 id="stop-heading">Do not scale past an unexplained failure.</h2>
+				<ul>
+					{data.stopConditions.map((condition) => <li>{condition}</li>)}
+				</ul>
+			</section>
+		</div>
+	</section>
+
+	<section class="experiment-resources page-frame" aria-labelledby="resources-heading">
+		<div>
+			<p class="eyebrow">Source trail</p>
+			<h2 id="resources-heading">Read alongside the run.</h2>
+		</div>
+		<div class="source-list">
+			{data.resources.map((resource, index) => (
+				<a href={resource.url} target="_blank" rel="noreferrer" class="source-list__item">
+					<span>{String(index + 1).padStart(2, "0")}</span>
+					<strong>{resource.label}</strong>
+					<span aria-hidden="true">↗</span>
+				</a>
+			))}
+		</div>
+	</section>
+
+	<nav class="experiment-nav page-frame" aria-label="Experiment navigation">
+		{previous ? (
+			<a href={previous.href} class="experiment-nav__link">
+				<span>Previous gate</span>
+				<strong>← {previous.title}</strong>
+			</a>
+		) : <span></span>}
+		{next ? (
+			<a href={next.href} class="experiment-nav__link experiment-nav__link--next">
+				<span>Next gate</span>
+				<strong>{next.title} →</strong>
+			</a>
+		) : <a href={`/papers/${data.paperSlug}/`} class="experiment-nav__link experiment-nav__link--next">
+			<span>Runway complete</span>
+			<strong>Return to Gemma Scope →</strong>
+		</a>}
+	</nav>
+</main>

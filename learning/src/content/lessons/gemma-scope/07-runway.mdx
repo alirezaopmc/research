@@ -1,0 +1,38 @@
+---
+paperSlug: gemma-scope
+id: runway
+order: 7
+number: "07"
+kicker: "Make it real"
+title: "The smallest experiment that teaches you something"
+summary: "Start with one canonical SAE, a small slice, and checks that tell you whether the pipeline is wired correctly before scaling data or claims."
+idea: "The first milestone is not a publishable detector. It is a trustworthy path from tokens to model activations to SAE features to a measured reconstruction and a comparable probe."
+bullets:
+  - "Load Gemma 2 2B and a canonical residual-stream SAE through SAE Lens."
+  - "Verify feature tensor shapes, activation norms, sparsity, and reconstruction error on a tiny sample."
+  - "Inspect top activating examples for a handful of features before fitting any classifier."
+  - "Compare raw hidden-state and SAE-feature probes with the same split, labels, and metrics."
+cues:
+  remember: "A trustworthy pipeline comes before a persuasive detector score."
+  test: "Which invariant would make you stop before scaling the run?"
+  do: "Capture shape, mean L0, reconstruction error, runtime, and memory first."
+callout: "Stop condition: if the reconstruction smoke test is not understood, do not move to intervention."
+source:
+  label: "SAE Lens usage and Gemma Scope model card"
+  url: "https://decoderesearch.github.io/SAELens/latest/usage/"
+quiz:
+  prompt: "What should happen before a detector result is trusted?"
+  options:
+    - label: "Validate the activation-to-SAE pipeline and compare against a raw-state baseline"
+      correct: true
+      explanation: "Correct. Wiring and a fair baseline come before interpreting detector gains."
+    - label: "Train the widest SAE available from scratch"
+      correct: false
+      explanation: "The point of Gemma Scope is to avoid that cost in the first iteration."
+    - label: "Clamp the most interpretable feature immediately"
+      correct: false
+      explanation: "Intervention should follow validation and causal analysis, not replace it."
+---
+
+The runway is deliberately staged: every gate should leave behind a compact
+artifact that makes the next gate easier to audit.

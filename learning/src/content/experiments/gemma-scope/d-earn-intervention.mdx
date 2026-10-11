@@ -1,0 +1,141 @@
+---
+paperSlug: gemma-scope
+slug: d-earn-intervention
+number: "D"
+title: "Earn intervention"
+purpose: "Test causal usefulness only after detection and feature selection survive held-out evaluation."
+status: future
+estimatedTime: "1–2 days"
+compute: "Inference-only generation/evaluation; small fixed intervention sweep on a T4"
+prerequisites:
+  - "Gate C shows a stable, calibrated signal across pre-registered slices."
+  - "Candidate features are selected using training/validation evidence only."
+  - "A factuality metric and at least one capability/side-effect evaluation are defined."
+resources:
+  - label: "SAELens steering tutorial"
+    url: "https://github.com/jbloomAus/SAELens/blob/main/tutorials/using_an_sae_as_a_steering_vector.ipynb"
+  - label: "Representation Engineering"
+    url: "https://arxiv.org/abs/2310.01405"
+  - label: "Gemma Scope paper"
+    url: "https://arxiv.org/abs/2408.05147"
+stopConditions:
+  - "Stop if the intervention is selected from test labels or test examples."
+  - "Stop if the effect is not dose-responsive or disappears across seeds/prompts."
+  - "Stop if factuality improves only by increasing refusal or degrading capability."
+artifacts:
+  - "A held-out evaluation manifest and fixed intervention strengths."
+  - "Clean, intervened, and no-op control outputs with token-level or response-level metrics."
+  - "A side-effect report covering factuality, refusal, helpfulness, and capability."
+  - "An AGENT_LOG.md entry containing failures, environment, and exact candidate IDs."
+---
+
+## Outcome
+
+Detection is correlational. Intervention asks a stronger question: does changing
+the candidate feature change behavior in the predicted direction while
+preserving unrelated capabilities?
+
+```text
+feature candidate → fixed-strength intervention → held-out behavior
+                         ├── factuality
+                         ├── refusal / abstention
+                         └── capability side effects
+```
+
+## Colab setup
+
+Freeze the candidate list and the evaluation set before writing the
+intervention loop:
+
+```python
+MODEL_NAME = "google/gemma-2-2b"
+SAE_RELEASE = "gemma-scope-2b-pt-res-canonical"
+SAE_ID = "layer_12/width_16k/canonical"
+FEATURE_IDS = [...]       # selected from train/validation only
+STRENGTHS = [-2.0, -1.0, 0.0, 1.0, 2.0]
+SEEDS = [0, 1]
+```
+
+Use the documented hook/intervention API for the model wrapper. Record whether
+you modify the SAE feature before decoding, the reconstructed activation, or
+the model activation directly. These are different interventions.
+
+## Cell-by-cell scaffold
+
+### Cell 1 — freeze candidate selection
+
+Read the Gate C ledger and select features using only training/validation
+evidence. Store the selection rule, feature IDs, layer/site, and sign
+convention. The test set must remain untouched until the intervention sweep is
+complete.
+
+### Cell 2 — define controls
+
+Create three conditions for every prompt:
+
+1. clean model;
+2. no-op intervention with strength `0.0`;
+3. candidate intervention at every declared strength.
+
+Add a random-feature or frequency-matched control if the compute budget allows.
+
+### Cell 3 — run a dose sweep
+
+Generate with identical prompts, decoding settings, and seeds. Apply one
+feature or one pre-registered feature group at a time before testing
+combinations.
+
+```python
+for feature_id in FEATURE_IDS:
+    for strength in STRENGTHS:
+        outputs = generate_with_feature_intervention(
+            prompts=held_out_prompts,
+            feature_id=feature_id,
+            strength=strength,
+            seed=seed,
+        )
+        save_outputs(feature_id, strength, outputs)
+```
+
+### Cell 4 — measure outcomes
+
+Report factuality and calibration against the same reference protocol used in
+Gate C. Also measure refusal/abstention rate, answer length, helpfulness, and a
+small capability control unrelated to the target behavior. Keep evaluator
+prompts and grading rules fixed.
+
+### Cell 5 — audit causality
+
+Look for a monotonic or at least interpretable dose-response curve, stability
+across prompts and seeds, and a difference from the no-op and random controls.
+A feature that changes output is not automatically a feature that controls the
+target concept.
+
+## Checks
+
+- Candidate selection is frozen before test evaluation.
+- Clean, no-op, and intervention conditions use identical generation settings.
+- Strength sign and unit are defined and logged.
+- The intervention location and token position are explicit.
+- Side effects are measured, not inferred from a few examples.
+- Effects replicate across held-out prompts and at least one additional seed.
+- Any improved factuality is reported alongside refusal and capability changes.
+- All failures and non-effects remain in the log.
+
+## Failure modes
+
+- **More refusals look like more truth:** separate factual correctness from
+  abstention and report coverage.
+- **No dose response:** verify sign, hook, token position, feature scale, and
+  intervention placement before changing the candidate.
+- **Large capability drop:** reduce strength, test feature specificity, and
+  keep the result as a side-effect finding.
+- **One prompt changes dramatically:** treat it as a qualitative lead, not a
+  causal conclusion.
+
+## Handoff
+
+Promote only a compact result summary with controls, held-out metrics,
+side-effects, and limitations. Keep raw generations in the sandbox and state
+clearly whether the result supports a thesis hypothesis or only motivates a
+larger study.

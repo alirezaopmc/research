@@ -1,0 +1,37 @@
+---
+paperSlug: gemma-scope
+id: jumprelu
+order: 3
+number: "03"
+kicker: "Key mechanism"
+title: "JumpReLU separates “is present” from “how strong”"
+summary: "JumpReLU gates a latent with a learned positive threshold, then leaves surviving pre-activations unchanged. This makes direct L0 regularization practical with a straight-through estimator."
+idea: "For each latent, z becomes z · H(z − θ). A low z is removed; a high z keeps its magnitude. The threshold controls selection, while the surviving value carries magnitude."
+bullets:
+  - "The training objective combines squared reconstruction error with λ ||f(x)||₀."
+  - "The threshold is discontinuous, so the backward pass uses a kernel-density-style straight-through estimator."
+  - "The bandwidth ε trades gradient variance against bias: too small can fail to train thresholds; too large can harm fidelity."
+cues:
+  remember: "JumpReLU chooses participation with a gate, then preserves the surviving magnitude."
+  test: "If θ rises, which changes first: active count or surviving value?"
+  do: "Move the threshold slowly and narrate the change in L0."
+callout: "Interactive check: move the threshold and watch active count change without shrinking the surviving bars."
+source:
+  label: "Gemma Scope · §2.2 JumpReLU SAEs"
+  url: "https://arxiv.org/html/2408.05147#S2.SS2"
+quiz:
+  prompt: "What does the JumpReLU threshold primarily decide?"
+  options:
+    - label: "Whether a latent participates in the reconstruction"
+      correct: true
+      explanation: "Correct. Its gate screens low pre-activations; active magnitudes are not directly penalized by the L0 term."
+    - label: "The number of transformer layers"
+      correct: false
+      explanation: "Layer choice is a model-site decision, separate from a latent’s learned threshold."
+    - label: "The tokenization vocabulary"
+      correct: false
+      explanation: "Tokenization is fixed by the model and is not controlled by the SAE threshold."
+---
+
+The threshold is the instrument’s selection rule. It is not a second model
+layer and it does not make a feature semantic by itself.
