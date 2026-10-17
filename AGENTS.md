@@ -18,7 +18,7 @@ When suggesting directions, weight:
 
 | Area | Rule |
 |------|------|
-| Papers | **No PDFs in git.** One note per paper: `docs/papers/{slug}.md`. Optional frontmatter: `paper_abstract`, `paper_content`, `paper_reproduced`, `paper_favorite` (manual tracking in the note file). |
+| Papers | **No PDFs in git.** One note per paper: `docs/papers/{slug}.md`. Optional frontmatter: `paper_abstract`, `paper_content`, `paper_reproduced`, `paper_favorite`, `paper_to_read` (manual tracking in the note file). |
 | Big binaries | `assets/` + optional Git LFS; datasets later → DVC, not raw git. |
 | External code | Prefer `vendor/` **submodules** or sibling repos. |
 | Experiments | Only under `sandbox/<slug>/` (gitignored). Log in `AGENT_LOG.md` there. |
@@ -28,6 +28,7 @@ When suggesting directions, weight:
 
 - Markdown + YAML frontmatter where templates exist (`docs/papers/_template.md`).
 - Wikilinks: `[[path/to/note]]` or `[[note\|alias]]` (paths relative to `docs/`, no `.md`).
+- In the proposal's Persian body, do not print English equivalents or English words inline. Put an English equivalent in a footnote at the concept's first occurrence only. At later occurrences, omit the English form; in glossary entries mark it with `term-en-footnote: false`. Route standalone English terms through the footnote renderer too. Official English titles and proper names are exceptions.
 
 ## Paper summary workflow
 

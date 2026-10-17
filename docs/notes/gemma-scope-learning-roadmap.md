@@ -18,6 +18,8 @@ cross-layer tools; it is future work, not an interchangeable runtime.
 
 ## First experiment contract
 
+Thesis main runs use Gemma 2 9B on a Colab Pro GPU (about 24 GB). The T4 contract below is the 2B wiring check that comes first.
+
 Use a small inference-only run that fits a Colab T4 or a single 16–24GB GPU:
 
 - Load Gemma 2 2B and one canonical residual-stream SAE from SAE Lens.

@@ -5,7 +5,7 @@
 - **Title:** *Characterizing and Steering the Behavior of Large Language Models Across Contexts* (توصیف و هدایت رفتار مدل‌های زبانی بزرگ در زمینه‌های گوناگون)
 - **Discipline:** M.Sc. Algorithms & Computation, University of Tehran
 - **Research scope:** Study how LLM behavior varies across tasks and contexts; characterize and detect selected behaviors, including bias, uncertainty, and factual inconsistency; and evaluate interventions that steer model outputs.
-- **Current research direction:** Test whether interpretable features from pretrained Sparse Autoencoders (SAEs) help detect factual errors and support lightweight interventions under a constrained compute budget (one GPU / Colab T4). This is an initial case study within the broader topic.
+- **Current research direction:** Test whether interpretable features from pretrained Sparse Autoencoders (SAEs) help detect factual errors and support lightweight interventions under a constrained compute budget (Google Colab Pro; Gemma 2 9B for main runs, Gemma 2 2B for pipeline checks on a T4). This is an initial case study within the broader topic.
 
 ---
 
@@ -37,7 +37,7 @@
 
 ### Compute Budget Constraint
 - **No SAE pretraining from scratch required.** Use open pretrained SAE weights from **Gemma Scope** via `SAELens`.
-- Execution: Inference-only evaluation on Colab T4 / single 16–24GB GPU.
+- Execution: Inference-only evaluation on Google Colab Pro (single 16–24GB GPU for Gemma 2 9B; Colab T4 for Gemma 2 2B checks).
 
 ---
 
@@ -73,6 +73,15 @@ Read with the template in `[[papers/_template]]`:
 | 6 | `[[papers/sae-survey]]` | Comprehensive Overview | Gao et al. / Survey (2025), *A Survey on Sparse Autoencoders* |
 
 ---
+
+## Proposal Decisions (2026-10-18)
+
+- **Framing:** broad thesis title; SAE-based factual-error detection is the explicit case study (RQ1–RQ2).
+- **Steering:** conditional (RQ3 and §4-2 stage 3); runs only if RQ1–RQ2 evidence supports it.
+- **Compute:** Google Colab Pro; main model Gemma 2 9B with Gemma Scope residual SAEs; Gemma 2 2B for pipeline checks.
+- **Thesis type:** applied (کاربردی). **Timeline:** 12 months from Aban 1405, six two-month sequential phases.
+- **Font:** XB Niloofar kept; redistribution rights still unverified.
+- **Open inputs:** abstract, supervisor and advisor rank/share/workplace/signature, student signature, approval date (1405/05/25 predates today).
 
 ## Step-by-Step Proposal Finalization Checklist
 

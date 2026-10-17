@@ -29,7 +29,7 @@ paper_to_read: true
 > - **Compute:** train/deploy cost vs ~**1× H100** (or edge MCU)—feasible to reproduce?
 > - **Hype / market:** why people cite it now.
 > - **Industry:** deployment, tooling, regulation, or product relevance.
-> - **Topic fit:** how this connects to [[research/topics/llm-techniques]] (ICL, prompting, context).
+> - **Topic fit:** how this connects to [[notes/research-strategy]] (current thesis direction).
 
 ## Method
 
@@ -41,7 +41,7 @@ paper_to_read: true
 
 ## Notes / quotes
 
-> Grab verbatim lines worth citing; link related vault notes with wikilinks (`[[research/topics/llm-techniques]]`, other papers under `[[papers/llm-techniques/…]]`, roadmap `[[research/roadmap]]`, …).
+> Grab verbatim lines worth citing; link related vault notes with wikilinks (`[[notes/research-strategy]]`, `[[papers/gemma-scope]]`, …).
 
 ## Open questions
 

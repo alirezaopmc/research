@@ -13,7 +13,7 @@
 |-------|------|--------|
 | Cover | Official UT form | Double border, full grid where the template requires it |
 | Body §2–§3 | Clean registry / field sheet | Horizontal rules only; no vertical grid |
-| Body §4+ | Narrative blocks | Double-border frames on subsection content only |
+| Body §4+ | Narrative blocks | No frames; the glossary panel is the only framed block |
 
 The body should read like a contemporary university PDF (grant application, registry export)—not an Excel “all borders” table.
 
@@ -52,8 +52,9 @@ Section title
 |------|-------|
 | Row height | `auto` — never fixed |
 | Header | Bold label weight; single blue underline |
-| Text columns (role, name, workplace) | `right + top` |
-| Short columns (rank, share, signature) | `center + horizon` |
+| Supervisor cells (role, name, rank, share, workplace) | `center + horizon`, `justify: false` |
+| Signature column | Dashed placeholder box; filled cell is centered |
+| Optional rows (`حسب نیاز`) | Hidden until a name is entered (`supervisor-visible-rows` in presenters) |
 | Signature column | Empty cell; optional dashed inner box for “fill by hand” |
 | Column balance | Widen role/workplace; narrow share/signature |
 | Inset | `(x: 6pt, y: 10–12pt)` when wrapped |
@@ -124,19 +125,53 @@ Do not shrink body type below 11pt to avoid wraps.
 | ۱ Summary | `body/summary.typ` | Prose — no table |
 | ۲ Supervisors | `body/supervisors-table.typ` | `registry` |
 | ۳ Student | `body/student-info.typ` | `fields` |
-| ۴-۱–۴-۳ | `body/topic.typ`, `methodology.typ`, `background.typ` | Double-border frame on content |
+| ۴-۱–۴-۳ | `body/topic.typ`, `methodology.typ`, `background.typ` | Plain blocks; the glossary panel is the only framed block |
 | Timeline | `body/timeline.typ` | `grid` |
 | References | `body/bibliography.typ` | Prose list |
+
+## Figures
+
+Figures are native Typst drawings (vector, no raster assets). Labels and captions live in YAML, not in components.
+
+| Layer | Path |
+|-------|------|
+| Content (labels, captions) | `content/fa/body/meta/figures.yaml` → `meta.figures` |
+| Primitives (numbering, nodes, arrows, bands) | `lib/components/shared/figure.typ` |
+| Figure components | `lib/components/body/figures/*.typ` |
+
+| Section | Figure | Component |
+|---------|--------|-----------|
+| ۴-۱ تعریف | Two observation levels (behavioral / mechanistic) | `definition-layers.typ` |
+| ۴-۱ ضرورت | Published causal intervention, original vs. swapped | `necessity-intervention.typ` |
+| ۴-۲ روش | Three research stages and outputs | `methodology-stages.typ` |
+| ۴-۲ هدایت | Intervention on intermediate features: suppressed feature and injected steering vector (schematic, no results) | `figures/causal-steering.typ` |
+| ۴-۳ پیشینه | Table (`جدول`): two research families, what each shows and cannot show | `background-comparison.typ` (`body-table()`, registry style) |
+
+Rules:
+
+- Persian text only inside figures and captions; English terms belong in footnotes (see AGENTS.md).
+- Diagram text is never justified: `body-figure()` sets `par(justify: false)`.
+- Numbering is sequential (`شکل ۱`, `شکل ۲`, …) via `body-figure()`.
+- Arrows point left (RTL reading flow).
+- Figure content must match the surrounding prose; do not add results that the text does not claim.
 
 ## Footnotes
 
 | Type | YAML key | Direction |
 |------|----------|-----------|
-| English gloss | `en:` | LTR footnote |
-| Persian note | `fa:` | RTL footnote |
-| Inline English word | `ltr: true` | LTR inline, no footnote |
+| English gloss | `en:` | LTR footnote; Persian term stays inline |
+| Persian note | `fa:` | RTL footnote; Persian term stays inline |
+| Gloss and note | `en:` + `fa:` | One footnote: LTR gloss, line break, RTL note |
+| English-only term | `ltr: true` | Footnote holding the English word; no inline text |
+
+Rules:
+- Footnote a concept only at its first occurrence in the body; later occurrences stay plain Persian.
+- Text fields that may hold segments (`intro`, `note`, `theory`, `implementation`, `placeholder`, `definition`, `synthesis`, `research-gap`) render through `rich-text()`.
+- Proper names, titles, and metadata (cover, summary, bibliography) are outside the footnote rule.
 
 Component: `lib/components/shared/tech-footnote.typ`
+
+English gloss casing: lowercase for common technical terms (`behavioral evaluation`, `model steering`); capitalize only proper nouns, official titles, and acronyms (`LLM`, `Gemma Scope`). Apply the same rule to `term-en` in glossary entries.
 
 ## Latin values in RTL
 
@@ -151,6 +186,7 @@ Component: `lib/components/shared/tech-footnote.typ`
 | Cover header (logos + invocation) | `lib/components/cover/header.typ` |
 | Cover footnotes | `lib/components/cover/footnotes.typ` |
 | Body subsection heading | `lib/components/body/subsection-heading.typ` |
+| Figure wrapper and diagram primitives | `lib/components/shared/figure.typ` |
 
 ## QA (body tables)
 

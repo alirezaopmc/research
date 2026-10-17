@@ -1,6 +1,6 @@
 ---
-title: "A Survey on Sparse Autoencoders"
-authors: "Gao et al."
+title: "A Survey on Sparse Autoencoders: Interpreting the Internal Mechanisms of Large Language Models"
+authors: "Shu et al."
 year: 2025
 venue: arXiv
 arxiv: "2503.05613"

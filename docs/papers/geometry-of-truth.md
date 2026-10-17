@@ -1,6 +1,6 @@
 ---
-title: "The Geometry of Truth: Emergent Linear Structure in Large Language Model Representations"
-authors: "Samuel Marks, Max Tegmark (MIT)"
+title: "The Geometry of Truth: Emergent Linear Structure in Large Language Model Representations of True/False Datasets"
+authors: "Samuel Marks, Max Tegmark"
 year: 2023
 venue: arXiv
 arxiv: "2310.06824"

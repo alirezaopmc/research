@@ -1,6 +1,6 @@
 # research — thesis notes & documents
 
-Markdown vault for papers and notes, plus Typst builds for the thesis proposal and weekly reports. No web viewer — edit files in the repo or your editor.
+Markdown vault for papers and notes, plus Typst builds for the thesis proposal and weekly reports. Edit files in the repo or your editor; the only web app is the Learning Lab in `learning/`.
 
 ## Quick commands
 
@@ -32,7 +32,7 @@ Read the learning-app [architecture](learning/ARCHITECTURE.md) and
 docs/
   papers/_template.md     Scaffold for new paper notes (no PDFs in git)
   notes/                  General notes
-proposal/                 Typst thesis proposal (fa + en)
+proposal/                 Typst thesis proposal (fa)
 reports/                  Typst weekly progress reports
 sandbox/                  Local experiments (gitignored except README)
 assets/                   Shared static assets
