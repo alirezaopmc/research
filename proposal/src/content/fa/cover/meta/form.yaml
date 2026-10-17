@@ -2,5 +2,6 @@
 degree: masters
 # study-mode: day | evening (label: روزانه | نوبت دوم)
 study-mode: evening
+# campus-entry and reference-number: left blank for administrative entry
 campus-entry: ""
 reference-number: ""

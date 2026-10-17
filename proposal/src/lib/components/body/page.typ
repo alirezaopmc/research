@@ -23,14 +23,12 @@
       #body-supervisors-table(labels, meta)
       #v(space-lg)
       #body-student-info(labels, meta)
-      #pagebreak()
-      #v(space-lg)
       #body-topic-section(labels, meta)
       #body-methodology-section(labels, meta)
       #body-background-section(labels, meta)
       #body-timeline-section(labels, meta)
       #body-bibliography-section(labels, meta)
     ],
-    page-header-title: labels.page-header-title,
+    labels.page-header-title,
   )
 }

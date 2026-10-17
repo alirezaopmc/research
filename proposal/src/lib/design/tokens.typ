@@ -43,7 +43,7 @@
 
 // Page
 #let paper = "a4"
-#let margin-page = (x: 1.4cm, y: 1.4cm)
+#let margin-page = (x: 1.4cm, top: 2.2cm, bottom: 1.8cm)
 #let margin-cover = (x: 2cm, y: 2cm)
 
 #let logo-height-cover = 4.2cm
@@ -57,5 +57,5 @@
 #let space-footer-rule = 0.25em
 #let space-footer-notes = 0.3em
 #let space-footnote-gap = 0.3em
-#let header-ascent-page = 1.1cm
-#let footer-descent-page = 1.05cm
+#let header-ascent-page = 0.5cm
+#let footer-descent-page = 0.6cm

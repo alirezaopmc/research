@@ -1,0 +1,52 @@
+definition-layers:
+  caption: "دو سطح مطالعه‌ی رفتار مدل؛ ارزیابی رفتاری از روی ورودی و پاسخ، و تفسیر مکانیکی از روی ویژگی‌های میانی و مداخله‌ی علّی روی آن‌ها."
+  behavior-band: "ارزیابی رفتاری: ورودی و پاسخ قابل مشاهده‌اند"
+  mechanistic-band: "تفسیر مکانیکی: مداخله بر ویژگی‌های میانی و سنجش اثر آن بر پاسخ"
+  input: "ورودی"
+  input-detail: "وظیفه، زمینه، صورت‌بندی"
+  tokens: "توکن‌ها"
+  layers: "لایه‌های ترانسفورمر"
+  representation: "ویژگی میانی"
+  output: "پاسخ"
+
+necessity-intervention:
+  caption: "نمونه‌ای منتشرشده از مداخله‌ی علّی موضعی روی Claude 3.5 Haiku؛ شماتیک بر اساس [۹–۱۱] بازترسیم شده و نتیجه‌ی این پژوهش نیست."
+  header-input: "ورودی"
+  header-representation: "ویژگی میانی"
+  header-output: "پاسخ"
+  prompt: "پایتخت ایالتی که دالاس در آن قرار دارد"
+  row-original: "اجرای عادی"
+  row-intervened: "پس از جایگزینی"
+  original-representation: "تگزاس"
+  original-output: "آستین"
+  intervened-representation: "کالیفرنیا"
+  intervened-output: "ساکرامنتو"
+
+methodology-stages:
+  caption: "سه گام اجرای پژوهش و خروجی هر گام."
+  stages:
+    - title: "گام ۱: مرور و تعیین دامنه"
+      output: "مطالعه‌ی موردی خطای واقعیتی، منابع ارزیابی و مجموعه‌داده‌ها"
+    - title: "گام ۲: تشخیص و مقایسه"
+      output: "نتایج تشخیص خطا با خودرمزنگارهای تنک و خط‌مبناها"
+    - title: "گام ۳: بررسی هدایت"
+      output: "امکان‌سنجی امتناع و هدایت ویژگی‌ها و پیامدهای جانبی آن‌ها"
+      condition: "مشروط به شواهد و امکان اجرا"
+
+causal-steering:
+  caption: "شماتیک مداخله‌ی علّی و هدایت روی ویژگی‌های میانی، الهام‌گرفته از نمونه‌ی [۹–۱۱]؛ نمایش مفهومی است و اعداد یا نتایج این پژوهش را نشان نمی‌دهد."
+  header-input: "ورودی"
+  header-hidden: "ویژگی‌های میانی"
+  header-output: "پاسخ"
+  input-labels:
+    - "پایتخت"
+    - "ایالت"
+    - "دالاس"
+  capital-feature: "ویژگی «پایتخت»"
+  texas-feature: "ویژگی «تگزاس»"
+  inhibited: "مهار شده"
+  injected: "بردار هدایت «کالیفرنیا»"
+  output-original: "آستین"
+  output-steered: "ساکرامنتو"
+  row-normal: "اجرای عادی"
+  row-steered: "مداخله و هدایت"

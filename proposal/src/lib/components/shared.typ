@@ -1,4 +1,4 @@
-// Shared UI primitives used by cover and letter.
+// Shared UI primitives used by cover and body.
 #import "../design/tokens.typ": gutter-field
 
 #let to-persian-digits(content) = {

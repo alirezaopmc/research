@@ -5,10 +5,11 @@
 #import "../shared.typ": to-persian-digits
 
 #let cover-footnote-item(number, body) = [
+  #set text(dir: rtl, lang: "fa")
   #grid(
     columns: (auto, 1fr),
     column-gutter: 0.4em,
-    align: start,
+    align: (right + horizon, right + top),
     text-cover-section(to-persian-digits(number) + "."),
     text-cover-section(body),
   )

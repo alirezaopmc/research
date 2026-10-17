@@ -1,6 +1,9 @@
 // Layout primitives.
 #import "tokens.typ": *
-#import "page-chrome.typ": apply-page-chrome
+#import "page-chrome.typ": (
+  footnote-entry-block, letter-footnote-entry-settings, letter-page-settings,
+)
+#import "../components/shared.typ": to-persian-digits
 
 #let centered-block(body) = box(
   width: 100%,
@@ -26,10 +29,11 @@
   #body
 ]
 
-#let letter-page-shell(body, page-header-title: none) = [
-  #if page-header-title != none {
-    apply-page-chrome(page-header-title)
-  }
+#let letter-page-shell(body, page-header-title) = [
+  #set page(..letter-page-settings(page-header-title))
+  #set footnote(numbering: to-persian-digits)
+  #set footnote.entry(..letter-footnote-entry-settings)
+  #show footnote.entry: footnote-entry-block
   #set align(right)
   #set par(justify: true)
   #body

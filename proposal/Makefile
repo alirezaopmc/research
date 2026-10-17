@@ -1,15 +1,17 @@
 # Typst build for Persian proposal PDF (cover + body).
-export PATH := /opt/homebrew/bin:/usr/local/bin:$(PATH)
+export PATH := $(HOME)/.cargo/bin:/opt/homebrew/bin:/usr/local/bin:$(PATH)
 
 ROOT := .
 FONT_DIR := assets/fonts
 FONT_FILE := assets/fonts/XB Niloofar.ttf
 
-ENTRY_FA_PROPOSAL := src/main/fa/letter.typ
+ENTRY_FA_PROPOSAL := src/main/fa/proposal.typ
 ENTRY_FA_COVER := src/main/fa/cover.typ
 OUTPUT_DIR := output/fa
 OUTPUT_FA_PROPOSAL := $(OUTPUT_DIR)/proposal.pdf
 OUTPUT_FA_COVER := $(OUTPUT_DIR)/proposal-cover.pdf
+# Rebuild when any template, component, or YAML content changes.
+SOURCES := $(shell find src -type f \( -name '*.typ' -o -name '*.yaml' \))
 
 # Shell-time check: BSD make wildcard breaks on spaces in FONT_FILE.
 define TYPST_COMPILE
@@ -29,13 +31,13 @@ endef
 proposal: $(OUTPUT_FA_PROPOSAL)
 cover: $(OUTPUT_FA_COVER)
 
-$(OUTPUT_FA_PROPOSAL): $(ENTRY_FA_PROPOSAL)
+$(OUTPUT_FA_PROPOSAL): $(ENTRY_FA_PROPOSAL) $(SOURCES)
 	@$(MAKE) --no-print-directory _check-typst
 	@mkdir -p "$(OUTPUT_DIR)"
 	$(call TYPST_COMPILE,$(ENTRY_FA_PROPOSAL),$(OUTPUT_FA_PROPOSAL))
 	@echo "Built $(OUTPUT_FA_PROPOSAL)"
 
-$(OUTPUT_FA_COVER): $(ENTRY_FA_COVER)
+$(OUTPUT_FA_COVER): $(ENTRY_FA_COVER) $(SOURCES)
 	@$(MAKE) --no-print-directory _check-typst
 	@mkdir -p "$(OUTPUT_DIR)"
 	$(call TYPST_COMPILE,$(ENTRY_FA_COVER),$(OUTPUT_FA_COVER))

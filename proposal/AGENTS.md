@@ -1,15 +1,15 @@
 # Proposal (Typst)
 
-Persian thesis proposal PDF: cover form + letter. Built with [Typst](https://typst.app/).
+Persian thesis proposal PDF: cover form + body. Built with [Typst](https://typst.app/).
 
 ## Layers
 
 ```
-content/fa/          YAML labels + meta + letter body
+content/fa/          YAML labels + meta
 lib/content.typ      load locales, {{key}} interpolation
 lib/presenters/      derive UI state from meta (e.g. radio selection)
 templates/           thin adapters (pass locale to components)
-lib/components/      cover, letter, shared, cover-form
+lib/components/      cover, body, shared, cover-form
 lib/design/          tokens, typography, layout
 main/fa/             compile entry points
 ```
@@ -22,20 +22,19 @@ From `proposal/`:
 
 | Command | Output |
 |---------|--------|
-| `make proposal` | `output/fa/proposal.pdf` (cover + letter) |
+| `make proposal` | `output/fa/proposal.pdf` (cover + body) |
 | `make cover` | `output/fa/proposal-cover.pdf` |
-| `make letter` | `output/fa/proposal-letter.pdf` (letter only) |
 | `make watch` | watch full proposal |
 
 Requires `typst` (`brew install typst`).
 
 ## Fonts
 
-See [assets/fonts/README.md](assets/fonts/README.md). When `assets/fonts/XB Niloofar.ttf` exists, builds pass `--font-path assets/fonts` (all four variants).
+See [assets/fonts/README.md](assets/fonts/README.md). When `assets/fonts/XB Niloofar.ttf` exists, builds pass `--font-path assets/fonts` (regular and bold variants).
 
-## Page chrome (letter pages only)
+## Page chrome (body pages only)
 
-Cover page has no running header/footer. Letter pages use `apply-page-chrome` via `letter-page-shell`:
+Cover page has no running header/footer. Body pages use `letter-page-shell` (`lib/design/layout.typ`; the name is legacy from the removed letter template):
 
 - **Header:** left-aligned title (`shared/labels/common.yaml` → `page-header-title`) + horizontal rule
 - **Footer:** page number + horizontal rule
@@ -63,6 +62,10 @@ Cover layout modules:
 | `footer-fields.typ` | campus entry, reference boxes |
 | `page.typ` | stacks sections (orchestrator) |
 | `spacing.typ` | `cover-section` wrapper (before/after padding) |
+| `header.typ` | masthead: invocation and dual logos |
+| `field.typ` | label/value row |
+| `panel.typ` | right-aligned form panel |
+| `footnotes.typ` | administrative footnotes |
 
 ### Cover spacing
 
@@ -83,11 +86,9 @@ No template mapping needed.
 
 ### Shared organization
 
-`src/content/fa/shared/meta/organization.yaml` — `university`, `faculty` (used by cover and letter).
+`src/content/fa/shared/meta/organization.yaml` — `university`, `faculty` (used by cover and body).
 
 Cover-only: `cover/meta/organization.yaml` — `college`.
-
-Letter-only: `letter/meta/organization.yaml` — `department`.
 
 ### Form options
 
@@ -96,11 +97,9 @@ Letter-only: `letter/meta/organization.yaml` — `department`.
 - `degree`: `masters` | `phd`
 - `study-mode`: `day` | `evening` (labels: روزانه | شبانه)
 
-### Letter body
+### Body content
 
-Paragraphs in `src/content/fa/letter/body/*.yaml`, ordered by `manifest.yaml`.
-
-Use `{{key}}` placeholders; keys resolve from letter meta (author, research, correspondence, etc.). Interpolated values render **bold**.
+Section content: `src/content/fa/body/meta/*.yaml`; labels: `src/content/fa/body/labels/body.yaml`. Entry point: `src/main/fa/proposal.typ`.
 
 ## Design tokens
 
@@ -113,3 +112,5 @@ Typography roles: `src/lib/design/typography.typ` (`text-cover-*`, `text-base-*`
 See [proposal-design.md](../../docs/notes/proposal-design.md) for layout rules, table styles, and QA.
 
 **Body table styles:** §2 → `registry`; §3 → `fields`; timeline → `grid`. Shared API in `lib/components/shared/data-table.typ`.
+
+**Body figures:** captions and diagram labels in `content/fa/body/meta/figures.yaml` (`meta.figures`); drawing in `lib/components/body/figures/`; primitives in `lib/components/shared/figure.typ`. Rules in the design notes.

@@ -42,8 +42,12 @@
   )[#text-base-label(label.replace(" ", sym.space.nobreak))]
 ]
 
-#let signature-placeholder-box() = align(center + horizon)[
-  #box(width: 100%, height: 0.9cm, stroke: form-table-stroke-signature)
+#let signature-placeholder-box(text-label: none) = align(center + horizon)[
+  #box(width: 100%, height: 0.9cm, stroke: form-table-stroke-signature)[
+    #if text-label != none {
+      align(center + horizon)[#text(size: 8pt, fill: color-ut-blue)[#text-label]]
+    }
+  ]
 ]
 
 #let form-fields-sheet(rows) = {

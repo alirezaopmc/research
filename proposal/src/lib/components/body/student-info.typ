@@ -26,10 +26,10 @@
 #let student-signature-pair(label, signature) = align(right + top)[
   #student-field-label(label)
   #v(space-stack-tight)
-  #if type(signature) == str and signature.len() > 0 {
+  #if type(signature) == str and signature.len() > 0 and not signature.starts-with("[") {
     student-field-value(signature)
   } else {
-    signature-placeholder-box()
+    signature-placeholder-box(text-label: if type(signature) == str and signature.len() > 0 { signature } else { "[محل امضا و تاریخ]" })
   }
 ]
 

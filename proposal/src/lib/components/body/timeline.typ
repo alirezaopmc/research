@@ -48,11 +48,28 @@
   )
 }
 
+#let timeline-milestones-list(milestones) = {
+  set list(indent: 1.2em, spacing: space-stack-tight)
+  list(..milestones.map(m => text-base-body(
+    m.phase + ": " + m.output,
+  )))
+}
+
 #let body-timeline-section(labels, meta) = [
   #v(space-md)
   #text-base-label(labels.section-timeline)
+  #if "note" in meta.timeline and meta.timeline.note != none [
+    #v(space-xs)
+    #par(text-base-body(meta.timeline.note))
+  ]
   #v(space-sm)
   #timeline-phase-list(meta.timeline.phases)
   #v(space-md)
   #timeline-grid(meta.timeline.months, meta.timeline.schedule)
+  #if "milestones" in meta.timeline and meta.timeline.milestones != none [
+    #v(space-md)
+    #text-base-label(labels.timeline-milestones + ":")
+    #v(space-sm)
+    #timeline-milestones-list(meta.timeline.milestones)
+  ]
 ]

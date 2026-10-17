@@ -68,6 +68,7 @@
       supervisors: load-yaml(doc, "meta", "supervisors"),
       student: load-yaml(doc, "meta", "student"),
       topic: load-yaml(doc, "meta", "topic"),
+      figures: load-yaml(doc, "meta", "figures"),
       methodology: load-yaml(doc, "meta", "methodology"),
       background: load-yaml(doc, "meta", "background"),
       timeline: load-yaml(doc, "meta", "timeline"),

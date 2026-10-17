@@ -3,4 +3,8 @@ title-fa: >-
 title-en: >-
   Characterizing and Steering the Behavior of Large Language Models Across
   Contexts
-thesis-type: fundamental
+thesis-type: applied
+abstract: >-
+  [چکیده پایان‌نامه: بیان مسئله، اهمیت و ضرورت پژوهش، رویکرد پیشنهادی برای ارزیابی و هدایت مدل‌ها، و دستاوردهای مورد انتظار به صورت فشرده (حداکثر ۲۰۰ تا ۳۰۰ کلمه)]
+keywords: >-
+  مدل‌های زبانی بزرگ، توصیف رفتار، خطای واقعیتی، خودرمزنگار تنک، بازنمایی‌های درونی، هدایت مدل

@@ -11,6 +11,8 @@ thesis-type: نوع
 thesis-type-fundamental: بنیادی
 thesis-type-applied: کاربردی
 thesis-type-developmental: توسعه‌ای
+abstract: چکیده
+keywords: واژگان کلیدی
 
 supervisor-col-role: نوع مسئولیت
 supervisor-col-name: نام و نام خانوادگی
@@ -32,14 +34,26 @@ student-field: رشته و گرایش
 student-signature: امضا و تاریخ
 
 topic-definition: تعریف
-topic-goal: هدف
+topic-key-concepts: مفاهیم و اصطلاحات پایه
+topic-goal: هدف کلی
 topic-necessity: ضرورت
 topic-research-questions: پرسش‌های پژوهش
 
 section-methodology: روش و فنون اجرایی
 methodology-theory-title: بخش تئوری
 methodology-implementation-title: بخش پیاده‌سازی
+methodology-dimensions-title: ابعاد ارزیابی و مشخصات اجرایی
+methodology-models: مدل‌های زبانی مورد بررسی
+methodology-datasets: مجموعه‌داده‌ها و وظایف آزمون
+methodology-behaviors: تعریف رفتارهای هدف
+methodology-metrics: سنجه‌ها و معیارهای ارزیابی
+methodology-baselines: خط‌مبناها و روش‌های مقایسه
+methodology-analysis: طرح مقایسه و رویه تحلیل
 
 section-background: پیشینه پژوهش (همراه با ذکر منابع اساسی)
+background-synthesis: مرور تطبیقی و سنتز پژوهش‌ها
+background-research-gap: شکاف پژوهشی
 section-timeline: زمان‌بندی پیشنهادی برای پروژه
+timeline-milestones: نقاط عطف و خروجی‌های مورد انتظار
 section-bibliography: فهرست منابع
+bibliography-note: یادداشت یکپارچه‌سازی منابع

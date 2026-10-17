@@ -17,3 +17,69 @@ entries:
   - >-
     Bommasani, R., et al. (2021). On the Opportunities and Risks of Foundation
     Models. arXiv:2108.07258.
+  - >-
+    Google DeepMind. (2024). Gemma Scope: Helping the Safety Community Shed
+    Light on the Inner Workings of Language Models.
+    https://deepmind.google/blog/gemma-scope-helping-the-safety-community-shed-light-on-the-inner-workings-of-language-models/
+  - >-
+    Google DeepMind. (2025). Gemma Scope 2: Helping the AI Safety Community
+    Deepen Understanding of Complex Language Model Behavior.
+    https://deepmind.google/blog/gemma-scope-2-helping-the-ai-safety-community-deepen-understanding-of-complex-language-model-behavior/
+  - >-
+    Anthropic. (2025). Tracing the Thoughts of a Large Language Model.
+    https://www.anthropic.com/research/tracing-thoughts-language-model
+  - >-
+    Ameisen, E., et al. (2025). Circuit Tracing: Revealing Computational
+    Graphs in Language Models. Transformer Circuits Thread.
+    https://www.transformer-circuits.pub/2025/attribution-graphs/methods.html
+  - >-
+    Lindsey, J., et al. (2025). On the Biology of a Large Language Model.
+    Transformer Circuits Thread.
+    https://www.transformer-circuits.pub/2025/attribution-graphs/biology.html
+  - >-
+    Vaswani, A., et al. (2017). Attention Is All You Need. Advances in Neural
+    Information Processing Systems. https://arxiv.org/abs/1706.03762
+  - >-
+    Elhage, N., et al. (2021). A Mathematical Framework for Transformer
+    Circuits. Transformer Circuits Thread.
+    https://transformer-circuits.pub/2021/framework/index.html
+  - >-
+    Marks, S., & Tegmark, M. (2023). The Geometry of Truth: Emergent Linear
+    Structure in Large Language Model Representations of True/False Datasets.
+    arXiv:2310.06824.
+  - >-
+    Lieberum, T., et al. (2024). Gemma Scope: Open Sparse Autoencoders
+    Everywhere All At Once on Gemma 2. arXiv:2408.05147.
+  - >-
+    Shu, D., et al. (2025). A Survey on Sparse Autoencoders: Interpreting the
+    Internal Mechanisms of Large Language Models. arXiv:2503.05613.
+  - >-
+    Templeton, A., et al. (2024). Scaling Monosemanticity: Extracting
+    Interpretable Features from Claude 3 Sonnet. Transformer Circuits Thread.
+    https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html
+  - >-
+    Ji, Z., et al. (2023). Survey of Hallucination in Natural Language
+    Generation. ACM Computing Surveys. arXiv:2202.03629.
+  - >-
+    Kuhn, L., Gal, Y., & Farquhar, S. (2023). Semantic Uncertainty: Linguistic
+    Invariances for Uncertainty Estimation in Natural Language Generation.
+    ICLR. arXiv:2302.09664.
+  - >-
+    Wang, X., et al. (2023). Self-Consistency Improves Chain of Thought
+    Reasoning in Language Models. ICLR. arXiv:2203.11171.
+  - >-
+    Gemma Team. (2024). Gemma 2: Improving Open Language Models at a
+    Practical Size. arXiv:2408.00118.
+  - >-
+    Joshi, M., et al. (2017). TriviaQA: A Large Scale Distantly Supervised
+    Challenge Dataset for Reading Comprehension. ACL. arXiv:1705.03551.
+  - >-
+    Lee, K., et al. (2019). Latent Retrieval for Weakly Supervised Open Domain
+    Question Answering. ACL. arXiv:1906.00300.
+  - >-
+    Mallen, A., et al. (2023). When Not to Trust Language Models: Investigating
+    Effectiveness of Parametric and Non-Parametric Memories. ACL.
+    arXiv:2212.10511.
+  - >-
+    Lin, S., Hilton, J., & Evans, O. (2022). TruthfulQA: Measuring How Models
+    Mimic Human Falsehoods. ACL. arXiv:2109.07958.

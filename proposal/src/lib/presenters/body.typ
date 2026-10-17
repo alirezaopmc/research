@@ -6,6 +6,11 @@
   developmental-selected: meta.summary.thesis-type == "developmental",
 )
 
+// Optional supervisor rows (حسب نیاز) appear only once a name is entered.
+#let supervisor-visible-rows(rows) = rows.filter(row => {
+  str(row.at("name", default: "")).trim().len() > 0
+})
+
 #let supervisor-role-label(labels, role) = {
   if role == "primary" {
     labels.supervisor-role-primary
