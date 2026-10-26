@@ -1,8 +1,8 @@
 // Bibliography — LTR English block inside RTL document.
 #import "../../design/tokens.typ": *
-#import "../../design/typography.typ": text-base-label
 #import "../shared.typ": to-persian-digits
 #import "../shared/tech-footnote.typ": ltr-block
+#import "section-heading.typ": body-section-heading
 
 #let bibliography-entry(number, citation) = [
   #par(
@@ -16,7 +16,7 @@
 ]
 
 #let body-bibliography-section(labels, meta) = [
-  #text-base-label(labels.section-bibliography)
+  #body-section-heading("۶", labels.section-bibliography)
   #if "note" in meta.bibliography and meta.bibliography.note != none [
     #v(space-xs)
     #par(text(size: size-body)[#meta.bibliography.note])

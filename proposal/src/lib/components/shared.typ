@@ -34,6 +34,10 @@
   }
 }
 
+// Heading numbers ("۴-۱-۱.") stay left-to-right inside the RTL body. `dir: ltr` on inline text
+// does not reorder digits here, so the Unicode left-to-right isolate (LRI ... PDI) wraps them.
+#let heading-number(number) = "\u{2066}" + number + ".\u{2069}"
+
 #let labeled-field(label, value, label-style, row-gutter: 0em) = {
   grid(
     columns: (auto, 1fr),

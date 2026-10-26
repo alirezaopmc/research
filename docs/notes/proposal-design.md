@@ -91,7 +91,8 @@ Hierarchy through weight and ink—not extra borders.
 
 | Element | Treatment |
 |---------|-----------|
-| Section heading (`۲.`, `۳.`) | `text-base-heading` — unchanged |
+| Section heading (`۱.` to `۶.`) | `text-base-heading`, number via `heading-number()` |
+| Subsection (`۴-۱.`) and level 3 (`۴-۱-۱.`) | `text-base-heading`, number via `heading-number()`; level 3 uses `body-subheading()` |
 | Column / field labels | Bold, 12pt; headers may use blue ink |
 | Values | Regular weight, 12pt |
 | Empty cells | Truly empty; no placeholder dashes |
@@ -144,7 +145,7 @@ Figures are native Typst drawings (vector, no raster assets). Labels and caption
 | ۴-۱ تعریف | Two observation levels (behavioral / mechanistic) | `definition-layers.typ` |
 | ۴-۱ ضرورت | Published causal intervention, original vs. swapped | `necessity-intervention.typ` |
 | ۴-۲ روش | Three research stages and outputs | `methodology-stages.typ` |
-| ۴-۲ هدایت | Intervention on intermediate features: suppressed feature and injected steering vector (schematic, no results) | `figures/causal-steering.typ` |
+| ۴-۲ هدایت | Intervention on intermediate features: suppressed feature crossed out with its edges removed, injected steering vector, outputs ranked by illustrative probability with weaker outputs faded (schematic, no results) | `figures/causal-steering.typ` |
 | ۴-۳ پیشینه | Table (`جدول`): two research families, what each shows and cannot show | `background-comparison.typ` (`body-table()`, registry style) |
 
 Rules:
@@ -185,7 +186,7 @@ English gloss casing: lowercase for common technical terms (`behavioral evaluati
 | Form data table | `lib/components/shared/data-table.typ` |
 | Cover header (logos + invocation) | `lib/components/cover/header.typ` |
 | Cover footnotes | `lib/components/cover/footnotes.typ` |
-| Body subsection heading | `lib/components/body/subsection-heading.typ` |
+| Body subsection and level-3 heading | `lib/components/body/subsection-heading.typ` |
 | Figure wrapper and diagram primitives | `lib/components/shared/figure.typ` |
 
 ## QA (body tables)

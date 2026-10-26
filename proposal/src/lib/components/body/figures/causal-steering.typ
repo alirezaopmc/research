@@ -1,7 +1,7 @@
 // Figure for section 4-2 (methodology): steering as an intervention on intermediate features.
 // Drawn with absolute coordinates. Reading order is right to left, so inputs sit on the right.
-#import "../../../design/colors.typ": color-ut-blue
-#import "../../../design/typography.typ": text-base-body, text-base-label
+#import "../../../design/colors.typ": color-ink, color-ut-blue
+#import "../../../design/typography.typ": text-base-body, text-base-label, text-footnote
 #import "../../shared/figure.typ": (
   body-figure, diagram-band-top, diagram-stroke, diagram-stroke-emphasis,
 )
@@ -10,7 +10,12 @@
 #let panel-height = 6.4cm
 #let node-radius = 0.22cm
 #let tag-height = 0.8cm
+#let output-width = 3.0cm
+#let weak-alpha = 65%
 #let link-stroke = 0.4pt + color-ut-blue
+#let link-stroke-weak = 0.4pt + color-ut-blue.transparentize(weak-alpha)
+#let weak-stroke = 0.75pt + color-ut-blue.transparentize(weak-alpha)
+#let weak-ink = color-ink.transparentize(weak-alpha)
 #let cross-stroke = 1.2pt + color-ut-blue
 
 // Column x-positions and row y-positions (centres) inside a panel.
@@ -22,6 +27,12 @@
 #let row-input = (2.4cm, 3.4cm, 4.4cm)
 #let row-hidden-1 = (2.4cm, 3.4cm, 4.4cm, 5.4cm)
 #let row-hidden-2 = (2.9cm, 3.9cm, 4.9cm)
+// Ranked output slots, highest score first.
+#let row-output = (row-hidden-1.at(1), row-hidden-1.at(2))
+
+// Index of the Texas feature (suppressed in the steered run) and of the injected feature.
+#let inhibited-index = 3
+#let injected-index = 2
 
 // Straight line between two centre points.
 #let segment(a, b, stroke) = {
@@ -45,6 +56,13 @@
   ),
 )
 
+// Two crossed strokes over a node mark a suppressed feature.
+#let cross(p) = {
+  let d = node-radius * 0.7
+  segment((p.at(0) - d, p.at(1) - d), (p.at(0) + d, p.at(1) + d), cross-stroke)
+  segment((p.at(0) - d, p.at(1) + d), (p.at(0) + d, p.at(1) - d), cross-stroke)
+}
+
 #let tag(p, width, body, emphasis: false) = place(
   top + left,
   dx: p.at(0) - width / 2,
@@ -65,30 +83,44 @@
   box(width: width, height: tag-height)[#align(center + horizon)[#body]],
 )
 
-// Two crossed strokes over a node mark a suppressed feature.
-#let cross(p) = {
-  let d = node-radius * 0.7
-  segment((p.at(0) - d, p.at(1) - d), (p.at(0) + d, p.at(1) + d), cross-stroke)
-  segment((p.at(0) - d, p.at(1) + d), (p.at(0) + d, p.at(1) - d), cross-stroke)
-}
+// Output with its probability. Weaker outputs are drawn transparent.
+#let output-tag(p, name, score, weak: false) = place(
+  top + left,
+  dx: p.at(0) - output-width / 2,
+  dy: p.at(1) - tag-height / 2,
+  box(
+    width: output-width,
+    height: tag-height,
+    inset: 4pt,
+    fill: white,
+    stroke: if weak { weak-stroke } else { diagram-stroke-emphasis },
+  )[#align(center + horizon)[#text(fill: if weak { weak-ink } else { color-ink })[
+    #text-base-body(name) #h(0.4em) #text-footnote[#score]
+  ]]],
+)
 
 #let steering-network(content, steered: false) = {
   let inputs = row-input.map(y => (col-input, y))
   let hidden-1 = row-hidden-1.map(y => (col-hidden-1, y))
   let hidden-2 = row-hidden-2.map(y => (col-hidden-2, y))
-  let output-main = (col-output, row-hidden-2.at(1))
-  let output-alt = (col-output, row-hidden-1.at(3))
+  let outputs = row-output.map(y => (col-output, y))
   let injection = (12.9cm, 6.0cm)
-  let injected-node = hidden-1.at(2)
+  let suppressed = if steered { inhibited-index } else { none }
+  // Features that keep their edges; a suppressed feature stays as a node but loses all its edges.
+  let linked = hidden-1.enumerate().filter(((i, _)) => i != suppressed)
+  let ranked = if steered { content.outputs-steered } else { content.outputs-normal }
 
   box(width: panel-width, height: panel-height)[
     // Links first, so nodes and tags cover their ends.
-    #for a in inputs { for b in hidden-1 { segment(a, b, link-stroke) } }
-    #for a in hidden-1 { for b in hidden-2 { segment(a, b, link-stroke) } }
-    #for a in hidden-2 { segment(a, output-main, link-stroke) }
+    #for a in inputs { for (_, b) in linked { segment(a, b, link-stroke) } }
+    #for (_, a) in linked { for b in hidden-2 { segment(a, b, link-stroke) } }
+    #for (rank, o) in outputs.enumerate() {
+      for a in hidden-2 {
+        segment(a, o, if rank == 0 { link-stroke } else { link-stroke-weak })
+      }
+    }
     #if steered {
-      for a in hidden-2 { segment(a, output-alt, link-stroke) }
-      segment(injection, injected-node, diagram-stroke-emphasis)
+      segment(injection, hidden-1.at(injected-index), diagram-stroke-emphasis)
     }
 
     // Column headers (top panel only).
@@ -105,7 +137,7 @@
 
     // Intermediate features: capital and Texas are the features of interest.
     #for (i, p) in hidden-1.enumerate() {
-      node(p, emphasis: i == 0 or i == 3 or (steered and i == 2))
+      node(p, emphasis: i == 0 or i == inhibited-index or (steered and i == injected-index))
     }
     #for p in hidden-2 { node(p) }
 
@@ -113,17 +145,14 @@
     #plain-label((col-hidden-1 - 1.6cm, row-hidden-1.at(0)), 2.6cm, text-base-body(content.capital-feature))
     #plain-label((col-hidden-1 - 1.6cm, row-hidden-1.at(3)), 2.6cm, text-base-body(content.texas-feature))
 
-    // Outputs.
-    #if steered {
-      tag(output-main, 3.0cm, text-base-body(content.output-steered), emphasis: true)
-      tag(output-alt, 3.0cm, text-base-body(content.output-original))
-    } else {
-      tag(output-main, 3.0cm, text-base-body(content.output-original), emphasis: true)
+    // Outputs, sorted by score (highest first).
+    #for (rank, item) in ranked.enumerate() {
+      output-tag(outputs.at(rank), item.name, item.score, weak: rank > 0)
     }
 
     // Intervention: suppress the Texas feature and inject the steering vector.
     #if steered {
-      cross(hidden-1.at(3))
+      cross(hidden-1.at(inhibited-index))
       plain-label((col-hidden-1, row-hidden-1.at(3) + 0.6cm), 2.0cm, text-base-body(content.inhibited))
       tag(injection, 4.2cm, text-base-body(content.injected))
     }

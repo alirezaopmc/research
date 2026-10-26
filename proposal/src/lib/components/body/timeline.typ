@@ -4,6 +4,7 @@
 #import "../../design/typography.typ": text-base-body, text-base-label
 #import "../shared.typ": to-persian-digits
 #import "../shared/data-table.typ": form-data-table
+#import "section-heading.typ": body-section-heading
 
 #let phase-label(n) = "مرحله " + (
   ("اول", "دوم", "سوم", "چهارم", "پنجم", "ششم").at(
@@ -39,8 +40,8 @@
   form-data-table(
     (1.4fr,) + (0.45fr,) * months.len(),
     phase-rows,
-    header-cells: (
-      align(center + horizon)[#text-base-label("فاز")],
+    header-cells:     (
+      align(center + horizon)[#text-base-label("مرحله")],
       ..month-cells,
     ),
     style: "grid",
@@ -57,7 +58,7 @@
 
 #let body-timeline-section(labels, meta) = [
   #v(space-md)
-  #text-base-label(labels.section-timeline)
+  #body-section-heading("۵", labels.section-timeline)
   #if "note" in meta.timeline and meta.timeline.note != none [
     #v(space-xs)
     #par(text-base-body(meta.timeline.note))

@@ -1,9 +1,9 @@
 #import "../../design/tokens.typ": *
-#import "../../design/typography.typ": text-base-heading, text-base-label
+#import "../../design/typography.typ": text-base-label
 #import "../shared/tech-footnote.typ": rich-text
 #import "figures/methodology-stages.typ": methodology-stages-figure
 #import "figures/causal-steering.typ": steering-figure
-#import "subsection-heading.typ": body-subsection-heading
+#import "subsection-heading.typ": body-subheading, body-subsection-heading
 
 #let methodology-bullet-item(item) = {
   rich-text(item)
@@ -14,20 +14,14 @@
   list(..items.map(methodology-bullet-item))
 }
 
-#let methodology-subsection(title, items) = [
-  #block(sticky: true)[
-    #text-base-heading(title)
-    #v(space-xs)
-  ]
+#let methodology-subsection(number, title, items) = [
+  #body-subheading(number, title)
   #methodology-bullet-list(items)
   #v(space-sm)
 ]
 
-#let methodology-dimensions-block(title, labels, dimensions) = [
-  #block(sticky: true)[
-    #text-base-heading(title)
-    #v(space-xs)
-  ]
+#let methodology-dimensions-block(number, title, labels, dimensions) = [
+  #body-subheading(number, title)
   #for item in dimensions [
     #let item-label = labels.at(item.key, default: item.key)
     #par[
@@ -53,10 +47,10 @@
   ]
   #methodology-stages-figure(meta.figures.methodology-stages)
   #v(space-sm)
-  #methodology-subsection(labels.methodology-theory-title, meta.methodology.theory)
-  #methodology-subsection(labels.methodology-implementation-title, meta.methodology.implementation)
+  #methodology-subsection("۴-۲-۱", labels.methodology-theory-title, meta.methodology.theory)
+  #methodology-subsection("۴-۲-۲", labels.methodology-implementation-title, meta.methodology.implementation)
   #if "dimensions" in meta.methodology and meta.methodology.dimensions != none [
-    #methodology-dimensions-block(labels.methodology-dimensions-title, labels, meta.methodology.dimensions)
+    #methodology-dimensions-block("۴-۲-۳", labels.methodology-dimensions-title, labels, meta.methodology.dimensions)
   ]
   #steering-figure(meta.figures.causal-steering)
 ]

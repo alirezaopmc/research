@@ -81,7 +81,7 @@ Read with the template in `[[papers/_template]]`:
 - **Compute:** Google Colab Pro; main model Gemma 2 9B with Gemma Scope residual SAEs; Gemma 2 2B for pipeline checks.
 - **Thesis type:** applied (کاربردی). **Timeline:** 12 months from Aban 1405, six two-month sequential phases.
 - **Font:** XB Niloofar kept; redistribution rights still unverified.
-- **Open inputs:** abstract, supervisor and advisor rank/share/workplace/signature, student signature, approval date (1405/05/25 predates today).
+- **Open inputs:** supervisor and advisor rank/share/workplace/signature, student signature, approval date (1405/05/25 predates today).
 
 ## Step-by-Step Proposal Finalization Checklist
 

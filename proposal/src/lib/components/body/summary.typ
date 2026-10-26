@@ -32,14 +32,6 @@
       third-selected: selection.developmental-selected,
     ),
   )
-  #if "abstract" in meta.summary and meta.summary.abstract != "" [
-    #v(space-stack-tight)
-    #align(right + top)[
-      #text-base-label(labels.abstract + ":")
-      #v(space-xs)
-      #par(text-base-body(meta.summary.abstract))
-    ]
-  ]
   #if "keywords" in meta.summary and meta.summary.keywords != "" [
     #v(space-stack-tight)
     #body-field(labels.keywords, meta.summary.keywords)

@@ -1,9 +1,9 @@
 // Section 4-3: background with bilingual footnotes.
 #import "../../design/tokens.typ": *
-#import "../../design/typography.typ": text-base-body, text-base-heading
+#import "../../design/typography.typ": text-base-body
 #import "../shared/tech-footnote.typ": rich-text
 #import "background-comparison.typ": background-comparison-table
-#import "subsection-heading.typ": body-subsection-heading
+#import "subsection-heading.typ": body-subheading, body-subsection-heading
 
 #let rich-paragraph(content) = {
   if type(content) == str {
@@ -33,10 +33,7 @@
   ]
   #if "synthesis" in meta.background and meta.background.synthesis != none [
     #v(space-sm)
-    #block(sticky: true)[
-      #text-base-heading(labels.background-synthesis)
-      #v(space-xs)
-    ]
+    #body-subheading("۴-۳-۱", labels.background-synthesis)
     #for paragraph in meta.background.synthesis.paragraphs [
       #rich-paragraph(paragraph)
     ]
@@ -47,10 +44,7 @@
   ]
   #if "research-gap" in meta.background and meta.background.research-gap != none [
     #v(space-sm)
-    #block(sticky: true)[
-      #text-base-heading(labels.background-research-gap)
-      #v(space-xs)
-    ]
+    #body-subheading("۴-۳-۲", labels.background-research-gap)
     #rich-paragraph(meta.background.research-gap)
   ]
 ]

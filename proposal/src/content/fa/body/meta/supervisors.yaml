@@ -15,7 +15,7 @@ rows:
     name: دکتر علی فهیم
     rank: "[مرتبه علمی]"
     share: "[درصد]"
-    workplace: "[محل خدمت]"
+    workplace: دانشکده مهندسی برق و کامپیوتر
     signature: "[امضا و تاریخ]"
   - role: advisor-secondary
     name: ""

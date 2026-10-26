@@ -10,7 +10,7 @@ definition-layers:
   output: "پاسخ"
 
 necessity-intervention:
-  caption: "نمونه‌ای منتشرشده از مداخله‌ی علّی موضعی روی Claude 3.5 Haiku؛ شماتیک بر اساس [۹–۱۱] بازترسیم شده و نتیجه‌ی این پژوهش نیست."
+  caption: "نمونه‌ای منتشرشده از مداخله‌ی علّی موضعی روی Claude 3.5 Haiku؛ شماتیک بر اساس [۹] بازترسیم شده و نتیجه‌ی این پژوهش نیست."
   header-input: "ورودی"
   header-representation: "ویژگی میانی"
   header-output: "پاسخ"
@@ -34,10 +34,10 @@ methodology-stages:
       condition: "مشروط به شواهد و امکان اجرا"
 
 causal-steering:
-  caption: "شماتیک مداخله‌ی علّی و هدایت روی ویژگی‌های میانی، الهام‌گرفته از نمونه‌ی [۹–۱۱]؛ نمایش مفهومی است و اعداد یا نتایج این پژوهش را نشان نمی‌دهد."
+  caption: "شماتیک مداخله‌ی علّی و هدایت روی ویژگی‌های میانی، الهام‌گرفته از نمونه‌ی [۸–۹]؛ یال‌های ویژگی مهارشده حذف شده‌اند. احتمال‌ها فرضی‌اند، نمایش مفهومی است و نتیجه‌ی این پژوهش نیستند."
   header-input: "ورودی"
   header-hidden: "ویژگی‌های میانی"
-  header-output: "پاسخ"
+  header-output: "پاسخ و احتمال"
   input-labels:
     - "پایتخت"
     - "ایالت"
@@ -46,7 +46,16 @@ causal-steering:
   texas-feature: "ویژگی «تگزاس»"
   inhibited: "مهار شده"
   injected: "بردار هدایت «کالیفرنیا»"
-  output-original: "آستین"
-  output-steered: "ساکرامنتو"
+  # Outputs are ordered by score, highest first; the lower one is drawn transparent.
+  outputs-normal:
+    - name: "آستین"
+      score: "۸۵٪"
+    - name: "ساکرامنتو"
+      score: "۵٪"
+  outputs-steered:
+    - name: "ساکرامنتو"
+      score: "۸۰٪"
+    - name: "آستین"
+      score: "۱۰٪"
   row-normal: "اجرای عادی"
   row-steered: "مداخله و هدایت"
