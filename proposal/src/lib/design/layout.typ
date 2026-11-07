@@ -3,7 +3,7 @@
 #import "page-chrome.typ": (
   footnote-entry-block, letter-footnote-entry-settings, letter-page-settings,
 )
-#import "../components/shared.typ": to-persian-digits
+#import "../components/shared.typ": footnote-fa-numbering
 
 #let centered-block(body) = box(
   width: 100%,
@@ -31,7 +31,7 @@
 
 #let letter-page-shell(body, page-header-title) = [
   #set page(..letter-page-settings(page-header-title))
-  #set footnote(numbering: to-persian-digits)
+  #set footnote(numbering: footnote-fa-numbering)
   #set footnote.entry(..letter-footnote-entry-settings)
   #show footnote.entry: footnote-entry-block
   #set align(right)

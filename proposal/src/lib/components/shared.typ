@@ -15,6 +15,37 @@
   }
 }
 
+// Flatten content to plain text. Used to infer a footnote entry's direction.
+#let plain-text(value) = {
+  let walk(node) = {
+    if type(node) == str {
+      node
+    } else if type(node) == array {
+      node.map(walk).join("")
+    } else if type(node) == content {
+      if node.func() == text {
+        node.text
+      } else if node.has("child") {
+        walk(node.child)
+      } else if node.has("children") {
+        walk(node.children)
+      } else if node.has("body") {
+        walk(node.body)
+      } else if node.has("text") and type(node.text) == str {
+        node.text
+      } else {
+        ""
+      }
+    } else {
+      ""
+    }
+  }
+  walk(value)
+}
+
+// Persian superscripts in running text and footnote entries.
+#let footnote-fa-numbering(n) = to-persian-digits(str(n))
+
 // ASCII digits/dates → Persian; emails and Latin tokens stay LTR.
 #let ltr-value(content) = {
   if type(content) == str and content.len() > 0 {
@@ -34,9 +65,10 @@
   }
 }
 
-// Heading numbers ("۴-۱-۱.") stay left-to-right inside the RTL body. `dir: ltr` on inline text
-// does not reorder digits here, so the Unicode left-to-right isolate (LRI ... PDI) wraps them.
-#let heading-number(number) = "\u{2066}" + number + ".\u{2069}"
+// Heading numbers stay left-to-right inside the RTL body. `dir: ltr` on inline text does not
+// reorder digits here, so the Unicode left-to-right isolate (LRI ... PDI) wraps the digits.
+// The dot stays outside the isolate, after it, so the RTL line places it on the left of the number.
+#let heading-number(number) = "\u{2066}" + number + "\u{2069}."
 
 #let labeled-field(label, value, label-style, row-gutter: 0em) = {
   grid(

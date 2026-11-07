@@ -4,11 +4,11 @@ entries:
   - >-
     Elhage, N., et al. (2021). A Mathematical Framework for Transformer Circuits. Transformer Circuits Thread. https://transformer-circuits.pub/2021/framework/index.html
   - >-
-    Liang, P., et al. (2022). Holistic Evaluation of Language Models. arXiv:2211.09110.
+    Liang, P., et al. (2023). Holistic Evaluation of Language Models. Transactions on Machine Learning Research (TMLR). arXiv:2211.09110.
   - >-
-    Perez, E., et al. (2022). Discovering Language Model Behaviors with Model-Written Evaluations. arXiv:2212.09251.
+    Perez, E., et al. (2023). Discovering Language Model Behaviors with Model-Written Evaluations. Findings of ACL 2023, 13387–13434. https://doi.org/10.18653/v1/2023.findings-acl.847.
   - >-
-    Ji, Z., et al. (2023). Survey of Hallucination in Natural Language Generation. ACM Computing Surveys. arXiv:2202.03629.
+    Ji, Z., et al. (2023). Survey of Hallucination in Natural Language Generation. ACM Computing Surveys, 55(12). https://doi.org/10.1145/3571730
   - >-
     Simhi, A., et al. (2024). Distinguishing Ignorance from Error in LLM Hallucinations. arXiv:2410.22071.
   - >-
@@ -18,13 +18,13 @@ entries:
   - >-
     Lindsey, J., et al. (2025). On the Biology of a Large Language Model. Transformer Circuits Thread. https://www.transformer-circuits.pub/2025/attribution-graphs/biology.html
   - >-
-    Cunningham, H., et al. (2023). Sparse Autoencoders Find Highly Interpretable Features in Language Models. arXiv:2309.08600.
+    Huben, R., et al. (2024). Sparse Autoencoders Find Highly Interpretable Features in Language Models. ICLR 2024. arXiv:2309.08600.
   - >-
     Bricken, T., et al. (2023). Towards Monosemanticity: Decomposing Language Models With Dictionary Learning. Transformer Circuits Thread. https://transformer-circuits.pub/2023/monosemantic-features
   - >-
-    Shu, D., et al. (2025). A Survey on Sparse Autoencoders: Interpreting the Internal Mechanisms of Large Language Models. arXiv:2503.05613.
+    Shu, D., et al. (2025). A Survey on Sparse Autoencoders: Interpreting the Internal Mechanisms of Large Language Models. EMNLP 2025 Findings. arXiv:2503.05613.
   - >-
-    Marks, S., & Tegmark, M. (2024). The Geometry of Truth: Emergent Linear Structure in Large Language Model Representations of True/False Datasets. COLM 2024. arXiv:2310.06824.
+    Marks, S., & Tegmark, M. (2024). The Geometry of Truth: Emergent Linear Structure in LLM Representations of True/False Datasets. COLM 2024. arXiv:2310.06824.
   - >-
     Zou, A., et al. (2023). Representation Engineering: A Top-Down Approach to AI Transparency. arXiv:2310.01405.
   - >-
@@ -34,11 +34,9 @@ entries:
   - >-
     Lieberum, T., et al. (2024). Gemma Scope: Open Sparse Autoencoders Everywhere All At Once on Gemma 2. arXiv:2408.05147.
   - >-
-    McDougall, C., et al. (2025). Gemma Scope 2 - Technical Paper. Google DeepMind. https://storage.googleapis.com/deepmind-media/DeepMind.com/Blog/gemma-scope-2-helping-the-ai-safety-community-deepen-understanding-of-complex-language-model-behavior/Gemma_Scope_2_Technical_Paper.pdf
-  - >-
     Gemma Team. (2024). Gemma 2: Improving Open Language Models at a Practical Size. arXiv:2408.00118.
   - >-
-    Lin, S., Hilton, J., & Evans, O. (2022). TruthfulQA: Measuring How Models Mimic Human Falsehoods. ACL. arXiv:2109.07958.
+    Lin, S., Hilton, J., & Evans, O. (2022). TruthfulQA: Measuring How Models Mimic Human Falsehoods. ACL 2022, 3214–3252. arXiv:2109.07958.
   - >-
     Kadavath, S., et al. (2022). Language Models (Mostly) Know What They Know. arXiv:2207.05221.
   - >-
@@ -52,10 +50,34 @@ entries:
   - >-
     Kossen, J., et al. (2024). Semantic Entropy Probes: Robust and Cheap Hallucination Detection in LLMs. arXiv:2406.15927.
   - >-
-    Joshi, M., et al. (2017). TriviaQA: A Large Scale Distantly Supervised Challenge Dataset for Reading Comprehension. ACL. arXiv:1705.03551.
+    Joshi, M., et al. (2017). TriviaQA: A Large Scale Distantly Supervised Challenge Dataset for Reading Comprehension. ACL 2017, 1601–1611. https://doi.org/10.18653/v1/P17-1147. arXiv:1705.03551.
   - >-
-    Kwiatkowski, T., et al. (2019). Natural Questions: A Benchmark for Question Answering Research. Transactions of the Association for Computational Linguistics (TACL).
+    Kwiatkowski, T., et al. (2019). Natural Questions: A Benchmark for Question Answering Research. Transactions of the Association for Computational Linguistics (TACL). https://doi.org/10.1162/tacl_a_00276
   - >-
-    Lee, K., et al. (2019). Latent Retrieval for Weakly Supervised Open Domain Question Answering. ACL. arXiv:1906.00300.
+    Lee, K., et al. (2019). Latent Retrieval for Weakly Supervised Open Domain Question Answering. ACL 2019, 6086–6096. https://doi.org/10.18653/v1/P19-1612. arXiv:1906.00300.
   - >-
-    Mallen, A., et al. (2023). When Not to Trust Language Models: Investigating Effectiveness of Parametric and Non-Parametric Memories. ACL. arXiv:2212.10511.
+    Mallen, A., et al. (2023). When Not to Trust Language Models: Investigating Effectiveness of Parametric and Non-Parametric Memories. ACL 2023, 9802–9822. https://doi.org/10.18653/v1/2023.acl-long.546. arXiv:2212.10511.
+  - >-
+    Burns, C., et al. (2023). Discovering Latent Knowledge in Language Models Without Supervision. ICLR 2023. arXiv:2212.03827.
+  - >-
+    Li, K., et al. (2023). Inference-Time Intervention: Eliciting Truthful Answers from a Language Model. NeurIPS 2023. arXiv:2306.03341.
+  - >-
+    Azaria, A., & Mitchell, T. (2023). The Internal State of an LLM Knows When It's Lying. Findings of EMNLP 2023, 967–976. https://doi.org/10.18653/v1/2023.findings-emnlp.68. arXiv:2304.13734.
+  - >-
+    Dubanowska, Z., et al. (2025). Representation-based Broad Hallucination Detectors Fail to Generalize Out of Distribution. Findings of EMNLP 2025, 17563–17575. arXiv:2509.19372.
+  - >-
+    Orgad, H., Toker, M., Gekhman, Z., Reichart, R., Szpektor, I., Kotek, H., & Belinkov, Y. (2025). LLMs Know More Than They Show: On the Intrinsic Representation of LLM Hallucinations. ICLR 2025. arXiv:2410.02707.
+  - >-
+    Chen, B., Fan, Z., Wang, K., Leng, Z., Wu, F., Zheng, H., Sun, Y., & Wu, W. (2026). HalluSAE: Detecting Hallucinations in Large Language Models via Sparse Auto-Encoders. arXiv:2604.16430.
+  - >-
+    Patel, H., Chen, T., Wei, H., Papalexakis, E. E., & Chen, J. (2026). Are LLM Uncertainty and Correctness Encoded by the Same Features? A Functional Dissociation via Sparse Autoencoders. arXiv:2604.19974.
+  - >-
+    Ganesh, P., Shokri, R., & Farnadi, G. (2026). Rethinking Hallucinations: Correctness, Consistency, and Prompt Multiplicity. Proceedings of EACL 2026 (Long Papers), 6959–6978. https://aclanthology.org/2026.eacl-long.327/. arXiv:2602.00723.
+  - >-
+    Chauhan, M. S. (2026). DECK: A Consistency × Confidence Taxonomy of LLM Hallucinations. arXiv:2606.02289.
+  - >-
+    Abdaljalil, S., et al. (2025). SAFE: A Sparse Autoencoder-Based Framework for Robust Query Enrichment and Hallucination Mitigation in LLMs. Findings of EMNLP 2025, 9335–9346. https://doi.org/10.18653/v1/2025.findings-emnlp.496
+  - >-
+    Suresh, P., et al. (2025). From Noise to Narrative: Tracing the Origins of Hallucinations in Transformers. Advances in Neural Information Processing Systems 38 (NeurIPS 2025), 25507–25544. https://doi.org/10.52202/085713-0758. arXiv:2509.06938.
+  - >-
+    Gekhman, Z., et al. (2024). Does Fine-Tuning LLMs on New Knowledge Encourage Hallucinations? Proceedings of EMNLP 2024, 7765–7784. https://aclanthology.org/2024.emnlp-main.444/

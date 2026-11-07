@@ -1,6 +1,5 @@
 // Bibliography — LTR English block inside RTL document.
 #import "../../design/tokens.typ": *
-#import "../shared.typ": to-persian-digits
 #import "../shared/tech-footnote.typ": ltr-block
 #import "section-heading.typ": body-section-heading
 
@@ -8,7 +7,7 @@
   #par(
     hanging-indent: 1.4em,
     text(size: size-body)[
-      #strong(to-persian-digits(number) + ". ")
+      #strong(str(number) + ". ")
       #citation
     ],
   )

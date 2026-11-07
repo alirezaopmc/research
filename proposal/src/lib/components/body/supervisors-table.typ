@@ -10,11 +10,10 @@
   #text-base-body(body)
 ]
 
+// Empty signature cells stay blank for handwritten completion.
 #let supervisor-signature-cell(signature) = {
   if type(signature) == str and signature.len() == 0 {
-    signature-placeholder-box(text-label: "[محل امضا]")
-  } else if type(signature) == str and signature.starts-with("[") {
-    signature-placeholder-box(text-label: signature)
+    signature-placeholder-box()
   } else {
     supervisor-cell(signature)
   }

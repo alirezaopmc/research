@@ -1,24 +1,10 @@
-// Timeline — phase list + month grid.
+// Timeline — month grid + milestones.
 #import "../../design/colors.typ": color-ut-blue
 #import "../../design/tokens.typ": *
 #import "../../design/typography.typ": text-base-body, text-base-label
 #import "../shared.typ": to-persian-digits
 #import "../shared/data-table.typ": form-data-table
 #import "section-heading.typ": body-section-heading
-
-#let phase-label(n) = "مرحله " + (
-  ("اول", "دوم", "سوم", "چهارم", "پنجم", "ششم").at(
-    calc.min(n - 1, 5),
-    default: to-persian-digits(n),
-  )
-)
-
-#let timeline-phase-list(phases) = {
-  set list(indent: 1.2em, spacing: space-stack-tight)
-  list(..phases.enumerate().map(((i, phase)) => text-base-body(
-    phase-label(i + 1) + ": " + phase,
-  )))
-}
 
 #let month-active(months, active-months) = months.map(month => {
   align(center + horizon)[
@@ -64,8 +50,6 @@
     #par(text-base-body(meta.timeline.note))
   ]
   #v(space-sm)
-  #timeline-phase-list(meta.timeline.phases)
-  #v(space-md)
   #timeline-grid(meta.timeline.months, meta.timeline.schedule)
   #if "milestones" in meta.timeline and meta.timeline.milestones != none [
     #v(space-md)

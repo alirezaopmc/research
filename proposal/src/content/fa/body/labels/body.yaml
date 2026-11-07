@@ -1,7 +1,7 @@
-section-summary: خلاصه‌ی اطلاعات پایان نامه
+section-summary: خلاصه‌ی اطلاعات پایان‌نامه
 section-supervisors: اطلاعات استاد راهنما و مشاور
 section-student: اطلاعات دانشجو
-section-topic: مشخصات موضوعی پایان نامه
+section-topic: مشخصات موضوعی پایان‌نامه
 section-topic-problem: تعریف مسئله، هدف و ضرورت انجام
 
 title-fa: عنوان (فارسی)
@@ -43,13 +43,13 @@ methodology-theory-title: بخش تئوری
 methodology-implementation-title: بخش پیاده‌سازی
 methodology-dimensions-title: ابعاد ارزیابی و مشخصات اجرایی
 methodology-models: مدل‌های زبانی مورد بررسی
-methodology-datasets: مجموعه‌داده‌ها و وظایف آزمون
-methodology-behaviors: تعریف رفتارهای هدف
-methodology-metrics: سنجه‌ها و معیارهای ارزیابی
-methodology-baselines: خط‌مبناها و روش‌های مقایسه
-methodology-analysis: طرح مقایسه و رویه تحلیل
+methodology-datasets: وظایف و مجموعه‌داده‌ها
+methodology-behaviors: کاربردهای رفتاری
+methodology-metrics: معیارهای ارزیابی
+methodology-baselines: مقایسه با رویکردهای موجود
+methodology-analysis: رویه‌ی تحلیل و استحکام
 
-section-background: پیشینه پژوهش (همراه با ذکر منابع اساسی)
+section-background: پیشینه‌ی پژوهش (همراه با ذکر منابع اساسی)
 background-synthesis: مرور تطبیقی و سنتز پژوهش‌ها
 background-research-gap: شکاف پژوهشی
 section-timeline: زمان‌بندی پیشنهادی برای پروژه

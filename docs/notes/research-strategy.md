@@ -2,10 +2,10 @@
 
 ## Core Thesis
 
-- **Title:** *Characterizing and Steering the Behavior of Large Language Models Across Contexts* (توصیف و هدایت رفتار مدل‌های زبانی بزرگ در زمینه‌های گوناگون)
+- **Title:** *Investigating Internal Representations for Understanding and Evaluating Large Language Model Behavior* (بررسی بازنمایی‌های درونی برای فهم و ارزیابی رفتار مدل‌های زبانی بزرگ)
 - **Discipline:** M.Sc. Algorithms & Computation, University of Tehran
-- **Research scope:** Study how LLM behavior varies across tasks and contexts; characterize and detect selected behaviors, including bias, uncertainty, and factual inconsistency; and evaluate interventions that steer model outputs.
-- **Current research direction:** Test whether interpretable features from pretrained Sparse Autoencoders (SAEs) help detect factual errors and support lightweight interventions under a constrained compute budget (Google Colab Pro; Gemma 2 9B for main runs, Gemma 2 2B for pipeline checks on a T4). This is an initial case study within the broader topic.
+- **Research scope:** Exploratory study of the relationship between internal representations and observable behavior in selected open-weight LLMs on a limited number of tasks. Committed: internal representations as a lens for understanding and evaluating behavior. Open: whether the contribution is an analysis method, evaluation approach, predictive model, or intervention experiment (one primary application, at most one secondary).
+- **Initial case study:** factual errors in knowledge-based QA. Gemma 2 2B with Gemma Scope SAEs on a Colab T4 is the initial candidate setup, not a commitment. The RQs and pipeline below describe this case study; the proposal's RQs are the broader three in `proposal/src/content/fa/body/meta/topic.yaml`.
 
 ---
 
@@ -20,7 +20,7 @@
 ## Methodology & Execution Pipeline
 
 ```
-[Open LLM (e.g. Gemma 2 2B/9B)]
+[Open LLM (Gemma 2; scale per execution protocol)]
        │
        ▼ (Forward pass on QA benchmark)
 [Extract Residual Stream / MLP Activations]
@@ -37,7 +37,7 @@
 
 ### Compute Budget Constraint
 - **No SAE pretraining from scratch required.** Use open pretrained SAE weights from **Gemma Scope** via `SAELens`.
-- Execution: Inference-only evaluation on Google Colab Pro (single 16–24GB GPU for Gemma 2 9B; Colab T4 for Gemma 2 2B checks).
+- Execution: Inference-only evaluation on Google Colab Pro (default: Gemma 2 2B + SAE on Colab T4; larger checkpoints only via protocol update with logged rationale).
 
 ---
 
@@ -78,10 +78,34 @@ Read with the template in `[[papers/_template]]`:
 
 - **Framing:** broad thesis title; SAE-based factual-error detection is the explicit case study (RQ1–RQ2).
 - **Steering:** conditional (RQ3 and §4-2 stage 3); runs only if RQ1–RQ2 evidence supports it.
-- **Compute:** Google Colab Pro; main model Gemma 2 9B with Gemma Scope residual SAEs; Gemma 2 2B for pipeline checks.
+- **Compute:** Google Colab Pro; Gemma 2 2B with Gemma Scope residual SAEs (see 2026-10-27 scale decision below).
 - **Thesis type:** applied (کاربردی). **Timeline:** 12 months from Aban 1405, six two-month sequential phases.
 - **Font:** XB Niloofar kept; redistribution rights still unverified.
 - **Open inputs:** supervisor and advisor rank/share/workplace/signature, student signature, approval date (1405/05/25 predates today).
+
+## Proposal Review Decisions (2026-10-27)
+
+- **RQ2 timing:** detection uses activations of the single evaluated answer; "before generation" removed to match the semantic-entropy baseline.
+- **Label leakage:** consistency labels come from sampling separate from evaluation samples; labeling rule (match or judge) fixed before runs.
+- **Success criteria:** numeric thresholds live only in `[[notes/proposal-execution-protocol]]` (not binding proposal text); evaluated on validation/test, not training.
+- **Proposal wording (2026-10-27):** models, datasets, and baseline *instances* named only in execution protocol; body uses families; no pre-committed winners in goals/metrics.
+- **Compute:** Colab Pro with GPU availability variable; quantization treated as a sensitivity check that is reported separately.
+- **Model scale:** Proposal body stays family-level (open LLM + published SAEs); operational default **Gemma 2 2B** in `[[notes/proposal-execution-protocol]]`. Optional scale-up (e.g. 9B) is not a proposal commitment.
+- **Novelty:** softened to "not reported in the reviewed literature"; Dubanowska et al. (2025, arXiv:2509.19372) added as the nearest OOD neighbor.
+- **Language:** Google Colab Pro written as گوگل کولب پرو; open-source gloss moved to first occurrence in §4-1-4.
+- **Open:** approval date 1405/05/25 predates the current date (Aban 1405); supervisor/advisor rank, share, and signatures still placeholders.
+
+## Direction check (2026-10-27)
+
+Full sources and the recommended framing: [[notes/direction-validation-2026-10]].
+
+- **Keep** the broad title, Gemma 2 2B, published Gemma Scope weights, and the stable-vs-unstable error split.
+- **Demote** SAEs from the contribution to one comparison arm. Published 2025 results (Kantamneni; Dubanowska; AxBench) say they do not beat probes or prompting on detection and steering.
+- **Do not switch** to Gemma Scope 2, transcoders, or attribution graphs. Those answer a circuit question at a higher engineering cost.
+- **Center** selective answering: accuracy at fixed abstention, with output uncertainty and a linear probe as the serious baselines.
+- **Real-world link:** one small hand-built transfer set (game-lore against a fixed wiki, or a course FAQ). No medical or enterprise-RAG deployment claim.
+- **Graphs:** one knowledge graph as the applied slice’s ground truth, checked with k-hop lookup. Attribution graphs and a GNN stay out of the main method. See the graph section in [[notes/direction-validation-2026-10]].
+- Proposal text is unchanged until this framing is accepted.
 
 ## Step-by-Step Proposal Finalization Checklist
 

@@ -1,6 +1,7 @@
 // Bilingual footnotes: Persian (RTL) and English (LTR).
 #import "../../design/tokens.typ": font-english
 #import "../../design/typography.typ": text-base-body
+#import "../shared.typ": footnote-fa-numbering
 
 #let en-footnote-body(content) = {
   set text(font: font-english, dir: ltr, lang: "en")
@@ -12,20 +13,26 @@
   content
 }
 
-#let fa-after(prefix, note) = [#prefix#footnote(fa-footnote-body(note))]
+#let fa-after(prefix, note) = [
+  #prefix#footnote(numbering: footnote-fa-numbering, fa-footnote-body(note))
+]
 
-#let en-after(prefix, gloss) = [#prefix#footnote(en-footnote-body(gloss))]
+#let en-after(prefix, gloss) = [
+  #prefix#footnote(numbering: footnote-fa-numbering, en-footnote-body(gloss))
+]
 
 // English gloss followed by a Persian note in one footnote.
+// The gloss stays on the left; the note gets its own line aligned to the right.
+// A full-width inline box keeps the note inside the entry paragraph.
 #let en-fa-after(prefix, gloss, note) = [
-  #prefix#footnote[
+  #prefix#footnote(numbering: footnote-fa-numbering)[
     #en-footnote-body(gloss)
     #linebreak()
-    #fa-footnote-body(note)
+    #box(width: 100%)[#align(right)[#fa-footnote-body(note)]]
   ]
 ]
 
-#let en-only-footnote(gloss) = footnote(en-footnote-body(gloss))
+#let en-only-footnote(gloss) = footnote(numbering: footnote-fa-numbering, en-footnote-body(gloss))
 
 #let render-segments(segments) = {
   for seg in segments {

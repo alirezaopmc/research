@@ -1,10 +1,10 @@
 rows:
   - role: primary
-    name: دکتر روح‌الله عابدیان
-    rank: "[مرتبه علمی]"
-    share: "[درصد]"
+    name: دکتر روح اله عابدیان
+    rank: دانشیار
+    share: ""
     workplace: دانشکده علوم مهندسی
-    signature: "[امضا و تاریخ]"
+    signature: ""
   - role: secondary
     name: ""
     rank: ""
@@ -13,10 +13,10 @@ rows:
     signature: ""
   - role: advisor-primary
     name: دکتر علی فهیم
-    rank: "[مرتبه علمی]"
-    share: "[درصد]"
+    rank: استادیار
+    share: ""
     workplace: دانشکده مهندسی برق و کامپیوتر
-    signature: "[امضا و تاریخ]"
+    signature: ""
   - role: advisor-secondary
     name: ""
     rank: ""

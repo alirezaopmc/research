@@ -16,7 +16,7 @@
   #body-section-heading("۱", labels.section-summary)
   #body-field(labels.title-fa, meta.summary.title-fa)
   #v(space-stack-tight)
-  #body-field(labels.title-en, meta.summary.title-en)
+  #body-field(labels.title-en, text(dir: ltr)[#meta.summary.title-en])
   #v(space-stack-tight)
   #grid(
     columns: (auto, 1fr),
