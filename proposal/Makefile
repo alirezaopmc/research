@@ -10,6 +10,8 @@ ENTRY_FA_COVER := src/main/fa/cover.typ
 OUTPUT_DIR := output/fa
 OUTPUT_FA_PROPOSAL := $(OUTPUT_DIR)/proposal.pdf
 OUTPUT_FA_COVER := $(OUTPUT_DIR)/proposal-cover.pdf
+ENTRY_FA_CHEATSHEET := src/main/fa/cheatsheet.typ
+OUTPUT_FA_CHEATSHEET := $(OUTPUT_DIR)/cheatsheet.pdf
 # Rebuild when any template, component, or YAML content changes.
 SOURCES := $(shell find src -type f \( -name '*.typ' -o -name '*.yaml' \))
 
@@ -26,10 +28,11 @@ typst watch --root "$(ROOT)" \
 	"$(1)" "$(2)"
 endef
 
-.PHONY: proposal cover watch cover-watch clean
+.PHONY: proposal cover cheatsheet watch cover-watch clean
 
 proposal: $(OUTPUT_FA_PROPOSAL)
 cover: $(OUTPUT_FA_COVER)
+cheatsheet: $(OUTPUT_FA_CHEATSHEET)
 
 $(OUTPUT_FA_PROPOSAL): $(ENTRY_FA_PROPOSAL) $(SOURCES)
 	@$(MAKE) --no-print-directory _check-typst
@@ -42,6 +45,12 @@ $(OUTPUT_FA_COVER): $(ENTRY_FA_COVER) $(SOURCES)
 	@mkdir -p "$(OUTPUT_DIR)"
 	$(call TYPST_COMPILE,$(ENTRY_FA_COVER),$(OUTPUT_FA_COVER))
 	@echo "Built $(OUTPUT_FA_COVER)"
+
+$(OUTPUT_FA_CHEATSHEET): $(ENTRY_FA_CHEATSHEET) $(SOURCES)
+	@$(MAKE) --no-print-directory _check-typst
+	@mkdir -p "$(OUTPUT_DIR)"
+	$(call TYPST_COMPILE,$(ENTRY_FA_CHEATSHEET),$(OUTPUT_FA_CHEATSHEET))
+	@echo "Built $(OUTPUT_FA_CHEATSHEET)"
 
 watch:
 	@$(MAKE) --no-print-directory _check-typst

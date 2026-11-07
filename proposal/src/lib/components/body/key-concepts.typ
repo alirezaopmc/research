@@ -1,5 +1,6 @@
 // A compact glossary panel kept visually separate from the proposal narrative.
 #import "../../design/borders.typ": stroke-form-light
+#import "../../design/colors.typ": color-primary
 #import "../../design/tokens.typ": space-stack-tight
 #import "../../design/typography.typ": text-base-body, text-base-heading, text-base-label
 #import "../shared.typ": heading-number
@@ -14,6 +15,11 @@
   #text-base-heading[#heading-number(number) #title]
   #v(0.45em)
   #for (index, entry) in entries.enumerate() [
+    // Optional group label, set on the first entry of each group.
+    #if entry.at("group", default: none) != none [
+      #text-base-label[#text(fill: color-primary)[#entry.at("group")]]
+      #v(0.2em)
+    ]
     // Sticky term keeps each label with its definition across page breaks.
     #block(sticky: true)[
       #par[

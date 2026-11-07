@@ -24,6 +24,7 @@ From `proposal/`:
 |---------|--------|
 | `make proposal` | `output/fa/proposal.pdf` (cover + body) |
 | `make cover` | `output/fa/proposal-cover.pdf` |
+| `make cheatsheet` | `output/fa/cheatsheet.pdf` (two-page skim sheet; content in `src/content/fa/cheatsheet/meta/cheatsheet.yaml`) |
 | `make watch` | watch full proposal |
 
 Requires `typst` (`brew install typst`).
@@ -38,7 +39,7 @@ Cover page has no running header/footer. Body pages use `letter-page-shell` (`li
 
 - **Header:** left-aligned title (`shared/labels/common.yaml` → `page-header-title`) + horizontal rule
 - **Footer:** page number + horizontal rule
-- **Footnotes:** Persian-numbered markers and a numbered listing above the footer; styled via `footnote.entry`.
+- **Footnotes:** Persian-numbered markers and a numbered listing above the footer; styled via `footnote.entry`. English entries align left, Persian entries align right.
 
 Edit title in `src/content/fa/shared/labels/common.yaml`. Tune spacing in `src/lib/design/tokens.typ` (`size-page-*`, `space-*-page`).
 

@@ -3,7 +3,17 @@
 // (set rules inside a function body do not reach the page).
 #import "tokens.typ": *
 #import "typography.typ": text-footnote, text-page-header, text-page-number
-#import "../components/shared.typ": to-persian-digits
+#import "../components/shared.typ": footnote-fa-numbering, plain-text, to-persian-digits
+
+#let persian-script = regex(
+  "[\\u{0600}-\\u{06FF}\\u{0750}-\\u{077F}\\u{FB50}-\\u{FDFF}\\u{FE70}-\\u{FEFF}]",
+)
+
+// Entry direction follows the first non-space character of the note body.
+#let footnote-body-rtl(body) = {
+  let first = plain-text(body).find(regex("\\S"))
+  first != none and first.match(persian-script) != none
+}
 
 #let page-rule() = line(length: 100%, stroke: stroke-page-rule + black)
 
@@ -25,12 +35,26 @@
 
 #let footnote-entry-block(it) = {
   let loc = it.note.location()
-  text-footnote[
-    #par(leading: 0.15em, spacing: 0pt, justify: false)[
-      #set text(dir: rtl, lang: "fa")
-      #to-persian-digits(counter(footnote).at(loc).first())
+  let num = counter(footnote).at(loc).first()
+  let is-rtl = footnote-body-rtl(it.note.body)
+  let entry = if is-rtl {
+    text(dir: rtl, lang: "fa")[
+      #footnote-fa-numbering(num)
       #h(0.35em)
       #it.note.body
+    ]
+  } else {
+    text(dir: ltr, lang: "en", font: font-english)[
+      #footnote-fa-numbering(num)
+      #h(0.35em)
+      #it.note.body
+    ]
+  }
+  // Persian entries start from the right edge, English entries from the left.
+  let side = if is-rtl { right } else { left }
+  text-footnote[
+    #align(side)[
+      #par(leading: 0.15em, spacing: 0pt, justify: false)[#entry]
     ]
   ]
 }

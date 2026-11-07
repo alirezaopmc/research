@@ -1,8 +1,8 @@
 title-fa: >-
-  توصیف و هدایت رفتار مدل‌های زبانی بزرگ در زمینه‌های گوناگون
+  بررسی بازنمایی‌های درونی برای فهم و ارزیابی رفتار مدل‌های زبانی بزرگ
 title-en: >-
-  Characterizing and Steering the Behavior of Large Language Models Across
-  Contexts
+  Investigating Internal Representations for Understanding and Evaluating
+  Large Language Model Behavior
 thesis-type: applied
 keywords: >-
-  مدل‌های زبانی بزرگ، توصیف رفتار، خطای واقعیتی، خودرمزنگار تنک، بازنمایی‌های درونی، هدایت مدل
+  مدل‌های زبانی بزرگ، بازنمایی‌های درونی، رفتار مدل، ارزیابی رفتار، قابلیت تفسیر مکانیکی، خودرمزنگار تنک
