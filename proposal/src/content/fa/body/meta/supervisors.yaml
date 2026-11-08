@@ -2,7 +2,7 @@ rows:
   - role: primary
     name: دکتر روح اله عابدیان
     rank: دانشیار
-    share: ""
+    share: "۱۰۰"
     workplace: دانشکده علوم مهندسی
     signature: ""
   - role: secondary
@@ -14,8 +14,8 @@ rows:
   - role: advisor-primary
     name: دکتر علی فهیم
     rank: استادیار
-    share: ""
-    workplace: دانشکده مهندسی برق و کامپیوتر
+    share: "۰"
+    workplace: دانشکده علوم مهندسی
     signature: ""
   - role: advisor-secondary
     name: ""
