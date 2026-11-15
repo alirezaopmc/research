@@ -1,7 +1,7 @@
 // Section 2: supervisors and advisors table.
 #import "../../design/typography.typ": text-base-body
 #import "../../presenters/body.typ": supervisor-role-label, supervisor-visible-rows
-#import "../shared/data-table.typ": form-data-table, registry-header-cell, signature-placeholder-box
+#import "../shared/data-table.typ": form-data-table, registry-header-cell, signature-cell-content
 #import "section-heading.typ": body-section-heading
 
 // Every supervisor cell is centered; justification is off so short labels do not spread.
@@ -10,14 +10,7 @@
   #text-base-body(body)
 ]
 
-// Empty signature cells stay blank for handwritten completion.
-#let supervisor-signature-cell(signature) = {
-  if type(signature) == str and signature.len() == 0 {
-    signature-placeholder-box()
-  } else {
-    supervisor-cell(signature)
-  }
-}
+#let supervisor-signature-cell(signature) = signature-cell-content(signature)
 
 #let body-supervisors-table(labels, meta) = {
   let rows = supervisor-visible-rows(meta.supervisors.rows)

@@ -1,0 +1,17 @@
+# Local-only: copy to supervisors.signed.yaml and run `make proposal-signed`.
+# Signature images live in proposal/assets/signatures/ (gitignored).
+rows:
+  - role: primary
+    name: دکتر روح اله عابدیان
+    rank: دانشیار
+    share: "۱۰۰"
+    workplace: دانشکده علوم مهندسی
+    signature:
+      image: rohollah-abedian.jpg
+  - role: advisor-primary
+    name: دکتر علی فهیم
+    rank: استادیار
+    share: "۰"
+    workplace: دانشکده علوم مهندسی
+    signature:
+      image: ali-fahim.jpg

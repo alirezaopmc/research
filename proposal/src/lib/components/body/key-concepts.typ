@@ -3,7 +3,7 @@
 #import "../../design/colors.typ": color-primary
 #import "../../design/tokens.typ": space-stack-tight
 #import "../../design/typography.typ": text-base-body, text-base-heading, text-base-label
-#import "../shared.typ": heading-number
+#import "heading.typ": body-heading
 #import "../shared/tech-footnote.typ": render-segments, rich-text
 
 #let key-concepts-panel(number, title, entries) = block(
@@ -12,7 +12,7 @@
   stroke: stroke-form-light,
   inset: (x: 9pt, y: 7pt),
 )[
-  #text-base-heading[#heading-number(number) #title]
+  #body-heading(3, number, title)
   #v(0.45em)
   #for (index, entry) in entries.enumerate() [
     // Optional group label, set on the first entry of each group.

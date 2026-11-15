@@ -22,12 +22,17 @@ From `proposal/`:
 
 | Command | Output |
 |---------|--------|
-| `make proposal` | `output/fa/proposal.pdf` (cover + body) |
+| `make proposal` | `output/fa/proposal.pdf` (cover + body; empty signature boxes) |
+| `make setup-proposal-signed` | Create local `supervisors.signed.yaml` from example (once) |
+| `make proposal-signed` | `output/fa/proposal-signed.pdf` (needs local YAML + `assets/signatures/*.jpg`, all gitignored) |
 | `make cover` | `output/fa/proposal-cover.pdf` |
+| `make proposal-single` | `output/fa/proposal-single.typ` (one self-contained source of the unsigned proposal; `scripts/bundle-single.py`) |
 | `make cheatsheet` | `output/fa/cheatsheet.pdf` (two-page skim sheet; content in `src/content/fa/cheatsheet/meta/cheatsheet.yaml`) |
 | `make watch` | watch full proposal |
 
-Requires `typst` (`brew install typst`).
+Requires `typst` (`brew install typst`) and `python3` (stdlib only) for `proposal-single`.
+
+**Single file:** the bundler inlines every local `#import`, embeds the unsigned YAML under `src/content` behind a `yaml` shim (signed and cheatsheet data are excluded), and rewrites asset paths to be relative to `output/fa/`. It fails on duplicate top-level `#let` names, `as` imports, packages, and `yaml()` calls outside `lib/content.typ`. Compile from `proposal/`: `typst compile --root . --font-path assets/fonts output/fa/proposal-single.typ`. When changing templates or components, keep the bundler's rules in mind (top-level `#let` only, imports at column 0, no top-level content in modules).
 
 ## Fonts
 

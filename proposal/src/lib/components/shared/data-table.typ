@@ -50,6 +50,26 @@
   ]
 ]
 
+#let signature-asset-root = "../../../../assets/signatures/"
+
+#let signature-cell-content(signature) = {
+  if type(signature) == dictionary and signature.at("image", default: "").len() > 0 {
+    align(center + horizon)[
+      #image(
+        signature-asset-root + signature.image,
+        height: 0.85cm,
+        fit: "contain",
+      )
+    ]
+  } else if type(signature) == str and signature.len() == 0 {
+    signature-placeholder-box()
+  } else if type(signature) == str {
+    align(center + horizon)[#text-base-body(signature)]
+  } else {
+    signature-placeholder-box()
+  }
+}
+
 #let form-fields-sheet(rows) = {
   table(
     columns: (1fr, 1fr),

@@ -165,6 +165,8 @@ Rules:
 | Gloss and note | `en:` + `fa:` | One footnote: LTR gloss, line break, RTL note |
 | English-only term | `ltr: true` | Footnote holding the English word; no inline text |
 
+Entry alignment (`footnote-entry-block` in `page-chrome.typ`): English entries start from the left edge, Persian entries from the right. A gloss-and-note entry keeps the gloss on the left and the note on its own right-aligned line.
+
 Rules:
 - Footnote a concept only at its first occurrence in the body; later occurrences stay plain Persian.
 - Text fields that may hold segments (`intro`, `note`, `theory`, `implementation`, `placeholder`, `definition`, `synthesis`, `research-gap`) render through `rich-text()`.
@@ -173,6 +175,10 @@ Rules:
 Component: `lib/components/shared/tech-footnote.typ`
 
 English gloss casing: lowercase for common technical terms (`behavioral evaluation`, `model steering`); capitalize only proper nouns, official titles, and acronyms (`LLM`, `Gemma Scope`). Apply the same rule to `term-en` in glossary entries.
+
+## Glossary definitions
+
+Every definition (`topic.yaml` key-concepts and cheatsheet `terms`) is a full sentence with a finite verb.
 
 ## Latin values in RTL
 

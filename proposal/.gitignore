@@ -1,1 +1,4 @@
 output/
+assets/signatures/*
+!assets/signatures/.gitkeep
+src/content/fa/body/meta/supervisors.signed.yaml

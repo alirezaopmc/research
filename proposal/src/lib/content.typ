@@ -77,3 +77,16 @@
   )
 }
 
+#let load-body-locale-signed(locale: "fa", document: "body") = {
+  let body = load-body-locale(locale: locale, document: document)
+  let doc = document-base(locale, document)
+  let signed-supervisors = yaml(join-path(doc, "meta", "supervisors.signed"))
+  (
+    labels: body.labels,
+    meta: (
+      ..body.meta,
+      supervisors: signed-supervisors,
+    ),
+  )
+}
+
